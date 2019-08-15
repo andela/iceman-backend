@@ -1,11 +1,10 @@
-const mongoose = require('mongoose');
-const router = require('express').Router();
-const passport = require('passport');
+import { Router } from 'express';
+import passport from 'passport';
 
-const User = mongoose.model('User');
+const router = Router();
+
 
 router.get('/user', (req, res, next) => {
-  res.status(200).json('Welcome');
   User.findById(req.payload.id)
     .then((user) => {
       if (!user) {
@@ -22,7 +21,6 @@ router.put('/user', (req, res, next) => {
       if (!user) {
         return res.sendStatus(401);
       }
-
       // only update fields that were actually passed...
       if (typeof req.body.user.username !== 'undefined') {
         user.username = req.body.user.username;
@@ -40,9 +38,7 @@ router.put('/user', (req, res, next) => {
         user.setPassword(req.body.user.password);
       }
 
-      return user.save().then(() => {
-        return res.json({ user: user.toAuthJSON() });
-      });
+      return user.save().then(() => res.json({ user: user.toAuthJSON() }));
     })
     .catch(next);
 });
@@ -62,25 +58,21 @@ router.post('/users/login', (req, res, next) => {
 
     if (user) {
       return res.json({ user: user.toAuthJSON() });
-    } else {
-      return res.status(422).json(info);
     }
+    return res.status(422).json(info);
   })(req, res, next);
 });
 
 router.post('/users', (req, res, next) => {
   const user = new User();
-
   user.username = req.body.user.username;
   user.email = req.body.user.email;
   user.setPassword(req.body.user.password);
 
   user
     .save()
-    .then(() => {
-      return res.json({ user: user.toAuthJSON() });
-    })
+    .then(() => res.json({ user: user.toAuthJSON() }))
     .catch(next);
 });
 
-module.exports = router;
+export default router;

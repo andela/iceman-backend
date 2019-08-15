@@ -46,7 +46,9 @@
     "pg-hstore": "^2.3.3",
     "request": "^2.87.0",
     "sequelize": "^5.15.0",
-    "underscore": "^1.9.1"
+    "swagger-ui-express": "^4.0.7",
+    "underscore": "^1.9.1",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.6",
