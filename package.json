@@ -4,6 +4,7 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
+    "db:script": "cross-env NODE_ENV=test  sequelize db:migrate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Andela Simulations Programme",
@@ -24,7 +25,13 @@
     "mongoose-unique-validator": "^2.0.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "pg": "^7.12.1",
+    "pg-hstore": "^2.3.3",
     "request": "^2.87.0",
+    "sequelize": "^5.15.0",
     "underscore": "^1.9.1"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0"
   }
 }
