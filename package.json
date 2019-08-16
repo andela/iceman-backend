@@ -4,7 +4,7 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "dbscript": "cross-env NODE_ENV=test  sequelize db:create",
+    "test:dbscript": "cross-env NODE_ENV=test sequelize db:migrate",
     "server": "nodemon --watch src --exec babel-node src/index.js",
     "start": "node ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"

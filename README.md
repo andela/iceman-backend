@@ -24,8 +24,10 @@ Make company global travel and accommodation easy and convenient for the strong 
        <pre><code>DATABASE_URL_TEST=provide_test_database_url</code></pre>
   -  Environment Variable for Production Database
        <pre><code>DATABASE_URL=provide_production_database_url</code></pre>
-- Then you run any oending migrations using sequelize db:migrate
+- Then you can run any pending migrations using sequelize db:migrate
 - For more sequelize-cli commands visit https://github.com/sequelize/cli and https://sequelize.org/master/manual/migrations.html
+
+---
 
 ## Installation and Usage with Docker
 To install and run the app with Docker, you must have Docker installed and running on your computer. Follow this [link to guide you in installing and setting up Docker on Windows 10, MacOS or Linux](https://docs.docker.com/install/). Then clone this repo and run this command to build the Docker image.
