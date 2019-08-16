@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon --watch src --exec babel-node src/index.js",
+    "start": "node ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Andela Simulations Programme",
@@ -28,6 +29,7 @@
     "methods": "^1.1.2",
     "mongoose": "^5.2.2",
     "mongoose-unique-validator": "^2.0.1",
+    "morgan": "^1.9.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "request": "^2.87.0",
@@ -36,5 +38,8 @@
   "devDependencies": {
     "morgan": "^1.9.1",
     "nodemon": "^1.19.1"
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2"
   }
 }
