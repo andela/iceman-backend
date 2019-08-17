@@ -9,7 +9,7 @@ describe('API ROUTES', () => {
   it('should get all entry points', async () => {
     const res = await chai.request(app)
       .get('/');
-    res.should.have.status(201);
+    res.should.have.status(200);
   });
   it('should return a not found error message when an invalid route is accessed', async () => {
     const res = await chai.request(app)
