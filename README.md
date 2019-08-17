@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/andela/iceman-backend.svg?branch=development)](https://travis-ci.com/andela/iceman-backend)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 Barefoot Nomad - Making company travel and accommodation easy and convenient.
