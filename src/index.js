@@ -1,12 +1,7 @@
-import fs from 'fs';
-import http from 'http';
-import path from 'path';
-import methods from 'methods';
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import cors from 'cors';
-import passport from 'passport';
 import errorhandler from 'errorhandler';
 import 'dotenv/config';
 import router from './routes';
