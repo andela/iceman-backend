@@ -9,6 +9,7 @@ import cors from 'cors';
 import passport from 'passport';
 import errorhandler from 'errorhandler';
 import 'dotenv/config';
+import Route from './routes/index';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -25,8 +26,6 @@ app.use(bodyParser.json());
 
 app.use(require('method-override')());
 
-app.use(express.static(__dirname + '/public'));
-
 app.use(
   session({
     secret: 'authorshaven',
@@ -40,7 +39,7 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-//  app.use(require('./routes'));
+app.use(Route);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -49,38 +48,15 @@ app.use((req, res, next) => {
   next(err);
 });
 
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (!isProduction) {
-  app.use((err, req, res) => {
-    console.log(err.stack);
-
-    res.status(err.status || 500);
-
-    res.json({
-      errors: {
-        message: err.message,
-        error: err
-      }
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use((err, req, res) => {
-  res.status(err.status || 500);
-  res.json({
-    errors: {
-      message: err.message,
-      error: {}
-    }
-  });
+// global error handler
+app.use((err, req, res, next) => {
+  res.status(err.status).send(err.message);
+  next();
 });
 
 // finally, let's start our server...
 const server = app.listen(process.env.PORT || 3000, () => {
   console.log(`Listening on port ${server.address().port}`);
 });
+
+export default app;

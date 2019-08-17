@@ -1,5 +1,8 @@
-const router = require("express").Router();
+import express from 'express';
 
-router.use("/api", require("./api"));
+const app = express.Router();
 
-module.exports = router;
+
+app.get('/', (req, res) => res.status(200).send('Welcome to Barefoot Normad'));
+
+export default app;
