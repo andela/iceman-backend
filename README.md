@@ -29,6 +29,9 @@ Make company global travel and accommodation easy and convenient for the strong 
 
 ---
 
+## EditorConfig Setup
+This project uses a `.editorconfig` file to help maintain consistent coding styles for the developers working on this project across various editors and IDEs. Follow [this link to see if your editor requires a plugin for this feature and to guide you in installing the required plugin if it does](https://editorconfig.org/#download).
+
 ## Installation and Usage with Docker
 To install and run the app with Docker, you must have Docker installed and running on your computer. Follow this [link to guide you in installing and setting up Docker on Windows 10, MacOS or Linux](https://docs.docker.com/install/). Then clone this repo and run this command to build the Docker image.
 ```
