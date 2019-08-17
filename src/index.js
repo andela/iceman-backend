@@ -9,7 +9,8 @@ import cors from 'cors';
 import passport from 'passport';
 import errorhandler from 'errorhandler';
 import 'dotenv/config';
-import Route from './routes/index';
+import router from './routes';
+
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -39,7 +40,9 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-app.use(Route);
+
+app.use(router);
+
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

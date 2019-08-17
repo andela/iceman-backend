@@ -1,0 +1,103 @@
+swagger: '2.0'
+info:
+  description: |
+    Barefoot nomad is an application that will enable its “Company Nomads” book their international travel and accommodation globally; easily and conveniently across all the locations/centers where the Company has its operations.
+  version: 1.0.0
+  title: Barefoot Nomad
+
+tags:
+- name: users
+  description: Manage User Accout
+paths:
+  /users:
+    post:
+      tags:
+      - users
+      summary: Add a new user account
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: User details
+        required: true
+        schema:
+          type: object
+          properties:
+            username:
+              type: string
+            email:
+              type: string
+            password:
+              type: string
+      responses:
+        401:
+          description: Invalid input
+        200:
+          description: Success
+    put:
+      tags:
+      - users
+      summary: Updates user details
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: field to be updated 
+        required: true
+        schema:
+          type: object
+          properties:
+            field:
+              type: string
+      responses:
+        401:
+          description: Invalid input
+        200:
+          description: Success
+    get:
+      tags:
+      - users
+      summary: Get user details
+      produces:
+      - application/json
+      responses:
+        401:
+          description: Invalid input
+        200:
+          description: Success     
+          
+  /users/login:
+    post:
+      tags:
+      - users
+      summary: Logs in a new user
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: User details
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+      responses:
+        401:
+          description: Invalid input
+        200:
+          description: Success
+schemes:
+ - https
+ - http
