@@ -7,6 +7,7 @@
     "test:dbscript": "cross-env NODE_ENV=test sequelize db:migrate",
     "server": "nodemon --watch src --exec babel-node src/index.js",
     "start": "babel-node src/index.js",
+    "lint": "eslint ./ || true",
     "test": "nyc --reporter=html --reporter=text mocha src/test --require @babel/register --exit || true",
     "coveralls": "nyc --reporter=lcov --reporter=text-lcov npm test",
     "generate-lcov": "nyc report --reporter=text-lcov >lcov.info",
@@ -64,7 +65,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm test",
+      "pre-commit": "lint && npm test",
       "pre-push": "npm test"
     }
   }
