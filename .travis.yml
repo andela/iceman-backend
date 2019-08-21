@@ -1,22 +1,19 @@
 language: node_js
-
 node_js:
   - '10.15.1'
-
+before_install:
+  - npm update
+install:
+  - npm install
 cache:
 directories:
   - 'node_modules'
-
 services:
   - postgresql
-
 before_script:
   - psql -c 'create database icemantest;' -U postgres
   - npm i -g sequelize-cli
-  - npm run test:dbscript
-
 script:
   - npm run test
-
 after_script:
   - npm run coverage
