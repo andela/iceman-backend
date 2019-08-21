@@ -6,21 +6,42 @@ info:
   title: Barefoot Nomad
 
 tags:
+<<<<<<< HEAD
   - name: auth
     description: Authentication routes
+=======
+<<<<<<< HEAD
+  - name: Authentication
+    description: Manage User Accout
+>>>>>>> feature(documentation):update README.md and swagger doc
 host: localhost:3000
 basePath: /api/v1
 paths:
   /auth/login:
     post:
       tags:
+<<<<<<< HEAD
         - auth
       summary: Logs in a user
+=======
+        - Authentication
+  - name: users
+    description: Manage User Accout
+host: localhost:3000
+basePath: /api/v1
+paths:
+  /api/v1/auth/signup:
+    post:
+      tags:
+        - users
+      summary: Add a new user account
+>>>>>>> feature(documentation):update README.md and swagger doc
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
+<<<<<<< HEAD
         - in: body
           name: body
           description: User details
