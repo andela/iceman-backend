@@ -1,7 +1,7 @@
 language: node_js
 
 node_js:
-  - '10.15.1'
+  - 'stable'
 
 cache:
 directories:
@@ -16,6 +16,7 @@ before_script:
   - npm i -g sequelize-cli
 
 script:
+  - npm run test:dbscript
   - npm run test
 
 after_script:

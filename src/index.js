@@ -3,10 +3,12 @@ import bodyParser from 'body-parser';
 import session from 'express-session';
 import cors from 'cors';
 import errorhandler from 'errorhandler';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 import 'dotenv/config';
 import router from './routes';
 
-
+const swaggerDocument = YAML.load(`${process.cwd()}/src/docs/docs.yaml`);
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Create global app object
@@ -35,9 +37,11 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
+// versioning api
+app.use('/api/v1', router);
 
-app.use(router);
-
+app.get('/', (req, res) => res.status(200).send('Welcome to Barefoot Normad'));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
