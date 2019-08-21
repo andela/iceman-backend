@@ -7,8 +7,9 @@ cache:
 directories:
   - 'node_modules'
 
-services:
-  - postgresql
+addons:
+  chrome: stable
+  postgresql: 9.6
 
 before_script:
   - psql -c 'create database icemantestdb;' -U postgres
