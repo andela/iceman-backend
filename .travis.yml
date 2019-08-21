@@ -7,18 +7,16 @@ cache:
 directories:
   - 'node_modules'
 
-addons:
-  chrome: stable
-  postgresql: 9.6
+services:
+  - postgresql
 
 before_script:
-  - psql -c 'create database icemantestdb;' -U postgres
+  - psql -c 'create database icemantest;' -U postgres
   - npm i -g sequelize-cli
+  - npm run test:dbscript
 
 script:
-  - npm run test:dbscript
   - npm run test
 
 after_script:
-  - npm run test:dbscript
   - npm run coverage
