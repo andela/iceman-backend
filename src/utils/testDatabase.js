@@ -29,6 +29,6 @@ export default class TestDatabase {
    * @returns {integer} - return 1 if success or 0 if failed
    */
   static destroyUsers() {
-    return User.destroy({ truncate: true, restartIdentity: true });
+    User.destroy({ truncate: true, cascade: true, restartIdentity: true });
   }
 }

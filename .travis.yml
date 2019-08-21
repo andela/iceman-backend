@@ -13,6 +13,7 @@ services:
 before_script:
   - psql -c 'create database icemantest;' -U postgres
   - npm i -g sequelize-cli
+  - npm run test:dbscript
 script:
   - npm run test
 after_script:

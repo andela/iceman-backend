@@ -15,18 +15,21 @@ const user = {
 describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
-  before(async () => {
+  before((done) => {
     TestDatabase.destroyUsers();
-    verifiedUser = await TestDatabase.createUser({
-      ...user,
-      is_verified: true,
-    });
-    notVerifiedUser = await TestDatabase.createUser({
-      ...user,
-      email: 'user2@gmail.com',
-    });
+    done();
   });
   describe('POST /login', () => {
+    before(async () => {
+      verifiedUser = await TestDatabase.createUser({
+        ...user,
+        is_verified: true,
+      });
+      notVerifiedUser = await TestDatabase.createUser({
+        ...user,
+        email: 'user2@gmail.com',
+      });
+    });
     it('should return 400 if the user is not found', async () => {
       const res = await chai.request(app)
         .post(apiEndpoint)
