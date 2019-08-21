@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - '10.15.1'
+  - 'stable'
 before_install:
   - npm update
 install:
@@ -8,9 +8,11 @@ install:
 cache:
 directories:
   - 'node_modules'
-services:
-  - postgresql
+addons:
+  chrome: stable
+  postgresql: 9.6
 before_script:
+  - psql -c 'create database icemantestdb;' -U postgres
   - npm i -g sequelize-cli
   - npm run test:dbscript
 script:

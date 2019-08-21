@@ -6,32 +6,32 @@ info:
   title: Barefoot Nomad
 
 tags:
-- name: users
-  description: Manage User Accout
+  - name: users
+    description: Manage User Accout
 paths:
   /users:
     post:
       tags:
-      - users
+        - users
       summary: Add a new user account
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: body
-        description: User details
-        required: true
-        schema:
-          type: object
-          properties:
-            username:
-              type: string
-            email:
-              type: string
-            password:
-              type: string
+        - in: body
+          name: body
+          description: User details
+          required: true
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
       responses:
         401:
           description: Invalid input
@@ -39,22 +39,22 @@ paths:
           description: Success
     put:
       tags:
-      - users
+        - users
       summary: Updates user details
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: body
-        description: field to be updated 
-        required: true
-        schema:
-          type: object
-          properties:
-            field:
-              type: string
+        - in: body
+          name: body
+          description: field to be updated
+          required: true
+          schema:
+            type: object
+            properties:
+              field:
+                type: string
       responses:
         401:
           description: Invalid input
@@ -62,42 +62,42 @@ paths:
           description: Success
     get:
       tags:
-      - users
+        - users
       summary: Get user details
       produces:
-      - application/json
+        - application/json
       responses:
         401:
           description: Invalid input
         200:
-          description: Success     
-          
+          description: Success
+
   /users/login:
     post:
       tags:
-      - users
+        - users
       summary: Logs in a new user
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: body
-        description: User details
-        required: true
-        schema:
-          type: object
-          properties:
-            email:
-              type: string
-            password:
-              type: string
+        - in: body
+          name: body
+          description: User details
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
       responses:
         401:
           description: Invalid input
         200:
           description: Success
 schemes:
- - https
- - http
+  - https
+  - http
