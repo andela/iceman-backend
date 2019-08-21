@@ -1,5 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const salt = bcrypt.genSaltSync(10);
 const secret = process.env.JWTSECRET;
