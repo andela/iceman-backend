@@ -45,6 +45,10 @@ paths:
       responses:
         409:
           description: Email Address already exist
+        400:
+          description: Bad request
+        401:
+          description: Invalid input
         201:
           description: created
     put:

@@ -13,7 +13,7 @@ const user = {
   first_name: 'Samuel',
   last_name: 'koroh',
   email: 'user1@gmail.com',
-  password: '123456'
+  password: '12345678b'
 };
 const user2 = {
   first_name: 'Test',
@@ -104,5 +104,95 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('is_admin');
       res.body.data.should.have.property('is_verified');
     });
+  });
+
+  it('should not register a user when all required fields are empty', async () => {
+    const res = await chai.request(app)
+      .post(`${URL_PREFIX}/signup`)
+      .send({
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+      });
+
+    res.should.have.status(400);
+    res.body.should.be.an('object');
+    res.body.error.should.equal('First Name is required');
+  });
+
+  it('should not register a user when last name are provided', async () => {
+    const res = await chai.request(app)
+      .post(`${URL_PREFIX}/signup`)
+      .send({
+        first_name: 'john',
+        last_name: '',
+        email: 'doe@mail.com',
+        password: 'john12345',
+      });
+
+    res.should.have.status(400);
+    res.body.should.be.an('object');
+    res.body.error.should.equal('Last Name is required');
+  });
+
+  it('should not register a user when email is not provided', async () => {
+    const res = await chai.request(app)
+      .post(`${URL_PREFIX}/signup`)
+      .send({
+        first_name: 'john',
+        last_name: 'doe',
+        email: '',
+        password: '',
+      });
+
+    res.should.have.status(400);
+    res.body.should.be.an('object');
+    res.body.error.should.equal('Email must be a valid email address e.g example@mail.com or example@mail.co.uk');
+  });
+
+  it('should not register a user when password is not provided', async () => {
+    const res = await chai.request(app)
+      .post(`${URL_PREFIX}/signup`)
+      .send({
+        first_name: 'john',
+        last_name: 'doe',
+        email: 'doe@mail.com',
+        password: '',
+      });
+
+    res.should.have.status(400);
+    res.body.should.be.an('object');
+    res.body.error.should.equal('Password must contain at least one letter, at least one number, and be atleast 8 digits long');
+  });
+
+  it('should not register a user when a valid email is not provided', async () => {
+    const res = await chai.request(app)
+      .post(`${URL_PREFIX}/signup`)
+      .send({
+        first_name: 'john',
+        last_name: 'doe',
+        email: 'doemail.com',
+        password: '123345678',
+      });
+
+    res.should.have.status(400);
+    res.body.should.be.an('object');
+    res.body.error.should.equal('Email must be a valid email address e.g example@mail.com or example@mail.co.uk');
+  });
+
+  it('should not register a user when password is not a mixture of numbers and letters and atleast 8 characters long', async () => {
+    const res = await chai.request(app)
+      .post(`${URL_PREFIX}/signup`)
+      .send({
+        first_name: 'john',
+        last_name: 'doe',
+        email: 'doe@mail.com',
+        password: '123345678',
+      });
+
+    res.should.have.status(400);
+    res.body.should.be.an('object');
+    res.body.error.should.equal('Password must contain at least one letter, at least one number, and be atleast 8 digits long');
   });
 });
