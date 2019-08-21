@@ -1,10 +1,11 @@
 language: node_js
 node_js:
-  - '10.15.1'
+  - 'stable'
 before_install:
   - npm update
 install:
   - npm install
+  - npm i -g sequelize-cli
 cache:
 directories:
   - 'node_modules'
@@ -12,7 +13,6 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database icemantest;' -U postgres
-  - npm i -g sequelize-cli
   - npm run test:dbscript
 script:
   - npm run test
