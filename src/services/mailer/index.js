@@ -6,6 +6,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const templates = {
   verify_email: 'd-1903b0acf59940cea2618e012f891007',
+  reset_password: 'd-9fdf0f733e28408a8dfc06fbebf74070'
 };
 
 export const sendMail = async (data) => {

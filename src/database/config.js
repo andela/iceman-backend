@@ -1,13 +1,14 @@
 require('dotenv').config();
 
+const username = process.env.DBUSERNAME || process.env.USERNAME;
 module.exports = {
   development: {
-    // username: process.env.USERNAME,
-    // password: process.env.PASSWORD,
-    // database: process.env.DB_NAME,
-    // host: process.env.HOST,
-    url: 'postgres://cbumltgb:EdF0peNKRoImUUNlMnu1q5ZOFgW4dDrR@isilo.db.elephantsql.com:5432/cbumltgb',
-    dialect: 'postgres'
+    username,
+    password: process.env.PASSWORD,
+    database: process.env.DB_NAME,
+    host: process.env.HOST,
+    dialect: 'postgres',
+    quoteIdentifiers: false
   },
   test: {
     quoteIdentifiers: false,
