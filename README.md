@@ -25,7 +25,7 @@ docker run <docker-image-name>
 ```
 For example,
 ```
-docker run iceman-backend
+docker run -p 3000:3000 iceman-backend
 ```
 
 ## API Endpoints
