@@ -33,9 +33,6 @@ paths:
               first_name:
                 type: string
                 required: true
-              first_name:
-                type: string
-                required: true
               last_name:
                 type: string
                 required: true
@@ -73,6 +70,7 @@ paths:
           description: Invalid input
         200:
           description: Success
+  /users/:  
     get:
       tags:
         - users
