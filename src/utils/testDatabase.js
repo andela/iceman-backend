@@ -26,10 +26,9 @@ export default class TestDatabase {
 
   /**
    * Method to exclude properties from an object
-   * @param {string} email - email of the user
    * @returns {integer} - return 1 if success or 0 if failed
    */
-  static destroyUsers() {
+  static async destroyUsers() {
     return User.destroy({ truncate: true, restartIdentity: true });
   }
 }

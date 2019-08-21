@@ -16,7 +16,7 @@ describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
   before(async () => {
-    TestDatabase.destroyUsers();
+    await TestDatabase.destroyUsers();
     verifiedUser = await TestDatabase.createUser({
       ...user,
       is_verified: true,
