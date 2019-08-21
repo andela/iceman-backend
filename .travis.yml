@@ -12,11 +12,11 @@ addons:
   postgresql: 9.6
 
 before_script:
-  - psql -c 'create database icemantestdb;' -U postgres
+  - psql -c 'create database icemantest;' -U postgres
   - npm i -g sequelize-cli
+  - npm run test:dbscript
 
 script:
-  - npm run test:dbscript
   - npm run test
 
 after_script:
