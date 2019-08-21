@@ -6,11 +6,6 @@ module.exports = {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    username: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true
-    },
     email: {
       type: Sequelize.STRING,
       unique: true,
@@ -19,11 +14,23 @@ module.exports = {
         isEmail: true
       }
     },
+    password: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
     bio: {
       type: Sequelize.STRING
     },
     image: {
       type: Sequelize.STRING
+    },
+    is_admin: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
+    is_verified: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     },
     createdAt: {
       allowNull: false,

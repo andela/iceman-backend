@@ -6,31 +6,38 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER
-      },
-      username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+        type: DataTypes.INTEGER,
       },
       email: {
         type: DataTypes.STRING,
         unique: true,
         allowNull: false,
         validate: {
-          isEmail: true
-        }
+          isEmail: true,
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       bio: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+      },
+      is_admin: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      is_verified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
       image: {
-        type: DataTypes.STRING
-      }
+        type: DataTypes.STRING,
+      },
     },
-    {}
+    { },
   );
-  User.associate = () => {
+  User.associate = (models) => {
     // associations can be defined here
   };
   return User;
