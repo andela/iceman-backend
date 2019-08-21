@@ -10,7 +10,7 @@ chai.should();
 const apiEndpoint = '/api/v1/auth/login';
 const user = {
   email: 'user1@gmail.com',
-  password: '123456',
+  password: '123456'
 };
 describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
