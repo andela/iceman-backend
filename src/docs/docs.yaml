@@ -6,15 +6,17 @@ info:
   title: Barefoot Nomad
 
 tags:
-  - name: users
+  - name: Authentication
     description: Manage User Accout
+  - name: user
+    description: User Account
 host: localhost:3000
-basePath: /api/v1
+basePath: /api/v1/
 paths:
-  /users:
+  /auth/signup:
     post:
       tags:
-        - users
+        - Authentication
       summary: Add a new user account
       consumes:
         - application/json
@@ -28,17 +30,26 @@ paths:
           schema:
             type: object
             properties:
-              username:
+              first_name:
                 type: string
+                required: true
+              first_name:
+                type: string
+                required: true
+              last_name:
+                type: string
+                required: true
               email:
                 type: string
+                required: true
               password:
                 type: string
+                required: true
       responses:
-        401:
-          description: Invalid input
-        200:
-          description: Success
+        409:
+          description: Email Address already exist
+        201:
+          description: created
     put:
       tags:
         - users
