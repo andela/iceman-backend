@@ -17,12 +17,12 @@ export default class AuthService {
   static async login(email, password) {
     const result = await User.findOne({ where: { email, is_verified: true } });
 
-    if (!result) throw new Error('Invalid Credentials');
+    if (!result) throw new Error('The account does not exists or not yet verified');
 
     const { dataValues: user } = result;
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) throw new Error('Invalid Credentials');
+    if (!isPasswordValid) throw new Error('Please provide valid login credentials');
 
     const payload = { id: user.id, is_admin: user.is_admin };
     const token = await jwt.sign(payload, jwtSecret, { expiresIn: '1hr' });

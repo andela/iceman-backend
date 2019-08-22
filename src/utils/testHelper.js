@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { User } from '../models';
+import db from '../models';
 import Helper from './helpers';
 
 const jwtSecret = process.env.JWTSECRET;
@@ -8,7 +8,7 @@ const jwtSecret = process.env.JWTSECRET;
 /**
  * Helper class for query test database
  */
-export default class TestDatabase {
+export default class TestHelper {
   /**
    * Method to exclude properties from an object
    * @param {object} data - object containing user details
@@ -20,7 +20,7 @@ export default class TestDatabase {
 
     user.password = await bcrypt.hash(user.password, salt);
 
-    const { dataValues: result } = await User.create(user);
+    const { dataValues: result } = await db.User.create(user);
     const payload = { id: result.id, is_admin: result.is_admin };
     const token = await jwt.sign(payload, jwtSecret, { expiresIn: '1hr' });
 
@@ -29,9 +29,10 @@ export default class TestDatabase {
 
   /**
    * Method to exclude properties from an object
+   * @param {string} modelName - model to droped
    * @returns {integer} - return 1 if success or 0 if failed
    */
-  static destroyUsers() {
-    User.destroy({ truncate: true, restartIdentity: true });
+  static destroyModel(modelName) {
+    db[modelName].destroy({ truncate: true, restartIdentity: true });
   }
 }

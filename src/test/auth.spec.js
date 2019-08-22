@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
-import TestDatabase from '../utils/testDatabase';
+import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
 
 chai.use(chaiHttp);
@@ -9,6 +9,8 @@ chai.should();
 
 const apiEndpoint = '/api/v1/auth/login';
 const user = {
+  first_name: 'Samuel',
+  last_name: 'koroh',
   email: 'user1@gmail.com',
   password: '123456'
 };
@@ -17,18 +19,17 @@ describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
   before((done) => {
-    TestDatabase.destroyUsers();
+    TestHelper.destroyModel('User');
     done();
   });
 
   describe('POST /login', () => {
     before(async () => {
-      verifiedUser = await TestDatabase.createUser({
-        ...user,
-        is_verified: true,
+      verifiedUser = await TestHelper.createUser({
+        ...user, is_verified: true
       });
 
-      notVerifiedUser = await TestDatabase.createUser({
+      notVerifiedUser = await TestHelper.createUser({
         ...user,
         email: 'user2@gmail.com',
       });

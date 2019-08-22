@@ -12,8 +12,8 @@ export default class AuthController {
     try {
       const data = await AuthService.login(email, password);
       res.status(200).json({ status: 'success', data });
-    } catch (error) {
-      res.status(400).json({ status: 'error', error: 'Invalid Credentials' });
+    } catch ({ message: error }) {
+      res.status(400).json({ status: 'error', error });
     }
   }
 }
