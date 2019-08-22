@@ -17,10 +17,13 @@ export default class TestDatabase {
   static async createUser(data) {
     const user = { ...data };
     const salt = await bcrypt.genSalt(10);
+
     user.password = await bcrypt.hash(user.password, salt);
+
     const { dataValues: result } = await User.create(user);
     const payload = { id: result.id, is_admin: result.is_admin };
     const token = await jwt.sign(payload, jwtSecret, { expiresIn: '1hr' });
+
     return { token, ...Helper.omitFields(result, ['password']) };
   }
 

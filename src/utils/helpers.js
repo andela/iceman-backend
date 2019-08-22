@@ -10,9 +10,11 @@ export default class Helper {
    */
   static omitFields(objectItem, fields) {
     const items = objectItem;
+
     fields.forEach((field) => {
       delete items[field];
     });
+
     return items;
   }
 
@@ -24,9 +26,11 @@ export default class Helper {
    */
   static pickFields(objectItem, fields) {
     const items = {};
+
     fields.forEach((field) => {
       items[field] = objectItem[field];
     });
+
     return items;
   }
 }

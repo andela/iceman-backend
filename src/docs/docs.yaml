@@ -8,6 +8,8 @@ info:
 tags:
   - name: users
     description: Manage User Accout
+host: localhost:3000
+basePath: /api/v1
 paths:
   /users:
     post:
@@ -72,11 +74,11 @@ paths:
         200:
           description: Success
 
-  /users/login:
+  /auth/login:
     post:
       tags:
-        - users
-      summary: Logs in a new user
+        - auth
+      summary: Logs in a user
       consumes:
         - application/json
       produces:
@@ -94,10 +96,37 @@ paths:
               password:
                 type: string
       responses:
-        401:
-          description: Invalid input
+        400:
+          description: Invalid Credentials
         200:
           description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+
+definitions:
+  AuthReponse:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          token:
+            type: string
+          id:
+            type: integer
+          email:
+            type: string
+          first_name:
+            type: string
+          last_name:
+            type: string
+          is_admin:
+            type: boolean
+            default: false
+          is_verified:
+            type: boolean
+            default: false
 schemes:
   - https
   - http

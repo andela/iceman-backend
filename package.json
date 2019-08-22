@@ -4,7 +4,8 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "test:dbscript": "cross-env NODE_ENV=test sequelize db:migrate",
+    "db:migration": "cross-env NODE_ENV=test sequelize db:migrate",
+    "undo:migration": "cross-env NODE_ENV=test sequelize db:migrate:undo:all",
     "server": "nodemon --watch src --exec babel-node src/server.js",
     "start": "babel-node src/server.js",
     "lint": "eslint ./src --fix",

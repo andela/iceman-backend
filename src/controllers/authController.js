@@ -9,9 +9,11 @@ export default class AuthController {
  * @return {object} user - return object containing status and data
  */
   static async loginUser({ body: { email, password } }, res) {
-    const error = 'Invalid Credentials';
-    const result = await AuthService.login(email, password);
-    if (result === error) return res.status(400).json({ status: 'error', error });
-    return res.status(200).json({ status: 'success', data: result });
+    try {
+      const data = await AuthService.login(email, password);
+      res.status(200).json({ status: 'success', data });
+    } catch (error) {
+      res.status(400).json({ status: 'error', error: 'Invalid Credentials' });
+    }
   }
 }
