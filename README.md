@@ -27,3 +27,11 @@ For example,
 ```
 docker run iceman-backend
 ```
+
+## API Endpoints
+
+<table>
+<tr><th>HTTP VERB</th><th>ENDPOINTS</th><th>DESCRIPTION</th></tr>
+<tr><td>POST</td><td>/api/v1/auth/signup</td><td>Creates user account</td></tr>
+
+</table>
