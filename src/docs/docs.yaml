@@ -6,32 +6,34 @@ info:
   title: Barefoot Nomad
 
 tags:
-- name: users
-  description: Manage User Accout
+  - name: users
+    description: Manage User Accout
+host: localhost:3000
+basePath: /api/v1
 paths:
   /users:
     post:
       tags:
-      - users
+        - users
       summary: Add a new user account
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: body
-        description: User details
-        required: true
-        schema:
-          type: object
-          properties:
-            username:
-              type: string
-            email:
-              type: string
-            password:
-              type: string
+        - in: body
+          name: body
+          description: User details
+          required: true
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
       responses:
         401:
           description: Invalid input
@@ -39,22 +41,22 @@ paths:
           description: Success
     put:
       tags:
-      - users
+        - users
       summary: Updates user details
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: body
-        description: field to be updated 
-        required: true
-        schema:
-          type: object
-          properties:
-            field:
-              type: string
+        - in: body
+          name: body
+          description: field to be updated
+          required: true
+          schema:
+            type: object
+            properties:
+              field:
+                type: string
       responses:
         401:
           description: Invalid input
@@ -62,42 +64,69 @@ paths:
           description: Success
     get:
       tags:
-      - users
+        - users
       summary: Get user details
       produces:
-      - application/json
-      responses:
-        401:
-          description: Invalid input
-        200:
-          description: Success     
-          
-  /users/login:
-    post:
-      tags:
-      - users
-      summary: Logs in a new user
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-      - in: body
-        name: body
-        description: User details
-        required: true
-        schema:
-          type: object
-          properties:
-            email:
-              type: string
-            password:
-              type: string
+        - application/json
       responses:
         401:
           description: Invalid input
         200:
           description: Success
+
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Logs in a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User details
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        400:
+          description: Invalid Credentials
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+
+definitions:
+  AuthReponse:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          token:
+            type: string
+          id:
+            type: integer
+          email:
+            type: string
+          first_name:
+            type: string
+          last_name:
+            type: string
+          is_admin:
+            type: boolean
+            default: false
+          is_verified:
+            type: boolean
+            default: false
 schemes:
- - https
- - http
+  - https
+  - http

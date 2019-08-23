@@ -1,16 +1,9 @@
 import { Router } from 'express';
-import swaggerUi from 'swagger-ui-express';
-import YAML from 'yamljs';
-import api from './api';
+import authRoute from './auth';
 
 const router = Router();
 
-const swaggerDocument = YAML.load(`${process.cwd()}/src/docs/docs.yaml`);
 
-router.get('/', (req, res) => res.status(200).send('Welcome to Barefoot Normad'));
-router.use('/api', api);
-
-router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
+router.use('/auth', authRoute);
 
 export default router;

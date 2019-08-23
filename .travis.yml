@@ -1,17 +1,21 @@
 language: node_js
-
-node_js :
-  - "10.15.1"
-
+node_js:
+  - 'stable'
+before_install:
+  - npm update
+install:
+  - npm install
 cache:
 directories:
-  - "node_modules"
-
-services:
-  - postgresql
-
+  - 'node_modules'
+addons:
+  chrome: stable
+  postgresql: 9.6
+before_script:
+  - psql -c 'create database icemantestdb;' -U postgres
+  - npm i -g sequelize-cli
+  - npm run db:migration
 script:
-  - npm run test
-
+  - npm test
 after_script:
   - npm run coverage
