@@ -28,7 +28,9 @@ export default class AuthController {
     }
   }, res) {
     try {
-      const data = await AuthService.signup(first_name, last_name, email, password);
+      const data = await AuthService.signup({
+        first_name, last_name, email, password
+      });
       res.status(201).json({ status: 'created', data });
     } catch ({ message: error }) {
       res.status(409).json({ status: 'error', error });

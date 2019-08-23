@@ -8,13 +8,16 @@ chai.use(chaiHttp);
 chai.should();
 
 const URL_PREFIX = '/api/v1/auth';
+
 const apiEndpoint = '/api/v1/auth/login';
+
 const user = {
   first_name: 'Samuel',
   last_name: 'koroh',
   email: 'user1@gmail.com',
   password: '123456'
 };
+
 const user2 = {
   first_name: 'Test',
   last_name: 'Tester',
@@ -92,11 +95,13 @@ describe('/api/v1/auth', () => {
 
       res.should.have.status(409);
     });
+
     it('should return 201 if user account was created', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .set('Content-Type', 'application/json')
         .send(user2);
+
       res.should.have.status(201);
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
