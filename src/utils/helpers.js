@@ -1,8 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const salt = bcrypt.genSaltSync(10);
-const secret = process.env.JWTSECRET;
+
 /**
  * Helper class
  */
@@ -42,10 +41,14 @@ export default class Helper {
   /**
    * Method encrypt data
    * @param {*} data - params data
+   * @param { number } rounds - salt value
    * @returns { string} - encypted data
    */
-  static encryptor(data) {
-    const encrypted = bcrypt.hashSync(data, salt);
+  static async encryptor(data, rounds = 10) {
+    const salt = await bcrypt.genSaltSync(rounds);
+
+    const encrypted = await bcrypt.hashSync(data, salt);
+
     return encrypted;
   }
 
@@ -55,7 +58,10 @@ export default class Helper {
    * @returns {string} - token
    */
   static genToken(payloader) {
+    const secret = process.env.JWTSECRET;
+
     const token = jwt.sign(payloader, secret, { expiresIn: '1hr' });
+
     return token;
   }
 }
