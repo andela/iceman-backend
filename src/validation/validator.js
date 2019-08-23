@@ -5,7 +5,7 @@ import Joi from '@hapi/joi';
  * Input validation logic
  * @param {object} schema - user schema to be used for validation
  */
-const validate = (schema) => (req, res, next) => {
+const validate = schema => (req, res, next) => {
   const { error } = Joi.validate(req.body, schema);
   const valid = error == null;
 
