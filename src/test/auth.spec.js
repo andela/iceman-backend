@@ -15,7 +15,7 @@ const user = {
   first_name: 'Samuel',
   last_name: 'koroh',
   email: 'user1@gmail.com',
-  password: '123456'
+  password: 'Ice5m5am0a843r03'
 };
 
 const user2 = {
