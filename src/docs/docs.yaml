@@ -7,9 +7,12 @@ info:
 
 tags:
 <<<<<<< HEAD
+<<<<<<< HEAD
   - name: auth
     description: Authentication routes
 =======
+=======
+>>>>>>> test unit endpoint
 <<<<<<< HEAD
   - name: Authentication
     description: Manage User Accout
@@ -25,6 +28,8 @@ paths:
       summary: Logs in a user
 =======
         - Authentication
+=======
+>>>>>>> test unit endpoint
   - name: users
     description: Manage User Accout
 host: localhost:3000
@@ -41,7 +46,6 @@ paths:
       produces:
         - application/json
       parameters:
-<<<<<<< HEAD
         - in: body
           name: body
           description: User details
@@ -53,6 +57,13 @@ paths:
                 type: string
               password:
                 type: string
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                required: true
+=======
+>>>>>>> test unit endpoint
+>>>>>>> test unit endpoint
       responses:
         400:
           description: Invalid Credentials

@@ -64,4 +64,31 @@ export default class Helper {
 
     return token;
   }
+
+  /**
+   * Method authenticate token
+   * @param {*} activate - data
+   * @returns {string} - token
+   */
+  static verifyToken(activate) {
+    const verify = jwt.verify(activate, process.env.JWTSECRET, (err, decoded) => decoded);
+
+    return verify;
+  }
+
+  /**
+  * @static
+  * @description Returns message based on the status
+  * @param {Object} res - Response object
+  * @param {integer} statusCode - status code to be sent
+  * @param {string} errorMessage - the appropraite error message
+  * @returns {string} - token
+  * @memberof Helper
+  */
+  static errorstatus(res, statusCode, errorMessage) {
+    return res.status(statusCode).json({
+      status: statusCode,
+      error: errorMessage,
+    });
+  }
 }

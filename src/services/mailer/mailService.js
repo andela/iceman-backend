@@ -1,5 +1,10 @@
 import { sendMail } from './index';
 
+/**
+* Input validation logic
+* @param {object} user - user details
+* @return {json} - mail message
+*/
 const send = async (user) => {
   const data = {
     templateName: 'verify_email',

@@ -32,3 +32,15 @@ export const passwordResetSchema = Joi.object().keys({
       message: 'Password must contain at least one letter, at least one number, and be atleast 8 digits long',
     }))
 });
+  
+export const verifySchema = Joi.object().keys({
+    activate: Joi.string().trim().required()
+      .error(() => ({
+        message: 'Token is required'
+      })),
+    id: Joi.number().required()
+      .error(() => ({
+        message: 'User id must be a number'
+      })),
+  })
+};

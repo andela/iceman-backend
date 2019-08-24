@@ -21,8 +21,9 @@ export const sendMail = async (data) => {
   };
   try {
     await sgMail.send(message);
-  } catch (e) {
-    throw new Error(e);
+    console.log('message sent');
+  } catch (err) {
+    throw new Error(err);
   }
 };
 

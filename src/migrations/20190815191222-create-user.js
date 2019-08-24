@@ -26,7 +26,6 @@ module.exports = {
     },
     password: {
       type: Sequelize.STRING,
-<<<<<<< HEAD:src/migrations/20190815191222-create-user.js
       allowNull: false
     },
     is_verified: {
@@ -36,18 +35,6 @@ module.exports = {
     is_admin: {
       type: Sequelize.BOOLEAN,
       defaultValue: false
-=======
-      allowNull: false,
-      unique: false
-    },
-    is_admin: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false,
-    },
-    is_verified: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false,
->>>>>>> feature(authorization):add user registeration:src/migrations/create-user.js
     },
     reset_token: {
       type: Sequelize.STRING

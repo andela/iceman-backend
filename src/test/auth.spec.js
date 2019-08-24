@@ -1,11 +1,18 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import sgMail from '@sendgrid/mail';
+import sinon from 'sinon';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
 
 chai.use(chaiHttp);
 chai.should();
+const { expect } = chai;
+
+let send;
+let userId;
+let userToken;
 
 const URL_PREFIX = '/api/v1/auth';
 
@@ -86,7 +93,15 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('is_verified');
     });
   });
+
   describe('POST /signup', () => {
+    beforeEach(async () => {
+      send = sinon.stub(sgMail, 'send').resolves({});
+    });
+
+    afterEach(async () => {
+      send.restore();
+    });
     it('should return error if user email already exist', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
@@ -203,5 +218,95 @@ describe('/api/v1/auth', () => {
       res.body.should.be.an('object');
       res.body.error.should.equal('Password must contain at least one letter, at least one number, and be atleast 8 digits long');
     });
+  });
+
+  describe('Verify User email', () => {
+    beforeEach(async () => {
+      send = sinon.stub(sgMail, 'send').resolves({});
+    });
+
+    afterEach(async () => {
+      send.restore();
+    });
+
+    it('should sign up a new user', (done) => {
+      chai.request(app)
+        .post(`${URL_PREFIX}/signup`)
+        .send({
+          first_name: 'qqqq',
+          last_name: 'qqqq',
+          email: 'tees@trtr.com',
+          password: '11111111ghghjh'
+        })
+        .end((err, res) => {
+          expect(res.statusCode).to.equal(201);
+          expect(res.body).to.have.property('data');
+          expect(res.body.data).to.have.property('token');
+          const { token, id } = res.body.data;
+          userToken = token;
+          userId = id;
+          done();
+        });
+    });
+
+    it('should verify user email', (done) => {
+      chai.request(app)
+        .get(`${URL_PREFIX}/verify?activate=gfgfgfhgfh&&id=${userId}`)
+        .end((err, res) => {
+          expect(res.statusCode).to.equal(400);
+          expect(res.body).to.have.property('error');
+          done();
+        });
+    });
+
+    it('should verify user email', (done) => {
+      chai.request(app)
+        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=${userId}`)
+        .end((err, res) => {
+          expect(res.statusCode).to.equal(200);
+          expect(res.body).to.have.property('message');
+          done();
+        });
+    });
+
+    it('should not verify user email that has been verified', (done) => {
+      chai.request(app)
+        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=${userId}`)
+        .end((err, res) => {
+          expect(res.statusCode).to.equal(409);
+          expect(res.body).to.have.property('error');
+          done();
+        });
+    });
+
+    it('should not verify user email that does not exist', (done) => {
+      chai.request(app)
+        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=8`)
+        .end((err, res) => {
+          expect(res.statusCode).to.equal(404);
+          expect(res.body).to.have.property('error');
+          done();
+        });
+    });
+  });
+
+  it('should not verify user email with invalid query', (done) => {
+    chai.request(app)
+      .get(`${URL_PREFIX}/verify`)
+      .end((err, res) => {
+        expect(res.statusCode).to.equal(400);
+        expect(res.body).to.have.property('error');
+        done();
+      });
+  });
+
+  it('should not verify user email with invalid user id', (done) => {
+    chai.request(app)
+      .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=fffhj`)
+      .end((err, res) => {
+        expect(res.statusCode).to.equal(400);
+        expect(res.body).to.have.property('error');
+        done();
+      });
   });
 });

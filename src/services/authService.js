@@ -108,16 +108,43 @@ export default class AuthService {
   }
 
   /**
-   *
-   * @param {object} query condition
-   * @param {object} options update items
-   * @returns {object} data
-   */
-  static async updateUser(query, options) {
-    return User.update(options, {
-      where: {
-        ...query
-      }
-    });
+     *
+     * @param {Object} req body
+     * @param {Object} res body
+     * @returns {JSON} data
+     */
+  static async verifyUser(req, res) {
+    const { activate, id } = req.query;
+
+    const verify = Helper.verifyToken(activate);
+
+    const is_user = await User.findOne({ where: { id: Number(id) } });
+
+    if (!is_user) throw new VerifyErrors(404, 'User not find, please sign up');
+
+    if (!verify && !is_user.dataValues.is_verified) {
+      const { dataValues: user } = is_user;
+
+      const payloader = Helper.pickFields(user, ['id', 'is_admin']);
+
+      const token = Helper.genToken(payloader);
+
+      const data = {
+        token,
+        id: is_user.dataValues.id,
+        email: is_user.dataValues.email,
+        first_name: is_user.dataValues.first_name,
+        last_name: is_user.dataValues.last_name
+      };
+
+      await send(data);
+      throw new VerifyErrors(400, 'Expired or Invalid Verification Link. Check your Email For a new verification Link');
+    }
+
+    if (is_user.dataValues.is_verified) throw new VerifyErrors(409, 'User Email is Already Verified');
+
+    await User.update({ is_verified: true }, { where: { id: verify.id } });
+
+    return true;
   }
 }
