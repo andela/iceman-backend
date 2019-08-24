@@ -1,10 +1,9 @@
-/* eslint-disable arrow-parens */
-/* eslint-disable valid-jsdoc */
 import Joi from '@hapi/joi';
 
 /**
  * Input validation logic
- * @param {object} schema - user schema to be used for validation
+ * @param {object} schema - schema to be used for input validation
+ * @return {json} - validation error
  */
 const validate = schema => (req, res, next) => {
   const { error } = Joi.validate(req.body, schema);
