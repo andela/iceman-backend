@@ -21,27 +21,6 @@ export default class AuthController {
       res.status(400).json({ status: 'error', error });
     }
   }
-
-  /**
- *
- * @param {*} res - response object
- * @return {object} - user data and status code
- */
-  static async signupUser({
-    body: {
-      first_name, last_name, email, password
-    }
-  }, res) {
-    try {
-      const data = await AuthService.signup(first_name, last_name, email, password);
-      res.status(201).json({ status: 'created', data });
-    } catch ({ message: error }) {
-      res.status(409).json({ status: 'error', error });
-      const data = await AuthService.login(email, password);
-      res.status(200).json({ status: 'success', data });
-    }
-  }
-
   /**
    * @param {object} req request body
    * @param {object} res response body
