@@ -22,17 +22,11 @@ export default class AuthController {
  * @param {*} res - response object
  * @return {object} - user data and status code
  */
-  static async signupUser({
-    body: {
-      first_name, last_name, email, password
-    }
-  }, res) {
+  static async signupUser({ body }, res) {
     try {
-      const data = await AuthService.signup({
-        first_name, last_name, email, password
-      });
+      const data = await AuthService.signup(body);
       res.status(201).json({ status: 'success', data });
-    } catch ({ message: error }) {
+    } catch (error) {
       res.status(409).json({ status: 'error', error });
     }
   }
