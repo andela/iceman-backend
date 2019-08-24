@@ -33,9 +33,6 @@ export default class AuthService {
   /**
    *
    * @param {Object} userDetails - users input details
-   * @param {*} last_name - string
-   * @param {*} email - valid email
-   * @param {*} password - string
    * @return {JSON} - json format
    */
   static async signup(userDetails) {
