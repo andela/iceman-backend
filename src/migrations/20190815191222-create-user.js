@@ -1,4 +1,3 @@
-/* eslint-disable arrow-parens */
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Users', {
     id: {
@@ -27,13 +26,22 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false
     },
-    is_verified: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false,
+    bio: {
+      type: Sequelize.STRING
+    },
+    image: {
+      type: Sequelize.STRING
     },
     is_admin: {
       type: Sequelize.BOOLEAN,
       defaultValue: false
+    },
+    is_verified: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
+    reset_token: {
+      type: Sequelize.STRING
     },
     createdAt: {
       allowNull: false,
@@ -42,7 +50,7 @@ module.exports = {
     updatedAt: {
       allowNull: false,
       type: Sequelize.DATE
-    },
+    }
   }),
-  down: queryInterface => queryInterface.dropTable('Users')
+  down: (queryInterface) => queryInterface.dropTable('Users')
 };

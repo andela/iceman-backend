@@ -5,12 +5,10 @@ import cors from 'cors';
 import errorhandler from 'errorhandler';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import router from './routes';
 
 const swaggerDocument = YAML.load(`${process.cwd()}/src/docs/docs.yaml`);
-dotenv.config();
-
 const isProduction = process.env.NODE_ENV === 'production';
 // Create global app object
 const app = express();
@@ -55,10 +53,6 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   res.status(err.status).send(err.message);
   next();
-});
-
-const server = app.listen(process.env.PORT || 3000, () => {
-  console.log(`Listening on port ${server.address().port}`);
 });
 
 export default app;

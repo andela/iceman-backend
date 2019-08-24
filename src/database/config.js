@@ -1,9 +1,8 @@
 require('dotenv').config();
 
-const username = process.env.DBUSERNAME || process.env.USERNAME;
 module.exports = {
   development: {
-    username,
+    username: process.env.USERNAME,
     password: process.env.PASSWORD,
     database: process.env.DB_NAME,
     host: process.env.HOST,

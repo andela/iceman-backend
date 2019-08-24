@@ -5,8 +5,8 @@ dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const templates = {
-  verify_email: 'd-1903b0acf59940cea2618e012f891007',
-  reset_password: 'd-9fdf0f733e28408a8dfc06fbebf74070'
+  verify_email: process.env.VERIFY_TEMPLATE,
+  reset_password: process.env.RESET_TEMPLATE
 };
 
 export const sendMail = async (data) => {
@@ -22,8 +22,8 @@ export const sendMail = async (data) => {
   };
   try {
     await sgMail.send(message);
-  } catch (e) {
-    throw new Error(e);
+  } catch (error) {
+    throw new Error(error);
   }
 };
 
