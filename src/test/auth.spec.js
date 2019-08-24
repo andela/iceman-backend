@@ -94,6 +94,7 @@ describe('/api/v1/auth', () => {
         .send(user);
 
       res.should.have.status(409);
+      res.body.should.have.property('status').eql('error');
     });
 
     it('should return 201 if user account was created', async () => {
@@ -103,6 +104,7 @@ describe('/api/v1/auth', () => {
         .send(user2);
 
       res.should.have.status(201);
+      res.body.should.have.property('status').eql('success');
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
