@@ -1,3 +1,6 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=c4769b02e6551992a944caf9bfa770a0f0a3fb6c1af4eb80ec6aad297bde6072
 language: node_js
 node_js:
   - 'stable'
@@ -15,7 +18,11 @@ before_script:
   - psql -c 'create database icemantestdb;' -U postgres
   - npm i -g sequelize-cli
   - npm run db:migration
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script:
   - npm test
 after_script:
   - npm run coverage
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
