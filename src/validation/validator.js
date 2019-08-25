@@ -1,12 +1,13 @@
 import Joi from '@hapi/joi';
 
 /**
- * Input validation logic
- * @param {object} schema - schema to be used for input validation
- * @return {json} - validation error
- */
-const validate = schema => (req, res, next) => {
-  const { error } = Joi.validate(req.body, schema);
+  * Input validation logic
+  * @param {object} schema - schema to be used for input validation
+  * @param {*} property - property to be validated
+  * @return {json} - validation error
+  */
+const validate = (schema, property) => (req, res, next) => {
+  const { error } = Joi.validate(req[property], schema);
   const valid = error == null;
 
   if (valid) {
