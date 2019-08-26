@@ -109,7 +109,7 @@ export default class AuthService {
 
   /**
      *
-     * @param {Object} req body
+     * @param {Object} req query
      * @param {Object} res body
      * @returns {JSON} data
      */
@@ -120,7 +120,7 @@ export default class AuthService {
 
     const is_user = await User.findOne({ where: { id: Number(id) } });
 
-    if (!is_user) throw new VerifyErrors(404, 'User not find, please sign up');
+    if (!is_user) throw new Error('User not find, please sign up');
 
     if (!verify && !is_user.dataValues.is_verified) {
       const { dataValues: user } = is_user;
@@ -130,6 +130,7 @@ export default class AuthService {
       const token = Helper.genToken(payloader);
 
       const data = {
+        template_id: 'verify_email',
         token,
         id: is_user.dataValues.id,
         email: is_user.dataValues.email,
@@ -138,10 +139,10 @@ export default class AuthService {
       };
 
       await send(data);
-      throw new VerifyErrors(400, 'Expired or Invalid Verification Link. Check your Email For a new verification Link');
+      throw new Error('Expired or Invalid Verification Link. Check your Email For a new verification Link');
     }
 
-    if (is_user.dataValues.is_verified) throw new VerifyErrors(409, 'User Email is Already Verified');
+    if (is_user.dataValues.is_verified) throw new Error('User Email is Already Verified');
 
     await User.update({ is_verified: true }, { where: { id: verify.id } });
 

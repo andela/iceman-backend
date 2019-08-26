@@ -31,57 +31,11 @@ docker run -p 3000:3000 iceman-backend
 ```
 
 ## API Endpoints
-<<<<<<< HEAD
 
 <table>
 <tr><th>HTTP VERB</th><th>ENDPOINTS</th><th>DESCRIPTION</th></tr>
 <tr><td>POST</td><td>/api/v1/auth/signup</td><td>Creates user account</td></tr>
+<tr><td>POST</td><td>/api/v1/auth/signup</td><td>Login user account</td></tr>
+<tr><td>GET</td><td>/api/v1/auth/verify?activate&&id</td><td>Creates user account</td></tr>
 
 </table>
-=======
-This project application Endpoints include:
-- <code> POST /api/v1/auth/signup </code>
-
-
-## Configuration / API Endpoints
-This project API endpoints only allow json formated data and the expected output are also json formated.
-
-### User Signup Endpoint
-
-#### POST /api/v1/auth/signup
-
-Required fields includes:
- - first_name : <code> String </code>
- - last_name : <code> String </code>
- - email : <code> String </code>
- - password : <code> String </code>
-
- On success response :
-
-<pre><code>
-
-     {
-          "status" : Integar
-          "token" : String
-          "data" : {
-               "is_admin" : Boolean,
-               "is_verified" : Boolean,
-               "first_name" : String,
-               "last_name" : String,
-               "email" : String
-          }
-     }
-
-</code></pre>
- 
- Error response :
- <pre><code>
-
-     {
-          "status" : Integar
-          "error" : String
-     }
-
-</code></pre>
-
->>>>>>> feature(documentation):update README.md and swagger doc

@@ -70,20 +70,20 @@ export default class AuthController {
   /**
   @static
   * @description Returns message based on the status
-  * @param {*} req - request object
-  * @param {*} res - response object
+  * @param {req} req - request object
+  * @param {res} res - response object
   * @return {object} - message
   * @memberof AuthController
   */
   static async verify(req, res) {
     try {
       const is_verified = await AuthService.verifyUser(req, res);
+
       if (is_verified) {
         return res.status(200).json({ message: 'Email Successfully Verified' });
       }
-    } catch (error) {
-      const { status, message } = error;
-      return Helper.errorstatus(res, status, `${message}`);
+    } catch ({ message: error }) {
+      res.status(400).json({ status: 'error', error });
     }
   }
 }

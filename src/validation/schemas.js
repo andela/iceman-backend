@@ -34,13 +34,12 @@ export const passwordResetSchema = Joi.object().keys({
 });
   
 export const verifySchema = Joi.object().keys({
-    activate: Joi.string().trim().required()
-      .error(() => ({
-        message: 'Token is required'
-      })),
-    id: Joi.number().required()
-      .error(() => ({
-        message: 'User id must be a number'
-      })),
-  })
-};
+  activate: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Token is required'
+    })),
+  id: Joi.number().required()
+    .error(() => ({
+      message: 'User id must be a number'
+    })),
+});

@@ -8,7 +8,6 @@ import Helper from '../utils/helpers';
 
 chai.use(chaiHttp);
 chai.should();
-const { expect } = chai;
 
 let send;
 let userId;
@@ -229,84 +228,63 @@ describe('/api/v1/auth', () => {
       send.restore();
     });
 
-    it('should sign up a new user', (done) => {
-      chai.request(app)
+    it('should sign up a new user', async () => {
+      const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
           first_name: 'qqqq',
           last_name: 'qqqq',
           email: 'tees@trtr.com',
           password: '11111111ghghjh'
-        })
-        .end((err, res) => {
-          expect(res.statusCode).to.equal(201);
-          expect(res.body).to.have.property('data');
-          expect(res.body.data).to.have.property('token');
-          const { token, id } = res.body.data;
-          userToken = token;
-          userId = id;
-          done();
         });
+      res.should.have.status(201);
+      res.body.should.have.property('data');
+      res.body.data.should.have.property('token');
+      const { token, id } = res.body.data;
+      userToken = token;
+      userId = id;
     });
 
-    it('should verify user email', (done) => {
-      chai.request(app)
-        .get(`${URL_PREFIX}/verify?activate=gfgfgfhgfh&&id=${userId}`)
-        .end((err, res) => {
-          expect(res.statusCode).to.equal(400);
-          expect(res.body).to.have.property('error');
-          done();
-        });
+    it('should verify user email', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/verify?activate=gfgfgfhgfh&&id=${userId}`);
+      res.should.have.status(400);
+      res.body.should.have.property('error');
     });
 
-    it('should verify user email', (done) => {
-      chai.request(app)
-        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=${userId}`)
-        .end((err, res) => {
-          expect(res.statusCode).to.equal(200);
-          expect(res.body).to.have.property('message');
-          done();
-        });
+    it('should verify user email', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=${userId}`);
+      res.should.have.status(200);
+      res.body.should.have.property('message');
     });
 
-    it('should not verify user email that has been verified', (done) => {
-      chai.request(app)
-        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=${userId}`)
-        .end((err, res) => {
-          expect(res.statusCode).to.equal(409);
-          expect(res.body).to.have.property('error');
-          done();
-        });
+    it('should not verify user email that has been verified', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=${userId}`);
+      res.should.have.status(400);
+      res.body.should.have.property('error');
     });
 
-    it('should not verify user email that does not exist', (done) => {
-      chai.request(app)
-        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=8`)
-        .end((err, res) => {
-          expect(res.statusCode).to.equal(404);
-          expect(res.body).to.have.property('error');
-          done();
-        });
+    it('should not verify user email that does not exist', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=8`);
+      res.should.have.status(400);
+      res.body.should.have.property('error');
     });
-  });
 
-  it('should not verify user email with invalid query', (done) => {
-    chai.request(app)
-      .get(`${URL_PREFIX}/verify`)
-      .end((err, res) => {
-        expect(res.statusCode).to.equal(400);
-        expect(res.body).to.have.property('error');
-        done();
-      });
-  });
+    it('should not verify user email with invalid query', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/verify`);
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+    });
 
-  it('should not verify user email with invalid user id', (done) => {
-    chai.request(app)
-      .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=fffhj`)
-      .end((err, res) => {
-        expect(res.statusCode).to.equal(400);
-        expect(res.body).to.have.property('error');
-        done();
-      });
+    it('should not verify user email with invalid user id', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=fffhj`);
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+    });
   });
 });

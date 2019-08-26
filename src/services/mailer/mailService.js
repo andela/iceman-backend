@@ -7,7 +7,7 @@ import { sendMail } from './index';
 */
 const send = async (user) => {
   const data = {
-    templateName: 'verify_email',
+    templateName: user.template_id,
     sender: '"BareFoot Nomad" <support@barefootnomad.com>',
     receiver: `${user.email}`,
     name: `${user.first_name} ${user.last_name}`,
