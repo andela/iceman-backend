@@ -17,6 +17,7 @@ addons:
 before_script:
   - psql -c 'create database icemantest;' -U postgres
   - npm i -g sequelize-cli
+  - npm run undo:migration
   - npm run db:migration
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
