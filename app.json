@@ -1,0 +1,16 @@
+{
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+
+  ],
+  "env": {
+  },
+  "formation": {
+  },
+  "name": "iceman-backend",
+  "scripts": {
+  },
+  "stack": "heroku-18"
+}
