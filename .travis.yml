@@ -14,9 +14,9 @@ addons:
 before_script:
   - psql -c 'create database gyrsurol;' -U postgres
   - npm i -g sequelize-cli
-  - npm run undo:migration
 script:
   - npm test
 after_script:
+  - npm run undo:migration
   - npm run coverage
 
