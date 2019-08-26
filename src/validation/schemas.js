@@ -3,7 +3,7 @@ import Joi from '@hapi/joi';
 /**
  * user schema to be used for validating user input
  */
-const schemas = {
+export const signUpSchema = {
   user: Joi.object().keys({
     first_name: Joi.string().trim().required()
       .error(() => ({
@@ -24,5 +24,3 @@ const schemas = {
       })),
   })
 };
-
-export default schemas;

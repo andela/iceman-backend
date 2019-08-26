@@ -3,7 +3,7 @@ import Joi from '@hapi/joi';
 /**
   * Input validation logic
   * @param {object} schema - schema to be used for input validation
-  * @param {*} property - property to be validated
+  * @param {string} property - property to be validated
   * @return {json} - validation error
   */
 const validate = (schema, property) => (req, res, next) => {
