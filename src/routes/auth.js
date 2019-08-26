@@ -6,6 +6,6 @@ import validate from '../validation/validator';
 const router = express.Router();
 
 router.post('/login', AuthController.loginUser);
-router.post('/signup', validate(signUpSchema.user, 'body'), AuthController.signupUser);
+router.post('/signup', validate(signUpSchema, 'body'), AuthController.signupUser);
 
 export default router;
