@@ -1,9 +1,8 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const salt = bcrypt.genSaltSync(10);
 
 /**
  * Helper class
@@ -43,11 +42,26 @@ export default class Helper {
 
   /**
    * Method encrypt data
-   * @param {*} data - params data
+   * @param {string} password - password to encrypt
+   * @param { number } rounds - salt value
    * @returns { string} - encypted data
    */
-  static encryptor(data) {
-    const encrypted = bcrypt.hashSync(data, salt);
+  static async encryptor(password, rounds = 10) {
+    const salt = await bcrypt.genSaltSync(rounds);
+    const encrypted = await bcrypt.hashSync(password, salt);
+
     return encrypted;
+  }
+
+  /**
+   * Method generate token
+   * @param {object} payloader - data
+   * @returns {string} - token
+   */
+  static genToken(payloader) {
+    const secret = process.env.JWTSECRET;
+    const token = jwt.sign(payloader, secret, { expiresIn: '1hr' });
+
+    return token;
   }
 }

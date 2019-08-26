@@ -7,12 +7,22 @@ import Helper from '../utils/helpers';
 chai.use(chaiHttp);
 chai.should();
 
+const URL_PREFIX = '/api/v1/auth';
+
 const apiEndpoint = '/api/v1/auth/login';
+
 const user = {
   first_name: 'Samuel',
   last_name: 'koroh',
   email: 'user1@gmail.com',
-  password: '123456'
+  password: 'Ice5m5am0a843r03'
+};
+
+const user2 = {
+  first_name: 'Test',
+  last_name: 'Tester',
+  email: 'test@test.com',
+  password: 'PasswordTest123'
 };
 
 describe('/api/v1/auth', () => {
@@ -69,6 +79,32 @@ describe('/api/v1/auth', () => {
         .send(Helper.pickFields(user, ['email', 'password']));
 
       res.should.have.status(200);
+      res.body.data.should.have.property('token');
+      res.body.data.should.have.property('id');
+      res.body.data.should.have.property('email');
+      res.body.data.should.have.property('is_admin');
+      res.body.data.should.have.property('is_verified');
+    });
+  });
+  describe('POST /signup', () => {
+    it('should return error if user email already exist', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/signup`)
+        .set('Content-Type', 'application/json')
+        .send(user);
+
+      res.should.have.status(409);
+      res.body.should.have.property('status').eql('error');
+    });
+
+    it('should return 201 if user account was created', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/signup`)
+        .set('Content-Type', 'application/json')
+        .send(user2);
+
+      res.should.have.status(201);
+      res.body.should.have.property('status').eql('success');
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');

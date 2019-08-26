@@ -28,9 +28,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      bio: {
-        type: DataTypes.STRING,
-      },
       is_admin: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
@@ -42,14 +39,11 @@ module.exports = (sequelize, DataTypes) => {
       reset_token: {
         type: DataTypes.STRING
       },
-      image: {
-        type: DataTypes.STRING,
-      },
     },
     { },
   );
-  User.associate = (models) => {
-    // associations can be defined here
-  };
+  // User.associate = (models) => {
+  //   // associations can be defined here
+  // };
   return User;
 };
