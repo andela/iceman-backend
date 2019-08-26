@@ -14,6 +14,7 @@ addons:
 before_script:
   - psql -c 'create database icemantest;' -U postgres
   - npm i -g sequelize-cli
+  - npm run undo:migration
   - npm run db:migration
 script:
   - npm test
