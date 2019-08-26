@@ -29,4 +29,25 @@ export default class AuthService {
 
     return { token, ...Helper.omitFields(user, ['password']) };
   }
+
+  /**
+   *
+   * @param {object} userDetails - users input details
+   * @return {json} - json format
+   */
+  static async signup(userDetails) {
+    const { email, password } = userDetails;
+    const checkEmail = await User.findOne({ where: { email } });
+
+    if (checkEmail) throw new Error(`Email '${email}' already exists`);
+
+    userDetails.password = await Helper.encryptor(password);
+
+    const result = await User.create(userDetails);
+    const { dataValues: user } = result;
+    const payload = Helper.pickFields(user, ['id', 'is_admin']);
+    const token = await Helper.genToken(payload);
+
+    return { token, ...Helper.omitFields(user, ['password']) };
+  }
 }

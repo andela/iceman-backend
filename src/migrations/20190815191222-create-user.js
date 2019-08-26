@@ -1,5 +1,5 @@
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Users', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('users', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -26,17 +26,11 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false
     },
-    bio: {
-      type: Sequelize.STRING
-    },
-    image: {
-      type: Sequelize.STRING
+    is_verified: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
     },
     is_admin: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false
-    },
-    is_verified: {
       type: Sequelize.BOOLEAN,
       defaultValue: false
     },
@@ -47,7 +41,7 @@ module.exports = {
     updatedAt: {
       allowNull: false,
       type: Sequelize.DATE
-    }
+    },
   }),
   down: (queryInterface) => queryInterface.dropTable('Users')
 };
