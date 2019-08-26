@@ -12,9 +12,8 @@ addons:
   chrome: stable
   postgresql: 9.6
 before_script:
-  - psql -c 'create database icemantest;' -U postgres
+  - psql -c 'create database correctdb;' -U postgres
   - npm i -g sequelize-cli
-  - npm run undo:migration
   - npm run db:migration
 script:
   - npm test
