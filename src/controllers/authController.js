@@ -1,6 +1,8 @@
+import dotenv from 'dotenv';
 import AuthService from '../services/authService';
 import Response from '../utils/response';
 
+dotenv.config();
 /**
  * Class for authenticating  users
  */
@@ -56,10 +58,16 @@ export default class AuthController {
   static async signupUser({ body }, res) {
     try {
       const data = await AuthService.signup(body);
+      const url = `${process.env.APP_URL}/verify?token=${data.token}`;
+      const userDetails = {
+        receiver: data.email,
+        sender: process.env.sender,
+        templateName: 'verify_email',
+        name: data.first_name,
+        url
+      };
 
-      Response.success(res, data, 201);
-
-      await send(data);
+      await sendMail(userDetails);
 
       res.status(201).json({ status: 'success', data });
     } catch ({ message: error }) {
@@ -68,19 +76,32 @@ export default class AuthController {
   }
 
   /**
-  @static
-  * @description Returns message based on the status
   * @param {req} req - request object
   * @param {res} res - response object
   * @return {object} - message
-  * @memberof AuthController
   */
-  static async verify(req, res) {
+  static async verifyUser(req, res) {
     try {
-      const is_verified = await AuthService.verifyUser(req, res);
+      const isVerified = await AuthService.verify(req);
 
-      if (is_verified) {
+      if (isVerified) {
         return res.status(200).json({ message: 'Email Successfully Verified' });
+      }
+    } catch ({ message: error }) {
+      res.status(400).json({ status: 'error', error });
+    }
+  }
+
+  /**
+  * @param {res} res - response object
+  * @return {object} - message
+  */
+  static async resendVerification({ body }, res) {
+    try {
+      const resend = await AuthService.verificationLink(body);
+
+      if (resend) {
+        return res.status(200).json({ message: 'Resend Verification Link Successful' });
       }
     } catch ({ message: error }) {
       res.status(400).json({ status: 'error', error });

@@ -109,60 +109,52 @@ export default class AuthService {
 
   /**
      *
-     * @param {Object} data user data
-     * @returns {Boolean} true
+     * @param {Object} req query
+     * @returns {JSON} data
      */
-  static async signUpMail(data) {
-    const message = {
-      templateName: 'verify_email',
-      sender: process.env.sender,
-      receiver: data.email,
-      name: `${data.first_name} ${data.last_name}`,
-      confirm_account__url: `${process.env.APP_URL}/verify?activate=${data.token}&&id=${data.id}`
-    };
+  static async verify(req) {
+    const { token } = req.query;
+    const isExpire = Helper.verifyToken(token);
 
-    await sendMail(message);
+    if (!isExpire) {
+      throw new Error('Expired Verification Link, resend verification Link');
+    }
+
+    const isUser = await User.findOne({ where: { id: isExpire.id } });
+
+    if (!isUser) throw new Error('User not find, please sign up');
+
+    if (isUser.dataValues.is_verified) throw new Error('User Email is Already Verified');
+
+    await User.update({ is_verified: true }, { where: { id: isExpire.id } });
 
     return true;
   }
 
   /**
      *
-     * @param {Object} req query
-     * @param {Object} res body
+     * @param {Object} body user email
      * @returns {JSON} data
      */
-  static async verifyUser(req, res) {
-    const { activate, id } = req.query;
+  static async verificationLink(body) {
+    const { email } = body;
+    const isUser = await User.findOne({ where: { email } });
 
-    const verify = Helper.verifyToken(activate);
+    if (!isUser) throw new Error('User not find, Please sign up');
 
-    const is_user = await User.findOne({ where: { id: Number(id) } });
+    if (isUser.dataValues.is_verified) throw new Error('User Email is Already Verified');
 
-    if (!is_user) throw new Error('User not find, please sign up');
+    const token = Helper.genToken({ id: isUser.dataValues.id });
+    const url = `${process.env.APP_URL}/verify?token=${token}`;
+    const userDetails = {
+      receiver: isUser.dataValues.email,
+      sender: process.env.sender,
+      templateName: 'verify_email',
+      name: isUser.dataValues.first_name,
+      url
+    };
 
-    if (!verify && !is_user.dataValues.is_verified) {
-      const { dataValues: user } = is_user;
-
-      const payloader = Helper.pickFields(user, ['id', 'is_admin']);
-
-      const token = Helper.genToken(payloader);
-
-      const data = {
-        templateName: 'verify_email',
-        sender: process.env.sender,
-        receiver: is_user.dataValues.email,
-        name: `${is_user.dataValues.first_name} ${is_user.dataValues.last_name}`,
-        confirm_account__url: `${process.env.APP_URL}/verify?activate=${token}&&id=${is_user.dataValues.id}`
-      };
-
-      await sendMail(data);
-      throw new Error('Expired or Invalid Verification Link. Check your Email For a new verification Link');
-    }
-
-    if (is_user.dataValues.is_verified) throw new Error('User Email is Already Verified');
-
-    await User.update({ is_verified: true }, { where: { id: verify.id } });
+    await sendMail(userDetails);
 
     return true;
   }

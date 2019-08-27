@@ -8,12 +8,15 @@ info:
 tags:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   - name: auth
     description: Authentication routes
 =======
 =======
 >>>>>>> test unit endpoint
 <<<<<<< HEAD
+=======
+>>>>>>> implement feedback
   - name: Authentication
     description: Manage User Accout
 >>>>>>> feature(documentation):update README.md and swagger doc
@@ -28,17 +31,6 @@ paths:
       summary: Logs in a user
 =======
         - Authentication
-=======
->>>>>>> test unit endpoint
-  - name: users
-    description: Manage User Accout
-host: localhost:3000
-basePath: /api/v1
-paths:
-  /api/v1/auth/signup:
-    post:
-      tags:
-        - users
       summary: Add a new user account
 >>>>>>> feature(documentation):update README.md and swagger doc
       consumes:
@@ -58,12 +50,16 @@ paths:
               password:
                 type: string
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
                 required: true
 =======
 >>>>>>> test unit endpoint
 >>>>>>> test unit endpoint
+=======
+                required: true
+>>>>>>> implement feedback
       responses:
         400:
           description: Invalid Credentials
@@ -103,6 +99,125 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthReponse'
+
+    /auth/login:
+    post:
+        200:
+          description: Success
+        409:
+          description: Email Address already exist
+        400:
+          description: Bad request
+        201:
+          description: created
+    put:
+      tags:
+        - Authentication
+      summary: Logs in a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User details
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        400:
+          description: Invalid Credentials
+>>>>>>> implement feedback
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+  /auth/forgot_password:
+    post:
+      tags:
+        - Authentication
+      summary: sends change mail paswword
+  # /auth/verify?token&id:
+  #   get:
+  #       200:
+  #         description: Success
+  #       400:
+  #         description: Bad request
+  /auth/verify?token:
+    get:
+      tags:
+        - Authentication
+      summary: verifies user email
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: email
+          description: User Email
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        404:
+          description: Email Not Found
+        200:
+          description: Success
+  /auth/reset_password/{token}:
+    post:
+      tags:
+        - Authentication
+      summary: changes user password
+        - in: query
+          name: token
+          description: User token
+          required: true
+          schema:
+            type: string
+            properties:
+              token:
+                type: string
+      responses:
+        400:
+          description: error
+        200:
+          description: Success
+
+  /auth/verify:
+    post:
+      tags:
+        - Authentication
+      summary: Resend Verification Link
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: email
+          description: User email
+          required: true
+          schema:
+            type: string
+            properties:
+              email:
+                type: string
+      responses:
+        400:
+          description: error
+        200:
+          description: Success
+
   /auth/forgot_password:
     post:
       tags:
@@ -182,3 +297,16 @@ definitions:
 schemes:
   - https
   - http
+<<<<<<< HEAD
+=======
+
+
+
+
+
+
+
+
+
+
+>>>>>>> implement feedback

@@ -23,6 +23,7 @@ export const signUpSchema = Joi.object().keys({
     })),
 });
 
+<<<<<<< HEAD
 /**
  * password schema to be used for validating password change
  */
@@ -39,7 +40,12 @@ export const verifySchema = Joi.object().keys({
       message: 'Token is required'
     })),
   id: Joi.number().required()
+=======
+export const verifyEmail = Joi.object().keys({
+  email: Joi.string().email().trim().lowercase()
+    .required()
+>>>>>>> implement feedback
     .error(() => ({
-      message: 'User id must be a number'
+      message: 'Email must be a valid email address e.g example@mail.com or example@mail.co.uk'
     })),
 });

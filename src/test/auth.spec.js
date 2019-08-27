@@ -10,7 +10,6 @@ chai.use(chaiHttp);
 chai.should();
 
 let send;
-let userId;
 let userToken;
 
 const URL_PREFIX = '/api/v1/auth';
@@ -240,49 +239,89 @@ describe('/api/v1/auth', () => {
       res.should.have.status(201);
       res.body.should.have.property('data');
       res.body.data.should.have.property('token');
-      const { token, id } = res.body.data;
+      const { token } = res.body.data;
       userToken = token;
-      userId = id;
     });
 
     it('should verify user email', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/verify?activate=gfgfgfhgfh&&id=${userId}`);
+        .get(`${URL_PREFIX}/verify?token=gfgfgfhgfh`);
       res.should.have.status(400);
       res.body.should.have.property('error');
     });
 
     it('should verify user email', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=${userId}`);
+        .get(`${URL_PREFIX}/verify?token=${userToken}`);
       res.should.have.status(200);
       res.body.should.have.property('message');
     });
 
     it('should not verify user email that has been verified', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=${userId}`);
+        .get(`${URL_PREFIX}/verify?token=${userToken}`);
       res.should.have.status(400);
       res.body.should.have.property('error');
     });
 
     it('should not verify user email that does not exist', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=8`);
+        .get(`${URL_PREFIX}/verify?token=${userToken}`);
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+    });
+  });
+
+  describe('Resend Verification Link', () => {
+    beforeEach(async () => {
+      send = sinon.stub(sgMail, 'send').resolves({});
+    });
+
+    afterEach(async () => {
+      send.restore();
+    });
+
+    it('should sign up a new user', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/signup`)
+        .send({
+          first_name: 'qqqq',
+          last_name: 'qqqq',
+          email: 'teeser@trtr.com',
+          password: '11111111ghghjh'
+        });
+      res.should.have.status(201);
+      res.body.should.have.property('data');
+      res.body.data.should.have.property('token');
+    });
+
+    it('should verify user email', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/verify`);
       res.should.have.status(400);
       res.body.should.have.property('error');
     });
 
-    it('should not verify user email with invalid query', async () => {
+    it('should verify user email', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/verify`);
+        .post(`${URL_PREFIX}/verify`)
+        .send({ email: 'teeser@trtr.com' });
+      res.should.have.status(200);
+      res.body.should.have.property('message');
+    });
+
+    it('should not verify user email that has been verified', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/verify`)
+        .send({ email: 'tees@trtr.com' });
       res.should.have.status(400);
       res.body.should.have.property('error');
     });
 
-    it('should not verify user email with invalid user id', async () => {
+    it('should not resend verification link for user that does not exist', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/verify?activate=${userToken}&&id=fffhj`);
+        .post(`${URL_PREFIX}/verify`)
+        .send({ email: 'aaa@test.com' });
       res.should.have.status(400);
       res.body.should.have.property('error');
     });

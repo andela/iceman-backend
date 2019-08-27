@@ -5,25 +5,30 @@ dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const templates = {
-  verify_email: process.env.EMAIL_TEMPLATE_ID,
+  verify_email: process.env.VERIFY_TEMPLATE,
+  reset_password: process.env.RESET_TEMPLATE
 };
 
 export const sendMail = async (data) => {
+  const {
+    receiver, sender, templateName, url, name
+  } = data;
+
   const message = {
-    to: data.receiver,
-    from: data.sender,
-    templateId: templates[data.templateName],
+    to: receiver,
+    from: sender,
+    templateId: templates[templateName],
 
     dynamic_template_data: {
-      name: data.name,
-      verify_email: data.confirm_account__url,
+      name,
+      url,
     }
   };
+
   try {
     await sgMail.send(message);
-    console.log('message sent');
-  } catch (err) {
-    throw new Error(err);
+  } catch (error) {
+    throw new Error(error);
   }
 };
 
