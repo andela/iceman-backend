@@ -7,10 +7,10 @@ import TestHelper from '../utils/testHelper';
 import db from '../models';
 
 chai.use(chaiHttp);
+let stub;
 
 describe('/api/v1/auth', () => {
   let passwordResetToken;
-  const stub = sinon.stub(sgMail, 'send');
 
   before((done) => {
     TestHelper.destroyModel('User');
@@ -21,6 +21,14 @@ describe('/api/v1/auth', () => {
       password: 'PasswordTest123'
     });
     done();
+  });
+
+  beforeEach(async () => {
+    stub = sinon.stub(sgMail, 'send').resolves({});
+  });
+
+  afterEach(async () => {
+    stub.restore();
   });
 
   describe('POST /forgot_password', () => {

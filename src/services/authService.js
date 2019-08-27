@@ -154,7 +154,7 @@ export default class AuthService {
       url
     };
 
-    await sendMail(userDetails);
+    await sendmail(userDetails);
 
     return true;
   }
