@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Helper from '../utils/helpers';
 import { User } from '../models';
-import sendmail from './mailer';
+import sendmail from './emailService';
 
 
 const jwtSecret = process.env.JWTSECRET;
@@ -51,7 +51,7 @@ export default class AuthService {
       sender: process.env.SENDER,
       templateName: 'reset_password',
       name,
-      confirm_account__url: `provide_newpass/reset_password/${token}`
+      url: `provide_newpass/reset_password/${token}`
     };
 
     await sendmail(emailDetails);
@@ -64,7 +64,7 @@ export default class AuthService {
       }
     });
 
-    return token;
+    return { token };
   }
 
   /**
@@ -91,7 +91,7 @@ export default class AuthService {
       }
     });
 
-    return 'Password changed';
+    return 'Password reset successfully';
   }
 
   /**

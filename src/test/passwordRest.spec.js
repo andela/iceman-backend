@@ -42,8 +42,9 @@ describe('/api/v1/auth', () => {
           email: 'testa@test.com'
         });
 
-      passwordResetToken = await JSON.parse(text).data;
-      expect(JSON.parse(text).data).to.equal(passwordResetToken);
+      passwordResetToken = await JSON.parse(text).data.token;
+
+      expect(JSON.parse(text).data.token).to.equal(passwordResetToken);
       expect(status).to.equal(200);
       sinon.assert.calledOnce(stub);
     });
@@ -90,7 +91,7 @@ describe('/api/v1/auth', () => {
         });
 
       expect(status).to.equal(200);
-      expect(JSON.parse(text).message).to.equal('Password changed');
+      expect(JSON.parse(text).message).to.equal('Password reset successfully');
     });
   });
 });

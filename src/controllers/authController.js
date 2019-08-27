@@ -4,7 +4,7 @@ import AuthService from '../services/authService';
  * Class for authenticating  users
  */
 export default class AuthController {
-  /**
+/**
  * @param {object} res - response object
  * @return {object} user - return object containing status and data
  */

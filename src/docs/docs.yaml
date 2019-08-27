@@ -78,7 +78,7 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthReponse'
-  /auth/forget_password:
+  /auth/forgot_password:
     post:
       tags:
         - Authentication

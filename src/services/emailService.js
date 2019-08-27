@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import dotenv from 'dotenv';
 import sgMail from '@sendgrid/mail';
 
@@ -10,16 +11,21 @@ const templates = {
 };
 
 export const sendMail = async (data) => {
+  const {
+ receiver, sender, templateName, url, name
+  } = data;
+
   const message = {
-    to: data.receiver,
-    from: data.sender,
-    templateId: templates[data.templateName],
+    to: receiver,
+    from: sender,
+    templateId: templates[templateName],
 
     dynamic_template_data: {
-      name: data.name,
-      verify_email: data.confirm_account__url,
+      name,
+      url,
     }
   };
+
   try {
     await sgMail.send(message);
   } catch (error) {
