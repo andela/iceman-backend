@@ -39,6 +39,12 @@ paths:
           description: Invalid input
         200:
           description: Success
+        409:
+          description: Email Address already exist
+        400:
+          description: Bad request
+        201:
+          description: created
     put:
       tags:
         - users

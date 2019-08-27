@@ -26,6 +26,7 @@
     "@babel/register": "^7.5.5",
     "@babel/runtime": "^7.5.5",
     "bcrypt": "^3.0.6",
+    "@hapi/joi": "^15.1.1",
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
