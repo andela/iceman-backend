@@ -1,53 +1,95 @@
+
 import passport from 'passport';
-// import LocalStrategy from 'passport-local';
+import GoogleStrategy from 'passport-google-oauth20';
+// import passportJWT from 'passport-jwt';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Op } from 'sequelize';
 import { User } from '../models';
+import Helper from '../utils/helpers';
 
-// const GoogleStrategy = require('passport-google-oauth').OAuthStrategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
+const {
+  FACEBOOK_APP_ID,
+  FACEBOOK_APP_SECRET,
+  GOOGLE_CONSUMER_KEY,
+  GOOGLE_CONSUMER_SECRET
+} = process.env;
 
-const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } = process.env;
+// passport.serializeUser((user, done) => {
+//   done(null, user.id);
+// });
 
-// passport.use(new GoogleStrategy({
-//   consumerKey: GOOGLE_CONSUMER_KEY,
-//   consumerSecret: GOOGLE_CONSUMER_SECRET,
-//   callbackURL: "http://www.example.com/auth/google/callback"
-//   }, (token, tokenSecret, profile, done) => {
-//       User.findOrCreate({ googleId: profile.id }, function (err, user) {
-//         return done(err, user);
-//       });
-//   }
-// ));
+// passport.deserializeUser(async (id, done) => {
+//   const { dataValues: user } = await User.findOne({ where: { id } });
+//   done(null, Helper.omitFields(user, ['password', 'google_id', 'facebook_id']));
+// });
+
+passport.use(new GoogleStrategy({
+  clientID: GOOGLE_CONSUMER_KEY,
+  clientSecret: GOOGLE_CONSUMER_SECRET,
+  callbackURL: '/api/v1/auth/google/callback'
+},
+async (token, tokenSecret, { _json: data }, done) => {
+  const userDetails = {
+    email: data.email,
+    image: data.picture,
+    google_id: data.sub,
+    first_name: data.given_name,
+    last_name: data.family_name
+  };
+
+  const { email, google_id } = userDetails;
+  let result = await User.findOne({ where: { [Op.or]: [{ email }, { google_id }] } });
+
+  if (!result) {
+    result = await User.create(userDetails);
+    return done(null, Helper.omitFields(result.dataValues, ['password', 'google_id', 'facebook_id']));
+  }
+
+  return done(null, Helper.omitFields(result.dataValues, ['password', 'google_id', 'facebook_id']));
+}));
 
 passport.use(new FacebookStrategy({
   clientID: FACEBOOK_APP_ID,
   clientSecret: FACEBOOK_APP_SECRET,
-  callbackURL: 'http://www.example.com/auth/facebook/callback'
+  callbackURL: '/api/v1/auth/facebook/callback',
+  profileFields: ['id', 'email', 'displayName', 'name', 'gender', 'photos']
 },
-(accessToken, refreshToken, profile, done) => {
-  User.findOrCreate(profile, (err, user) => {
-    if (err) { return done(err); }
-    done(null, user);
-  });
+async (accessToken, refreshToken, { _json: data }, done) => {
+  const userDetails = {
+    facebook_id: data.id,
+    email: data.email,
+    first_name: data.first_name,
+    last_name: data.last_name,
+    middle_name: data.last_name,
+    image: data.picture.data.url
+  };
+
+  const { email, facebook_id } = userDetails;
+  let result = await User.findOne({ where: { [Op.or]: [{ email }, { facebook_id }] } });
+
+  if (!result) {
+    result = await User.create(userDetails);
+
+    return done(null, Helper.omitFields(result.dataValues, ['password', 'google_id', 'facebook_id']));
+  }
+  return done(null, Helper.omitFields(result.dataValues, ['password', 'google_id', 'facebook_id']));
 }));
 
-// passport.use(
-//   new LocalStrategy(
-//     {
-//       usernameField: 'user[email]',
-//       passwordField: 'user[password]'
-//     },
-//     ((email, password, done) => {
-//       User.findOne({ email })
-//         .then((user) => {
-//           if (!user || !user.validPassword(password)) {
-//             return done(null, false, {
-//               errors: { 'email or password': 'is invalid' }
-//             });
-//           }
+// const JWTStrategy = passportJWT.Strategy;
+// const ExtractJWT = passportJWT.ExtractJwt;
 
-//           return done(null, user);
-//         })
-//         .catch(done);
+// passport.use(new JWTStrategy({
+//   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//   secretOrKey: 'your_jwt_secret'
+// },
+// (jwtPayload, cb) => {
+//   // find the user in db if needed
+//   // This functionality may be omitted if you store everything you'll need in JWT payload.
+//   return User.findOneById(jwtPayload.id)
+//     .then((user) => {
+//       return cb(null, user);
 //     })
-//   )
-// );
+//     .catch((err) => {
+//       return cb(err);
+//     });
+// }));

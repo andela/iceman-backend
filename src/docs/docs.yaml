@@ -39,6 +39,12 @@ paths:
           description: Invalid input
         200:
           description: Success
+        409:
+          description: Email Address already exist
+        400:
+          description: Bad request
+        201:
+          description: created
     put:
       tags:
         - users
@@ -102,7 +108,38 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthReponse'
-
+  /auth/signup:
+    post:
+      tags:
+        - auth
+      summary: Create User Account
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User details
+          required: true
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        409:
+          description: Email already exists
+        201:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
 definitions:
   AuthReponse:
     properties:
@@ -130,3 +167,14 @@ definitions:
 schemes:
   - https
   - http
+
+
+
+
+
+
+
+
+
+
+

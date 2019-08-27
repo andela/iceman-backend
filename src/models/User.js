@@ -2,12 +2,6 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: DataTypes.INTEGER,
-      },
       first_name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -26,9 +20,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
       },
-      bio: {
+      google_id: {
+        type: DataTypes.STRING,
+      },
+      facebook_id: {
         type: DataTypes.STRING,
       },
       is_admin: {
@@ -39,14 +35,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
-      image: {
-        type: DataTypes.STRING,
-      },
     },
     { },
   );
-  User.associate = (models) => {
-    // associations can be defined here
-  };
+  // User.associate = (models) => {
+  //   // associations can be defined here
+  // };
   return User;
 };

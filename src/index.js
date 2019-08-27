@@ -1,12 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
+import passport from 'passport';
 import cors from 'cors';
 import errorhandler from 'errorhandler';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import 'dotenv/config';
 import router from './routes';
+import './config/passport';
 
 const swaggerDocument = YAML.load(`${process.cwd()}/src/docs/docs.yaml`);
 const isProduction = process.env.NODE_ENV === 'production';
@@ -21,7 +23,6 @@ app.use(require('morgan')('dev'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 app.use(require('method-override')());
 
 app.use(
@@ -32,6 +33,9 @@ app.use(
     saveUninitialized: false
   })
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 if (!isProduction) {
   app.use(errorhandler());

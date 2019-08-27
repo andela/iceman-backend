@@ -1,3 +1,6 @@
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
 /**
  * Helper class
  */
@@ -32,5 +35,30 @@ export default class Helper {
     });
 
     return items;
+  }
+
+  /**
+   * Method encrypt data
+   * @param {string} password - password to encrypt
+   * @param { number } rounds - salt value
+   * @returns { string} - encypted data
+   */
+  static async encryptor(password, rounds = 10) {
+    const salt = await bcrypt.genSaltSync(rounds);
+    const encrypted = await bcrypt.hashSync(password, salt);
+
+    return encrypted;
+  }
+
+  /**
+   * Method generate token
+   * @param {object} payloader - data
+   * @returns {string} - token
+   */
+  static genToken(payloader) {
+    const secret = process.env.JWTSECRET;
+    const token = jwt.sign(payloader, secret, { expiresIn: '1hr' });
+
+    return token;
   }
 }
