@@ -51,18 +51,16 @@ export default class AuthService {
       sender: process.env.SENDER,
       templateName: 'reset_password',
       name,
-      url: `provide_newpass/reset_password/${token}`
+      url: `${process.env.APP_URL}/reset_password/${token}`
     };
 
     await sendmail(emailDetails);
 
-    await User.update({
+    const options = {
       reset_token: token
-    }, {
-      where: {
-        email
-      }
-    });
+    };
+
+    this.updateUser({ email }, options);
 
     return { token };
   }
@@ -76,20 +74,14 @@ export default class AuthService {
   static async resetPassword(token, password) {
     const { email } = await jwt.verify(token, jwtSecret);
     const { dataValues: { reset_token: tokenSaved } } = await User.findOne({ where: { email } });
-
     if (token !== tokenSaved) throw new Error('Invalid token');
-    if (password === undefined || password.trim().length < 8) throw new Error('Provide valid password');
 
     const newPassword = await Helper.encryptor(password);
-
-    await User.update({
+    const options = {
       password: newPassword,
       reset_token: null
-    }, {
-      where: {
-        email
-      }
-    });
+    };
+    this.updateUser({ email }, options);
 
     return 'Password reset successfully';
   }
@@ -113,5 +105,19 @@ export default class AuthService {
     const token = await Helper.genToken(payload);
 
     return { token, ...Helper.omitFields(user, ['password']) };
+  }
+
+  /**
+   *
+   * @param {object} query condition
+   * @param {object} options update items
+   * @returns {object} data
+   */
+  static async updateUser(query, options) {
+    return User.update(options, {
+      where: {
+        ...query
+      }
+    });
   }
 }

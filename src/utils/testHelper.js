@@ -1,7 +1,10 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 import db from '../models';
 import Helper from './helpers';
+
+dotenv.config();
 
 const jwtSecret = process.env.JWTSECRET;
 

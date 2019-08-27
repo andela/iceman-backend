@@ -10,6 +10,11 @@ const templates = {
   reset_password: process.env.RESET_TEMPLATE
 };
 
+/**
+ *
+ * @param {object} data email details
+ * @returns {object} message
+ */
 export const sendMail = async (data) => {
   const {
  receiver, sender, templateName, url, name

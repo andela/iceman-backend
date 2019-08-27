@@ -6,54 +6,15 @@ info:
   title: Barefoot Nomad
 
 tags:
-  - name: Authentication
-    description: Manage User Accout
+  - name: auth
+    description: Authentication routes
 host: localhost:3000
-basePath: /api/v1/
+basePath: /api/v1
 paths:
-  /auth/signup:
-    post:
-      tags:
-        - Authentication
-      summary: Add a new user account
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: User details
-          required: true
-          schema:
-            type: object
-            properties:
-              first_name:
-                type: string
-                required: true
-              last_name:
-                type: string
-                required: true
-              email:
-                type: string
-                required: true
-              password:
-                type: string
-                required: true
-      responses:
-        409:
-          description: Email Address already exist
-        400:
-          description: Bad request
-        401:
-          description: Invalid input
-        201:
-          description: created
- 
   /auth/login:
     post:
       tags:
-        - Authentication
+        - auth
       summary: Logs in a user
       consumes:
         - application/json
@@ -74,60 +35,6 @@ paths:
       responses:
         400:
           description: Invalid Credentials
-        200:
-          description: Success
-          schema:
-            $ref: '#definitions/AuthReponse'
-  /auth/forgot_password:
-    post:
-      tags:
-        - Authentication
-      summary: sends change mail paswword
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: email
-          description: User Email
-          required: true
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-      responses:
-        404:
-          description: Email Not Found
-        200:
-          description: Success
-  /auth/reset_password/{token}:
-    post:
-      tags:
-        - Authentication
-      summary: changes user password
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: password
-          description: New password
-          required: true
-          schema:
-            type: object
-            properties:
-              password:
-                type: string
-        - in: path
-          name: token
-          required: true
-          type: string
-      responses:
-        404:
-          description: Email Not Found
         200:
           description: Success
           schema:
@@ -164,6 +71,58 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthReponse'
+  /auth/forgot_password:
+    post:
+      tags:
+        - auth
+      summary: sends change mail paswword
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: email
+          description: User Email
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        404:
+          description: Email Not Found
+        200:
+          description: Success
+  /auth/reset_password/{token}:
+    patch:
+      tags:
+        - auth
+      summary: changes user password
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: password
+          description: New password
+          required: true
+          schema:
+            type: object
+            properties:
+              password:
+                type: string
+        - in: path
+          name: token
+          required: true
+          type: string
+      responses:
+        404:
+          description: Email Not Found
+        200:
+          description: Success
 definitions:
   AuthReponse:
     properties:
@@ -191,14 +150,3 @@ definitions:
 schemes:
   - https
   - http
-
-
-
-
-
-
-
-
-
-
-

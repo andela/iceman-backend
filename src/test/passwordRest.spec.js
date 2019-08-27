@@ -56,42 +56,30 @@ describe('/api/v1/auth', () => {
         .patch(`/api/v1/auth/reset_password/${passwordResetToken}`)
         .send();
 
-      expect(JSON.parse(text).error).to.equal('Provide valid password');
+      expect(JSON.parse(text).error).to.equal('Password must contain at least one letter, at least one number, and be atleast 8 digits long');
       expect(status).to.equal(400);
     });
 
     it('should return an error for an invalid token', async () => {
       const { status, text } = await chai.request(app)
-        .patch('/api/v1/auth/reset_password/craptoken')
+        .patch('/api/v1/auth/reset_password/token')
         .send({
-          password: 'testa@test.com'
+          password: 'testa567890testcom'
         });
 
       expect(JSON.parse(text).error).to.equal('jwt malformed');
       expect(status).to.equal(400);
     });
 
-    it('should return an  error for invalid password', async () => {
-      const { status, text } = await chai.request(app)
-        .patch(`/api/v1/auth/reset_password/${passwordResetToken}`)
-        .send({
-          password: 'short'
-        });
-
-      expect(JSON.parse(text).error).to.equal('Provide valid password');
-      expect(status).to.equal(400);
-    });
-
-
     it('should return a message on succesful update', async () => {
       const { status, text } = await chai.request(app)
         .patch(`/api/v1/auth/reset_password/${passwordResetToken}`)
         .send({
-          password: 'passwogrd'
+          password: 'pas888swogrd'
         });
 
       expect(status).to.equal(200);
-      expect(JSON.parse(text).message).to.equal('Password reset successfully');
+      expect(JSON.parse(text).data).to.equal('Password reset successfully');
     });
   });
 });

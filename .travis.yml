@@ -1,10 +1,12 @@
 node_js:
-  - 'stable'
+  - "stable"
+before_install:
+  - npm update
 install:
   - npm install
 cache:
 directories:
-  - 'node_modules'
+  - "node_modules"
 addons:
   chrome: stable
   postgresql: 9.6

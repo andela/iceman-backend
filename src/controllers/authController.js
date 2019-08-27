@@ -1,4 +1,5 @@
 import AuthService from '../services/authService';
+import Response from '../utils/response';
 
 /**
  * Class for authenticating  users
@@ -12,9 +13,9 @@ export default class AuthController {
     try {
       const data = await AuthService.login(email, password);
 
-      res.status(200).json({ status: 'success', data });
+      Response.success(res, data);
     } catch ({ message: error }) {
-      res.status(400).json({ status: 'error', error });
+      Response.badRequest(res, error);
     }
   }
 
@@ -27,9 +28,9 @@ export default class AuthController {
     try {
       const data = await AuthService.forgotPassword(email);
 
-      res.status(200).json({ status: 'success', data });
+      Response.success(res, data);
     } catch ({ message: error }) {
-      res.status(400).json({ status: 'error', error });
+      Response.badRequest(res, error);
     }
   }
 
@@ -42,9 +43,9 @@ export default class AuthController {
     try {
       const message = await AuthService.resetPassword(token, password);
 
-      res.status(200).json({ status: 'success', message });
+      Response.success(res, message);
     } catch ({ message: error }) {
-      res.status(400).json({ status: 'error', error });
+      Response.badRequest(res, error);
     }
   }
 
@@ -56,9 +57,9 @@ export default class AuthController {
     try {
       const data = await AuthService.signup(body);
 
-      res.status(201).json({ status: 'success', data });
+      Response.success(res, data, 201);
     } catch ({ message: error }) {
-      res.status(409).json({ status: 'error', error });
+      Response.badRequest(res, error, 409);
     }
   }
 }
