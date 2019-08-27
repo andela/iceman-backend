@@ -109,6 +109,25 @@ export default class AuthService {
 
   /**
      *
+     * @param {Object} data user data
+     * @returns {Boolean} true
+     */
+  static async signUpMail(data) {
+    const message = {
+      templateName: 'verify_email',
+      sender: process.env.sender,
+      receiver: data.email,
+      name: `${data.first_name} ${data.last_name}`,
+      confirm_account__url: `${process.env.APP_URL}/verify?activate=${data.token}&&id=${data.id}`
+    };
+
+    await sendMail(message);
+
+    return true;
+  }
+
+  /**
+     *
      * @param {Object} req query
      * @param {Object} res body
      * @returns {JSON} data
@@ -130,15 +149,14 @@ export default class AuthService {
       const token = Helper.genToken(payloader);
 
       const data = {
-        template_id: 'verify_email',
-        token,
-        id: is_user.dataValues.id,
-        email: is_user.dataValues.email,
-        first_name: is_user.dataValues.first_name,
-        last_name: is_user.dataValues.last_name
+        templateName: 'verify_email',
+        sender: process.env.sender,
+        receiver: is_user.dataValues.email,
+        name: `${is_user.dataValues.first_name} ${is_user.dataValues.last_name}`,
+        confirm_account__url: `${process.env.APP_URL}/verify?activate=${token}&&id=${is_user.dataValues.id}`
       };
 
-      await send(data);
+      await sendMail(data);
       throw new Error('Expired or Invalid Verification Link. Check your Email For a new verification Link');
     }
 
