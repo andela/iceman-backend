@@ -19,10 +19,22 @@ module.exports = {
       type: Sequelize.DATE,
       allowNull: false
     },
+    returnDate: {
+      type: Sequelize.DATE,
+      allowNull: true,
+    },
+    tripType: {
+      type: Sequelize.ENUM,
+      allowNull: false,
+      values: ['one-way', 'return'],
+    },
     reason: {
       type: Sequelize.STRING
     },
     accommodation: {
+      type: Sequelize.STRING
+    },
+    status: {
       type: Sequelize.STRING
     },
     userId: {

@@ -1,6 +1,12 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Request = sequelize.define('Request', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
     source: {
       type: DataTypes.STRING,
       allowNull: false
@@ -13,10 +19,22 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false
     },
+    returnDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    tripType: {
+      type: DataTypes.ENUM,
+      allowNull: false,
+      values: ['one-way', 'return'],
+    },
     reason: {
       type: DataTypes.STRING
     },
     accommodation: {
+      type: DataTypes.STRING
+    },
+    status: {
       type: DataTypes.STRING
     },
   }, {});
