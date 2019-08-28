@@ -9,12 +9,12 @@ module.exports = {
     first_name: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: false
+
     },
     last_name: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: false
+
     },
     email: {
       type: Sequelize.STRING,

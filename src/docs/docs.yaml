@@ -6,33 +6,16 @@ info:
   title: Barefoot Nomad
 
 tags:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   - name: auth
     description: Authentication routes
-=======
-=======
->>>>>>> test unit endpoint
-<<<<<<< HEAD
-=======
->>>>>>> implement feedback
-  - name: Authentication
-    description: Manage User Accout
->>>>>>> feature(documentation):update README.md and swagger doc
 host: localhost:3000
 basePath: /api/v1
 paths:
   /auth/login:
     post:
       tags:
-<<<<<<< HEAD
         - auth
       summary: Logs in a user
-=======
-        - Authentication
-      summary: Add a new user account
->>>>>>> feature(documentation):update README.md and swagger doc
       consumes:
         - application/json
       produces:
@@ -49,17 +32,6 @@ paths:
                 type: string
               password:
                 type: string
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-                required: true
-=======
->>>>>>> test unit endpoint
->>>>>>> test unit endpoint
-=======
-                required: true
->>>>>>> implement feedback
       responses:
         400:
           description: Invalid Credentials
@@ -99,11 +71,11 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthReponse'
-
+      
   /auth/verify?token:
     get:
       tags:
-        - Authentication
+        - auth
       summary: Verifies User Email
       consumes:
         - application/json
@@ -125,10 +97,10 @@ paths:
         200:
           description: Success
 
-  /auth/verify:
+  /auth/resend_verification_link:
     post:
       tags:
-        - Authentication
+        - auth
       summary: Resend Verification Link
       consumes:
         - application/json
@@ -149,7 +121,6 @@ paths:
           description: error
         200:
           description: Success
-
   /auth/forgot_password:
     post:
       tags:
@@ -228,21 +199,4 @@ definitions:
             default: false
 schemes:
   - https
-<<<<<<< HEAD
   - http
-<<<<<<< HEAD
-=======
-
-
-
-
-
-
-
-
-
-
->>>>>>> implement feedback
-=======
-  - http
->>>>>>> >- implement feedback

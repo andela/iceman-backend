@@ -67,11 +67,11 @@ export default class Helper {
 
   /**
    * Method authenticate token
-   * @param {string} activate - data
-   * @returns {string} - token
+   * @param {string} token - token
+   * @returns {string} - user details
    */
-  static verifyToken(activate) {
-    const verify = jwt.verify(activate, process.env.JWTSECRET, (err, decoded) => decoded);
+  static verifyToken(token) {
+    const verify = jwt.verify(token, process.env.JWTSECRET, (err, decoded) => decoded);
 
     return verify;
   }

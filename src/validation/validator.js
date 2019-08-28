@@ -1,4 +1,3 @@
-/* eslint-disable arrow-parens */
 import Joi from '@hapi/joi';
 
 /**

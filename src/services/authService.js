@@ -108,12 +108,24 @@ export default class AuthService {
   }
 
   /**
-     *
-     * @param {Object} req query
-     * @returns {JSON} data
-     */
-  static async verify(req) {
-    const { token } = req.query;
+   *
+   * @param {object} query condition
+   * @param {object} options update items
+   * @returns {object} data
+   */
+  static async updateUser(query, options) {
+    return User.update(options, {
+      where: {
+        ...query
+      }
+    });
+  }
+
+  /**
+   * @param {Object} token user token
+   * @returns {String} success message
+   */
+  static async verify(token) {
     const isExpire = Helper.verifyToken(token);
 
     if (!isExpire) {
@@ -122,25 +134,24 @@ export default class AuthService {
 
     const isUser = await User.findOne({ where: { id: isExpire.id } });
 
-    if (!isUser) throw new Error('User not find, please sign up');
+    if (!isUser) throw new Error('User not find');
 
     if (isUser.dataValues.is_verified) throw new Error('User Email is Already Verified');
 
     await User.update({ is_verified: true }, { where: { id: isExpire.id } });
 
-    return true;
+    return 'Email Verification Successful';
   }
 
   /**
-     *
-     * @param {Object} body user email
-     * @returns {JSON} data
-     */
+   * @param {Object} body user email
+   * @returns {String} success message
+   */
   static async verificationLink(body) {
     const { email } = body;
     const isUser = await User.findOne({ where: { email } });
 
-    if (!isUser) throw new Error('User not find, Please sign up');
+    if (!isUser) throw new Error('User not found');
 
     if (isUser.dataValues.is_verified) throw new Error('User Email is Already Verified');
 
@@ -148,7 +159,7 @@ export default class AuthService {
     const url = `${process.env.APP_URL}/verify?token=${token}`;
     const userDetails = {
       receiver: isUser.dataValues.email,
-      sender: process.env.sender,
+      sender: process.env.SENDER,
       templateName: 'verify_email',
       name: isUser.dataValues.first_name,
       url
@@ -156,6 +167,6 @@ export default class AuthService {
 
     await sendmail(userDetails);
 
-    return true;
+    return 'Verification Link Sent';
   }
 }

@@ -23,7 +23,6 @@ export const signUpSchema = Joi.object().keys({
     })),
 });
 
-<<<<<<< HEAD
 /**
  * password schema to be used for validating password change
  */
@@ -33,19 +32,14 @@ export const passwordResetSchema = Joi.object().keys({
       message: 'Password must contain at least one letter, at least one number, and be atleast 8 digits long',
     }))
 });
-  
-export const verifySchema = Joi.object().keys({
-  activate: Joi.string().trim().required()
-    .error(() => ({
-      message: 'Token is required'
-    })),
-  id: Joi.number().required()
-=======
+
+/**
+ * Verify Email schema to be used for resending verification link
+ */
 export const verifyEmail = Joi.object().keys({
-  email: Joi.string().email().trim().lowercase()
+  email: Joi.string().email()
     .required()
->>>>>>> implement feedback
     .error(() => ({
-      message: 'Email must be a valid email address e.g example@mail.com or example@mail.co.uk'
+      message: 'Email must be a valid email'
     })),
 });

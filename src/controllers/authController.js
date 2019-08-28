@@ -1,8 +1,6 @@
-import dotenv from 'dotenv';
 import AuthService from '../services/authService';
 import Response from '../utils/response';
 
-dotenv.config();
 /**
  * Class for authenticating  users
  */
@@ -58,16 +56,8 @@ export default class AuthController {
   static async signupUser({ body }, res) {
     try {
       const data = await AuthService.signup(body);
-      const url = `${process.env.APP_URL}/verify?token=${data.token}`;
-      const userDetails = {
-        receiver: data.email,
-        sender: process.env.sender,
-        templateName: 'verify_email',
-        name: data.first_name,
-        url
-      };
 
-      await sendMail(userDetails);
+      await AuthService.verificationLink(data);
 
       res.status(201).json({ status: 'success', data });
     } catch ({ message: error }) {
@@ -76,33 +66,30 @@ export default class AuthController {
   }
 
   /**
-  * @param {req} req - request object
-  * @param {res} res - response object
-  * @return {object} - message
-  */
+   * @param {req} req - request object
+   * @param {res} res - response object
+   * @return {object} - message
+   */
   static async verifyUser(req, res) {
     try {
-      const isVerified = await AuthService.verify(req);
+      const { token } = req.query;
+      const isVerified = await AuthService.verify(token);
 
-      if (isVerified) {
-        return res.status(200).json({ message: 'Email Successfully Verified' });
-      }
+      return res.status(200).json({ status: 'success', message: isVerified });
     } catch ({ message: error }) {
       res.status(400).json({ status: 'error', error });
     }
   }
 
   /**
-  * @param {res} res - response object
-  * @return {object} - message
-  */
+   * @param {res} res - response object
+   * @return {object} - message
+   */
   static async resendVerification({ body }, res) {
     try {
       const resend = await AuthService.verificationLink(body);
 
-      if (resend) {
-        return res.status(200).json({ message: 'Resend Verification Link Successful' });
-      }
+      return res.status(200).json({ status: 'success', message: resend });
     } catch ({ message: error }) {
       res.status(400).json({ status: 'error', error });
     }

@@ -100,6 +100,7 @@ describe('/api/v1/auth', () => {
     afterEach(async () => {
       send.restore();
     });
+
     it('should return error if user email already exist', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
@@ -236,39 +237,49 @@ describe('/api/v1/auth', () => {
           email: 'tees@trtr.com',
           password: '11111111ghghjh'
         });
+
+      const { token } = res.body.data;
+      userToken = token;
+
       res.should.have.status(201);
       res.body.should.have.property('data');
       res.body.data.should.have.property('token');
-      const { token } = res.body.data;
-      userToken = token;
     });
 
-    it('should verify user email', async () => {
+    it('should not verify a user with invalid/expired token', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/verify?token=gfgfgfhgfh`);
+
       res.should.have.status(400);
       res.body.should.have.property('error');
+      res.body.error.should.equal('Expired Verification Link, resend verification Link');
     });
 
     it('should verify user email', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/verify?token=${userToken}`);
+
       res.should.have.status(200);
       res.body.should.have.property('message');
+      res.body.message.should.equal('Email Verification Successful');
     });
 
     it('should not verify user email that has been verified', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/verify?token=${userToken}`);
+
       res.should.have.status(400);
       res.body.should.have.property('error');
+      res.body.error.should.equal('User Email is Already Verified');
     });
 
-    it('should not verify user email that does not exist', async () => {
+    it('should notify user for to resend verification link on expired token', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/verify?token=${userToken}`);
+        .get(`${URL_PREFIX}/verify?token=kkkklkj`);
+
       res.should.have.status(400);
       res.body.should.have.property('error');
+      res.body.error.should.equal('Expired Verification Link, resend verification Link');
     });
   });
 
@@ -290,40 +301,51 @@ describe('/api/v1/auth', () => {
           email: 'teeser@trtr.com',
           password: '11111111ghghjh'
         });
+      const { token } = res.body.data;
+      userToken = token;
+
       res.should.have.status(201);
       res.body.should.have.property('data');
       res.body.data.should.have.property('token');
     });
 
-    it('should verify user email', async () => {
+    it('should not resend verification link if email is not provided', async () => {
       const res = await chai.request(app)
-        .post(`${URL_PREFIX}/verify`);
+        .post(`${URL_PREFIX}/resend_verification_link`);
+
       res.should.have.status(400);
       res.body.should.have.property('error');
+      res.body.error.should.equal('Email must be a valid email');
     });
 
-    it('should verify user email', async () => {
+    it('should resend verification link to user email', async () => {
       const res = await chai.request(app)
-        .post(`${URL_PREFIX}/verify`)
+        .post(`${URL_PREFIX}/resend_verification_link`)
         .send({ email: 'teeser@trtr.com' });
+
       res.should.have.status(200);
       res.body.should.have.property('message');
+      res.body.message.should.equal('Verification Link Sent');
     });
 
-    it('should not verify user email that has been verified', async () => {
+    it('should not resend verification link to email that has been verified', async () => {
       const res = await chai.request(app)
-        .post(`${URL_PREFIX}/verify`)
+        .post(`${URL_PREFIX}/resend_verification_link`)
         .send({ email: 'tees@trtr.com' });
+
       res.should.have.status(400);
       res.body.should.have.property('error');
+      res.body.error.should.equal('User Email is Already Verified');
     });
 
     it('should not resend verification link for user that does not exist', async () => {
       const res = await chai.request(app)
-        .post(`${URL_PREFIX}/verify`)
+        .post(`${URL_PREFIX}/resend_verification_link`)
         .send({ email: 'aaa@test.com' });
+
       res.should.have.status(400);
       res.body.should.have.property('error');
+      res.body.error.should.equal('User not found');
     });
   });
 });
