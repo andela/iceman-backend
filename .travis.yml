@@ -3,10 +3,10 @@ env:
     - CC_TEST_REPORTER_ID=646c778232b801f611ede9ea505ae8465fc4a2805589d6023afa890c243daf8d
 node_js:
   - 'stable'
+before_install:
+  - npm update
 install:
   - npm install
-  - npm install -g nyc
-  - npm i -g sequelize-cli
 cache:
 directories:
   - 'node_modules'
@@ -15,6 +15,7 @@ addons:
   postgresql: 9.6
 before_script:
   - psql -c 'create database icemantestdb;' -U postgres
+  - npm i -g sequelize-cli
   - npm run undo:migration
   - npm run db:migration
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -22,6 +23,6 @@ before_script:
   - ./cc-test-reporter before-build
 script:
   - npm test
-  - npm run coveralls
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+  - npm run coverage
