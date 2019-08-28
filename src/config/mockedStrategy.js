@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable import/no-extraneous-dependencies */
 import passport from 'passport-strategy';
 import util from 'util';
 import user from './mockedProfile';
