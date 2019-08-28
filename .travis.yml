@@ -1,15 +1,18 @@
+<<<<<<< HEAD
 env:
   global:
     - CC_TEST_REPORTER_ID=646c778232b801f611ede9ea505ae8465fc4a2805589d6023afa890c243daf8d
+=======
+>>>>>>> 7b1b840b2693062cb27851c8a7358651a7f728c8
 node_js:
-  - 'stable'
+  - "stable"
 before_install:
   - npm update
 install:
   - npm install
 cache:
 directories:
-  - 'node_modules'
+  - "node_modules"
 addons:
   chrome: stable
   postgresql: 9.6
