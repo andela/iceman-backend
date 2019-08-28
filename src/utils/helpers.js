@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
+import crypto from 'crypto';
 /**
  * Helper class
  */
@@ -60,5 +60,30 @@ export default class Helper {
     const token = jwt.sign(payloader, secret, { expiresIn: '1hr' });
 
     return token;
+  }
+
+  /**
+   * Method generate token
+   * @param {object} profile -user social profile
+   * @returns {object} - user details
+   */
+  static getUserSocialDetails(profile) {
+    const { provider, _json: data } = profile;
+    const user = { password: crypto.randomBytes(15).toString('hex') };
+    if (provider === 'google') {
+      user.email = data.email;
+      user.image = data.picture;
+      user.social_id = data.sub;
+      user.first_name = data.given_name;
+      user.last_name = data.family_name;
+    } else {
+      user.social_id = data.id;
+      user.email = data.email;
+      user.first_name = data.first_name;
+      user.last_name = data.last_name;
+      user.middle_name = data.middle_name;
+      user.image = data.picture.data.url;
+    }
+    return user;
   }
 }

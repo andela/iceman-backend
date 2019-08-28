@@ -8,7 +8,6 @@ chai.use(chaiHttp);
 chai.should();
 
 const URL_PREFIX = '/api/v1/auth';
-
 const apiEndpoint = '/api/v1/auth/login';
 
 const user = {
@@ -73,7 +72,6 @@ describe('/api/v1/auth', () => {
     });
 
     it('should return 200 if the user account is verified', async () => {
-      console.log(verifiedUser);
       const res = await chai.request(app)
         .post(apiEndpoint)
         .set('Content-Type', 'application/json')
@@ -87,6 +85,20 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('is_verified');
     });
   });
+
+  describe('Social Authentication Test', () => {
+    it('Should return a Google authenticated user', async () => {
+      const res = await chai.request(app).get('/api/v1/auth/google/callback');
+      res.should.have.status(200);
+      res.body.data.should.have.property('token');
+    });
+    it('Should return a Facebook authenticated user', async () => {
+      const res = await chai.request(app).get('/api/v1/auth/facebook/callback');
+      res.should.have.status(200);
+      res.body.data.should.have.property('token');
+    });
+  });
+
   describe('POST /signup', () => {
     it('should return error if user email already exist', async () => {
       const res = await chai.request(app)

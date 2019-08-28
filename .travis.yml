@@ -1,12 +1,15 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=646c778232b801f611ede9ea505ae8465fc4a2805589d6023afa890c243daf8d
 node_js:
-  - "stable"
+  - 'stable'
 before_install:
   - npm update
 install:
   - npm install
 cache:
 directories:
-  - "node_modules"
+  - 'node_modules'
 addons:
   chrome: stable
   postgresql: 9.6
@@ -15,7 +18,11 @@ before_script:
   - npm i -g sequelize-cli
   - npm run undo:migration
   - npm run db:migration
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script:
   - npm test
 after_script:
   - npm run coverage
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

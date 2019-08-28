@@ -1,7 +1,15 @@
+import 'dotenv/config';
+
 export default {
-    FACEBOOK_APP_ID: process.env.FACEBOOK_APP_ID,
-    FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET,
-    GOOGLE_CONSUMER_KEY: process.env.GOOGLE_CONSUMER_KEY,
-    GOOGLE_CONSUMER_SECRET: process.env.GOOGLE_CONSUMER_SECRET
-  
+  facebookApp: {
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: '/api/v1/auth/facebook/callback',
+    profileFields: ['id', 'email', 'displayName', 'name', 'gender', 'photos']
+  },
+  googleApp: {
+    clientID: process.env.GOOGLE_CONSUMER_KEY,
+    clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
+    callbackURL: '/api/v1/auth/google/callback'
+  }
 };

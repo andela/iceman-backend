@@ -6,6 +6,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
+      middle_name: {
+        type: DataTypes.STRING
+      },
       last_name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -20,11 +23,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       password: {
         type: DataTypes.STRING,
+        allowNull: false
       },
-      google_id: {
-        type: DataTypes.STRING,
-      },
-      facebook_id: {
+      social_id: {
         type: DataTypes.STRING,
       },
       is_admin: {

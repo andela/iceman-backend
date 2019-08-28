@@ -10,6 +10,9 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false
     },
+    middle_name: {
+      type: Sequelize.STRING
+    },
     last_name: {
       type: Sequelize.STRING,
       allowNull: false
@@ -22,14 +25,12 @@ module.exports = {
         isEmail: true
       }
     },
-    google_id: {
-      type: Sequelize.STRING,
-    },
-    facebook_id: {
+    social_id: {
       type: Sequelize.STRING,
     },
     password: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      allowNull: false
     },
     is_verified: {
       type: Sequelize.BOOLEAN,
