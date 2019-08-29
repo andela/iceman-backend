@@ -11,10 +11,10 @@ const facebook = {
   profileUrl: undefined,
   emails: [{ value: 'test@gmail.com' }],
   photos:
-    [{
-      value:
-        'https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=2095868869373636&height=50&width=50&ext=1569565681&hash=AeQBSXQxB0Hne32F'
-    }],
+  [{
+    value:
+      'https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=2095868869373636&height=50&width=50&ext=1569565681&hash=AeQBSXQxB0Hne32F'
+  }],
   provider: 'facebook',
   _raw:
     '{"id":"2095868869373636","email":"test\\u0040gmail.com","name":"Obas jerry Umokoro","last_name":"Umokoro","first_name":"Obas","middle_name":"jerry","picture":{"data":{"height":50,"is_silhouette":false,"url":"https:\\/\\/platform-lookaside.fbsbx.com\\/platform\\/profilepic\\/?asid=2095868869373636&height=50&width=50&ext=1569565681&hash=AeQBSXQxB0Hne32F","width":50}}}',
@@ -45,10 +45,10 @@ const google = {
   name: { familyName: 'Umokoro', givenName: 'Obas' },
   emails: [{ value: 'test@gmail.com', verified: true }],
   photos:
-    [{
-      value:
-        'https://lh5.googleusercontent.com/-WUXse3rcqLI/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3reehqwq3qe1mqnWEvt44uLLkEA32g/photo.jpg'
-    }],
+  [{
+    value:
+      'https://lh5.googleusercontent.com/-WUXse3rcqLI/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3reehqwq3qe1mqnWEvt44uLLkEA32g/photo.jpg'
+  }],
   provider: 'google',
   _raw:
     '{\n  "sub": "857578736364757586",\n  "name": "Obas Umokoro",\n  "given_name": "Obas",\n  "family_name": "Umokoro",\n  "picture": "https://lh5.googleusercontent.com/-WUXse3rcqLI/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3reehqwq3qe1mqnWEvt44uLLkEA32g/photo.jpg",\n  "email": "test@gmail.com",\n  "email_verified": true,\n  "locale": "en"\n}',
