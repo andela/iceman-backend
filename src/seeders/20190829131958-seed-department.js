@@ -4,5 +4,5 @@ module.exports = {
     { department: 'IT', manager: 2 },
     { department: 'Marketing', manager: 3 },
   ], {}),
-  down: async (queryInterface) => queryInterface.bulkDelete('Departments', null, {})
+  down: async queryInterface => queryInterface.bulkDelete('Departments', null, {})
 };
