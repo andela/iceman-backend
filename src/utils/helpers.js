@@ -70,6 +70,7 @@ export default class Helper {
   static getUserSocialDetails(profile) {
     const { provider, _json: data } = profile;
     const user = { password: crypto.randomBytes(15).toString('hex') };
+    
     if (provider === 'google') {
       user.email = data.email;
       user.image = data.picture;
