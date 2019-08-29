@@ -9,15 +9,15 @@ export default class RequestService {
    * @returns {object} obej - return object
    */
   static async multiCityRequest({ body, user }) {
-    const request = await Request.create({ ...body[0], userId: user.id });
+    if (body.length < 1) throw new Error('The request cannot be empty');
 
-    if (!request) throw new Error('The operation was not successful');
+    const request = await Request.create({ ...body[0], user_id: user.id });
 
     body.splice(0, 1);
 
-    const resetRequest = body.map((trip) => ({ ...trip, requestId: request.dataValues.id }));
-
+    const resetRequest = body.map((trip) => ({ ...trip, request_id: request.dataValues.id }));
     const multiRequest = await MultiRequest.bulkCreate(resetRequest, { returning: true });
-    return multiRequest;
+
+    return { request, multiRequest };
   }
 }

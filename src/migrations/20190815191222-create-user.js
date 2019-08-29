@@ -45,14 +45,14 @@ module.exports = {
     reset_token: {
       type: Sequelize.STRING
     },
-    createdat: {
+    createdAt: {
       allowNull: false,
       type: Sequelize.DATE
     },
-    updatedat: {
+    updatedAt: {
       allowNull: false,
       type: Sequelize.DATE
-    },
+    }
   }),
   down: (queryInterface) => queryInterface.dropTable('Users')
 };

@@ -14,7 +14,7 @@ export default class RequestController {
       const data = await RequestServices.multiCityRequest(req);
       res.status(200).json({ status: 'success', data });
     } catch ({ message: error }) {
-      res.status(200).json({ status: 'success', error });
+      res.status(400).json({ status: 'success', error });
     }
   }
 }

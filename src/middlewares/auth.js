@@ -9,9 +9,10 @@ export default async (req, res, next) => {
 
   try {
     const payload = await jwt.verify(token, jwtSecret);
+
     req.user = payload;
     next();
   } catch (error) {
     res.status(400).json({ status: 'error', error: 'Access Denied, Invalid token' });
   }
-}
+};
