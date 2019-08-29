@@ -15,7 +15,7 @@ export default class RequestService {
 
     body.splice(0, 1);
 
-    const resetRequest = body.map((trip) => ({ ...trip, request_id: request.dataValues.id }));
+    const resetRequest = body.map(trip => ({ ...trip, request_id: request.dataValues.id }));
     const multiRequest = await MultiRequest.bulkCreate(resetRequest, { returning: true });
 
     return { request, multiRequest };
