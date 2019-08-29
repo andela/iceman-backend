@@ -46,7 +46,11 @@ module.exports = (sequelize, DataTypes) => {
   );
   User.associate = (models) => {
     User.hasMany(models.Request, {
-      foreignKey: 'userId'
+      foreignKey: 'user_id'
+    });
+
+    User.hasMany(models.Notification, {
+      foreignKey: 'user_id'
     });
   };
   return User;

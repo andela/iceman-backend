@@ -45,11 +45,11 @@ module.exports = {
     reset_token: {
       type: Sequelize.STRING
     },
-    createdAt: {
+    createdat: {
       allowNull: false,
       type: Sequelize.DATE
     },
-    updatedAt: {
+    updatedat: {
       allowNull: false,
       type: Sequelize.DATE
     },

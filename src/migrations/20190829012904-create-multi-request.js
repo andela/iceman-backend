@@ -1,6 +1,5 @@
-
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Requests', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('MultiRequests', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -23,29 +22,20 @@ module.exports = {
       type: Sequelize.DATE,
       allowNull: false
     },
-    type: {
-      type: Sequelize.ENUM,
-      allowNull: false,
-      values: ['one-way', 'return', 'multi-city'],
-    },
     reason: {
       type: Sequelize.STRING
     },
     accommodation: {
       type: Sequelize.STRING
     },
-    user_id: {
+    request_id: {
       type: Sequelize.INTEGER,
       onDelete: 'CASCADE',
       references: {
-        model: 'Users',
+        model: 'Requests',
         key: 'id',
-        as: 'user_id'
+        as: 'request_id'
       }
-    },
-    status: {
-      type: Sequelize.STRING,
-      defaultValue: 'pending',
     },
     createdat: {
       allowNull: false,
@@ -56,5 +46,5 @@ module.exports = {
       type: Sequelize.DATE
     },
   }),
-  down: (queryInterface) => queryInterface.dropTable('Requests')
+  down: (queryInterface) => queryInterface.dropTable('MultiRequests')
 };
