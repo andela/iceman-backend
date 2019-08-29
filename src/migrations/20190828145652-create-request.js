@@ -1,3 +1,4 @@
+/* eslint-disable arrow-parens */
 
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Requests', {
@@ -55,5 +56,5 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  down: (queryInterface) => queryInterface.dropTable('Requests')
+  down: queryInterface => queryInterface.dropTable('Requests')
 };
