@@ -17,5 +17,3 @@ before_script:
   - npm run db:migration
 script:
   - npm test
-after_script:
-  - npm run coverage
