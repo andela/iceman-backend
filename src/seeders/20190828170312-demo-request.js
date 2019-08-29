@@ -1,5 +1,5 @@
 
-const demoRequest = id => ({
+const demoRequest = (id, status) => ({
   id,
   source: 'lagos',
   destination: 'newyork',
@@ -8,15 +8,15 @@ const demoRequest = id => ({
   tripType: 'one-way',
   reason: 'business',
   accommodation: 'Lorem ipsum',
-  status: 'pending',
+  status,
   userId: 1,
   createdAt: new Date(),
   updatedAt: new Date()
 });
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.bulkInsert('Requests', [
-    demoRequest(1),
-    demoRequest(2)
+    demoRequest(1, 'pending'),
+    demoRequest(2, 'accepted')
   ], {}),
 
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Requests', null, {})

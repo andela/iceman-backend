@@ -22,7 +22,7 @@ const requestDetails = {
 
 describe('TRIP REQUEST ROUTE', () => {
   describe('Edit Request', () => {
-    it('should update trip request when user is logged in and required details are provided', async () => {
+    it('should update an open trip request when user is logged in and required details are provided', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/request/1`)
         .set('token', userToken)
@@ -41,17 +41,7 @@ describe('TRIP REQUEST ROUTE', () => {
       res.body.should.be.an('object');
     });
 
-    it('should update trip has been accepted or rejected', async () => {
-      const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/request/2`)
-        .set('token', userToken)
-        .send(requestDetails);
-
-      res.should.have.status(400);
-      res.body.should.be.an('object');
-    });
-
-    it('should update trip has been accepted or rejected', async () => {
+    it('should not update a trip that has been accepted or rejected', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/request/2`)
         .set('token', userToken)
