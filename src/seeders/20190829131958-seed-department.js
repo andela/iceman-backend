@@ -1,5 +1,5 @@
 module.exports = {
-  up: async (queryInterface) => queryInterface.bulkInsert('Departments', [
+  up: async queryInterface => queryInterface.bulkInsert('Departments', [
     { department: 'Human Resources', manager: 1 },
     { department: 'IT', manager: 2 },
     { department: 'Marketing', manager: 3 },
