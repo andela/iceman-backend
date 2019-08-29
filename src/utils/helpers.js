@@ -61,7 +61,7 @@ export default class Helper {
    */
   static genToken(payloader) {
     const secret = process.env.JWTSECRET;
-    const token = jwt.sign(payloader, secret, { expiresIn: '1hr' });
+    const token = jwt.sign(payloader, secret, { expiresIn: '12h' });
 
     return token;
   }

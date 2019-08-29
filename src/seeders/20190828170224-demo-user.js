@@ -9,16 +9,6 @@ module.exports = {
     is_verified: true,
     createdAt: new Date(),
     updatedAt: new Date()
-  },
-  {
-    id: 2,
-    first_name: 'cleave2',
-    last_name: 'owhiroro2',
-    email: 'cleave2@mail.com',
-    password: '$2b$10$Ei9AIY7iUCU3jN3EAH7a8ez9lBmfazkBOHCI8SPbwWkD7iT4LWkYm',
-    is_verified: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
   }], {}),
 
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Users', null, {})
