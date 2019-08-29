@@ -10,7 +10,6 @@ import './config/passport';
 
 const swaggerDocument = YAML.load(`${process.cwd()}/src/docs/docs.yaml`);
 const isProduction = process.env.NODE_ENV === 'production';
-
 // Create global app object
 const app = express();
 

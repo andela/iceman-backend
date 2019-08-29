@@ -6,8 +6,8 @@ module.exports = {
     password: process.env.PASSWORD,
     database: process.env.DB_NAME,
     host: process.env.HOST,
-    quoteIdentifiers: false,
-    dialect: 'postgres'
+    dialect: 'postgres',
+    quoteIdentifiers: false
   },
   test: {
     quoteIdentifiers: false,

@@ -1,6 +1,10 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 /**
  * Helper class
  */
