@@ -6,7 +6,7 @@ info:
   title: Barefoot Nomad
 
 tags:
-  - name: auth
+  - name: Auth
     description: Authentication routes
 host: localhost:3000
 basePath: /api/v1
@@ -14,7 +14,7 @@ paths:
   /auth/login:
     post:
       tags:
-        - auth
+        - Auth
       summary: Logs in a user
       consumes:
         - application/json
@@ -42,7 +42,7 @@ paths:
   /auth/signup:
     post:
       tags:
-        - auth
+        - Auth
       summary: Create User Account
       consumes:
         - application/json
@@ -124,7 +124,7 @@ paths:
   /auth/forgot_password:
     post:
       tags:
-        - auth
+        - Auth
       summary: sends change mail paswword
       consumes:
         - application/json
@@ -148,7 +148,7 @@ paths:
   /auth/reset_password/{token}:
     patch:
       tags:
-        - auth
+        - Auth
       summary: changes user password
       consumes:
         - application/json
@@ -173,6 +173,59 @@ paths:
           description: Email Not Found
         200:
           description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+
+  /request/multi-city:
+    post:
+      tags:
+        - Request
+      summary: Multi City Request
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: token
+          description: Authenticate User
+          required: true
+        - in: body
+          name: body
+          description: Multiple Request Destination
+          required: true
+          schema:
+            type: array
+            items:
+              properties:
+                source:
+                  type: string
+                  required: true
+                destination:
+                  type: string
+                  required: true
+                travel_date:
+                  type: string
+                  format: date
+                  required: true
+                return_date:
+                  type: string
+                  format: date
+                  required: true
+                reason:
+                  type: string
+                accommodation:
+                  type: string
+      responses:
+        400:
+          description: The request cannot be empty
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/MultiCityReponse'
+
 definitions:
   AuthReponse:
     properties:
@@ -197,6 +250,62 @@ definitions:
           is_verified:
             type: boolean
             default: false
+  MultiCityReponse:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          request:
+            type: object
+            properties:
+              id:
+                type: integer
+              source:
+                type: string
+                required: true
+              destination:
+                type: string
+                required: true
+              travel_date:
+                type: string
+                format: date
+                required: true
+              return_date:
+                type: string
+                format: date
+                required: true
+              reason:
+                type: string
+              accommodation:
+                type: string
+              user_id:
+                type: integer
+          multiRequest:
+            type: array
+            items:
+              properties:
+                source:
+                  type: string
+                  required: true
+                destination:
+                  type: string
+                  required: true
+                travel_date:
+                  type: string
+                  format: date
+                  required: true
+                return_date:
+                  type: string
+                  format: date
+                  required: true
+                reason:
+                  type: string
+                accommodation:
+                  type: string
+                request_id:
+                  type: integer
 schemes:
   - https
   - http

@@ -44,6 +44,11 @@ describe('/api/v1/request', () => {
         .send(multiRequest);
 
       res.should.have.status(200);
+      res.body.data.request.should.have.property('destination');
+      res.body.data.request.should.have.property('source');
+      res.body.data.request.should.have.property('type', 'multi-city');
+      res.body.data.request.should.have.property('return_date');
+      res.body.data.request.should.have.property('travel_date');
     });
 
     it('should return 400 if pass empty requests', async () => {
