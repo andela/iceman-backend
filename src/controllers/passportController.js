@@ -9,7 +9,7 @@ import { User } from '../models';
 export default class PassportController {
   /**
    * @param {string} provider  - it takes the name of the provider e.g facebook, google
-   * @param {array} scope - list of cntent required from the user profile
+   * @param {array} scope - list of content required from the user profile
    * @returns {object} - the profile of user
    */
   static authenticate(provider, scope) {
