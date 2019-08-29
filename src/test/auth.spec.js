@@ -28,23 +28,23 @@ const user2 = {
 describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
-  before((done) => {
+  beforeEach(async () => {
+    verifiedUser = await TestHelper.createUser({
+      ...user, is_verified: true
+    });
+
+    notVerifiedUser = await TestHelper.createUser({
+      ...user,
+      email: 'user2@gmail.com',
+    });
+  });
+
+  afterEach((done) => {
     TestHelper.destroyModel('User');
     done();
   });
 
   describe('POST /login', () => {
-    before(async () => {
-      verifiedUser = await TestHelper.createUser({
-        ...user, is_verified: true
-      });
-
-      notVerifiedUser = await TestHelper.createUser({
-        ...user,
-        email: 'user2@gmail.com',
-      });
-    });
-
     it('should return 400 if the user is not found', async () => {
       const res = await chai.request(app)
         .post(apiEndpoint)

@@ -36,6 +36,38 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
+      role: {
+        type: DataTypes.STRING,
+        defaultValue: 'requester'
+      },
+      manager_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      gender: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      date_of_birth: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      department: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      preferred_language: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      residential_address: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      preferred_currency: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
     },
     { },
   );

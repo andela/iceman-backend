@@ -1,5 +1,5 @@
 # Define image to build from
-FROM node:12
+FROM node:10
 
 # Create app directory
 WORKDIR /usr/src/app
