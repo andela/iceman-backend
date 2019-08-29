@@ -120,4 +120,53 @@ export default class AuthService {
       }
     });
   }
+
+  /**
+   * @param {Object} token user token
+   * @returns {String} success message
+   */
+  static async verify(token) {
+    const isExpire = Helper.verifyToken(token);
+
+    if (!isExpire) {
+      throw new Error('Expired Verification Link, resend verification Link');
+    }
+
+    const isUser = await User.findOne({ where: { id: isExpire.id } });
+
+    if (!isUser) throw new Error('User not find');
+
+    if (isUser.dataValues.is_verified) throw new Error('User Email is Already Verified');
+
+    await User.update({ is_verified: true }, { where: { id: isExpire.id } });
+
+    return 'Email Verification Successful';
+  }
+
+  /**
+   * @param {Object} body user email
+   * @returns {String} success message
+   */
+  static async verificationLink(body) {
+    const { email } = body;
+    const isUser = await User.findOne({ where: { email } });
+
+    if (!isUser) throw new Error('User not found');
+
+    if (isUser.dataValues.is_verified) throw new Error('User Email is Already Verified');
+
+    const token = Helper.genToken({ id: isUser.dataValues.id });
+    const url = `${process.env.APP_URL}/verify?token=${token}`;
+    const userDetails = {
+      receiver: isUser.dataValues.email,
+      sender: process.env.SENDER,
+      templateName: 'verify_email',
+      name: isUser.dataValues.first_name,
+      url
+    };
+
+    await sendmail(userDetails);
+
+    return 'Verification Link Sent';
+  }
 }

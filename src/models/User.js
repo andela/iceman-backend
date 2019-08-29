@@ -10,11 +10,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       first_name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+
       },
       last_name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+
       },
       email: {
         type: DataTypes.STRING,
@@ -42,8 +44,5 @@ module.exports = (sequelize, DataTypes) => {
     },
     { },
   );
-  // User.associate = (models) => {
-  //   // associations can be defined here
-  // };
   return User;
 };

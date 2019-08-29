@@ -57,9 +57,41 @@ export default class AuthController {
     try {
       const data = await AuthService.signup(body);
 
-      Response.success(res, data, 201);
+      await AuthService.verificationLink(data);
+
+      res.status(201).json({ status: 'success', data });
     } catch ({ message: error }) {
       Response.badRequest(res, error, 409);
+    }
+  }
+
+  /**
+   * @param {req} req - request object
+   * @param {res} res - response object
+   * @return {object} - message
+   */
+  static async verifyUser(req, res) {
+    try {
+      const { token } = req.query;
+      const isVerified = await AuthService.verify(token);
+
+      return res.status(200).json({ status: 'success', message: isVerified });
+    } catch ({ message: error }) {
+      res.status(400).json({ status: 'error', error });
+    }
+  }
+
+  /**
+   * @param {res} res - response object
+   * @return {object} - message
+   */
+  static async resendVerification({ body }, res) {
+    try {
+      const resend = await AuthService.verificationLink(body);
+
+      return res.status(200).json({ status: 'success', message: resend });
+    } catch ({ message: error }) {
+      res.status(400).json({ status: 'error', error });
     }
   }
 }

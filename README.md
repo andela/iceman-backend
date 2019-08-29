@@ -35,5 +35,7 @@ docker run -p 3000:3000 iceman-backend
 <table>
 <tr><th>HTTP VERB</th><th>ENDPOINTS</th><th>DESCRIPTION</th></tr>
 <tr><td>POST</td><td>/api/v1/auth/signup</td><td>Creates user account</td></tr>
+<tr><td>POST</td><td>/api/v1/auth/signup</td><td>Login user account</td></tr>
+<tr><td>GET</td><td>/api/v1/auth/verify?activate&&id</td><td>Creates user account</td></tr>
 
 </table>

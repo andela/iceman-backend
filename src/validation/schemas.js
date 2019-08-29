@@ -32,3 +32,14 @@ export const passwordResetSchema = Joi.object().keys({
       message: 'Password must contain at least one letter, at least one number, and be atleast 8 digits long',
     }))
 });
+
+/**
+ * Verify Email schema to be used for resending verification link
+ */
+export const verifyEmail = Joi.object().keys({
+  email: Joi.string().email()
+    .required()
+    .error(() => ({
+      message: 'Email must be a valid email'
+    })),
+});
