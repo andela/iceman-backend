@@ -36,8 +36,9 @@ docker run -p 3000:3000 iceman-backend
 <tr><th>HTTP VERB</th><th>ENDPOINTS</th><th>DESCRIPTION</th></tr>
 <tr><td>POST</td><td>/api/v1/auth/signup</td><td>Creates user account</td></tr>
 <tr><td>POST</td><td>/api/v1/auth/login</td><td>Logs user in</td></tr>
-<tr><td>GET</td><td>/api/v1/users/me</td><td>Gets user profile information</td></tr>
-<tr><td>PATCH</td><td>/api/v1/users/me</td><td>Updates user profile information</td></tr>
+<tr><td>GET</td><td>/api/v1/users/profile</td><td>Gets user profile information</td></tr>
+<tr><td>PATCH</td><td>/api/v1/users/profile</td><td>Updates user profile information</td></tr>
+<tr><td>GET</td><td>/api/v1/auth/verify?activate&&id</td><td>Creates user account</td></tr>
 </table>
 
 ## API Documentation

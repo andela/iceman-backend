@@ -8,11 +8,13 @@ module.exports = {
     },
     first_name: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
+
     },
     last_name: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
+
     },
     email: {
       type: Sequelize.STRING,
@@ -38,10 +40,6 @@ module.exports = {
       type: Sequelize.STRING,
       defaultValue: 'requester'
     },
-    manager_id: {
-      type: Sequelize.INTEGER,
-      allowNull: true
-    },
     gender: {
       type: Sequelize.STRING,
       allowNull: true
@@ -65,6 +63,9 @@ module.exports = {
     preferred_currency: {
       type: Sequelize.STRING,
       allowNull: true
+    },
+    reset_token: {
+      type: Sequelize.STRING
     },
     createdAt: {
       allowNull: false,

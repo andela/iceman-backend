@@ -25,6 +25,9 @@ export const signUpSchema = Joi.object().keys({
     })),
 });
 
+/**
+ * profile schema to be used for validating user profile
+ */
 export const profileSchema = Joi.object().keys({
   first_name: Joi.string().trim(),
   last_name: Joi.string().trim(),
@@ -33,4 +36,24 @@ export const profileSchema = Joi.object().keys({
   residential_address: Joi.string().trim(),
   preferred_currency: Joi.string().trim(),
   date_of_birth: Joi.date(),
+});
+/**
+ * password schema to be used for validating password change
+ */
+export const passwordResetSchema = Joi.object().keys({
+  password: Joi.string().regex(/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{8,20}$/).required()
+    .error(() => ({
+      message: 'Password must contain at least one letter, at least one number, and be atleast 8 digits long',
+    }))
+});
+
+/**
+ * Verify Email schema to be used for resending verification link
+ */
+export const verifyEmail = Joi.object().keys({
+  email: Joi.string().email()
+    .required()
+    .error(() => ({
+      message: 'Email must be a valid email'
+    })),
 });

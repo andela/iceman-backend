@@ -16,7 +16,7 @@ tags:
 host: localhost:3000
 basePath: /api/v1
 paths:
-  /users/me:
+  /users/profile:
     get:
       tags:
         - Users
@@ -160,6 +160,108 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthResponse'
+
+  /auth/verify?token:
+    get:
+      tags:
+        - Auth
+      summary: Verifies User Email
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: token
+          description: User token
+          required: true
+          schema:
+            type: string
+            properties:
+              email:
+                type: string
+      responses:
+        400:
+          description: Error
+        200:
+          description: Success
+
+  /auth/resend_verification_link:
+    post:
+      tags:
+        - Auth
+      summary: Resend Verification Link
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: email
+          description: User email
+          required: true
+          schema:
+            type: string
+            properties:
+              email:
+                type: string
+      responses:
+        400:
+          description: error
+        200:
+          description: Success
+  /auth/forgot_password:
+    post:
+      tags:
+        - Auth
+      summary: sends change mail paswword
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: email
+          description: User Email
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        404:
+          description: Email Not Found
+        200:
+          description: Success
+  /auth/reset_password/{token}:
+    patch:
+      tags:
+        - Auth
+      summary: changes user password
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: password
+          description: New password
+          required: true
+          schema:
+            type: object
+            properties:
+              password:
+                type: string
+        - in: path
+          name: token
+          required: true
+          type: string
+      responses:
+        404:
+          description: Email Not Found
+        200:
+          description: Success
 definitions:
   AuthResponse:
     properties:
@@ -188,18 +290,12 @@ definitions:
           role:
             type: string
             default: requester
-          manager_id:
-            type: integer
-            nullable: true
           gender:
             type: string
             nullable: true
           date_of_birth:
             type: string
             format: date
-            nullable: true
-          department:
-            type: string
             nullable: true
           preferred_language:
             type: string
@@ -278,14 +374,3 @@ definitions:
 schemes:
   - https
   - http
-
-
-
-
-
-
-
-
-
-
-

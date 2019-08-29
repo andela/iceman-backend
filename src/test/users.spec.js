@@ -7,7 +7,7 @@ import Helper from '../utils/helpers';
 chai.use(chaiHttp);
 chai.should();
 
-const URL_PREFIX = '/api/v1/users';
+const URL_PREFIX = '/api/v1/auth';
 
 const user = {
   first_name: 'Elijah',
@@ -16,7 +16,7 @@ const user = {
   password: 'elijah1994'
 };
 
-describe('/api/v1/users', () => {
+describe('/api/v1/auth', () => {
   let verifiedUser;
 
   beforeEach(async () => {
@@ -30,10 +30,10 @@ describe('/api/v1/users', () => {
     done();
   });
 
-  describe('GET /me', () => {
+  describe('GET /profile', () => {
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/me`)
+        .get(`${URL_PREFIX}/profile`)
         .set('Content-Type', 'application/json');
 
       res.should.have.status(401);
@@ -43,7 +43,7 @@ describe('/api/v1/users', () => {
 
     it('should return 400 if the token in the header is invalid', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/me`)
+        .get(`${URL_PREFIX}/profile`)
         .set('Content-Type', 'application/json')
         .set('token', 'lsdjlfsjdlkfjsd');
 
@@ -57,7 +57,7 @@ describe('/api/v1/users', () => {
       const token = await Helper.genToken(payload);
 
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/me`)
+        .get(`${URL_PREFIX}/profile`)
         .set('Content-Type', 'application/json')
         .set('token', token);
 
@@ -71,8 +71,6 @@ describe('/api/v1/users', () => {
       res.body.data.should.have.property('is_admin');
       res.body.data.should.have.property('is_verified');
       res.body.data.should.have.property('role');
-      res.body.data.should.have.property('department');
-      res.body.data.should.have.property('manager_id');
       res.body.data.should.have.property('gender');
       res.body.data.should.have.property('date_of_birth');
       res.body.data.should.have.property('preferred_language');
@@ -81,7 +79,7 @@ describe('/api/v1/users', () => {
     });
   });
 
-  describe('PATCH /me', () => {
+  describe('PATCH /profile', () => {
     const profileDetails = {
       first_name: 'Elijah',
       last_name: 'Enuem-Udogu',
@@ -94,7 +92,7 @@ describe('/api/v1/users', () => {
 
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/me`)
+        .patch(`${URL_PREFIX}/profile`)
         .set('Content-Type', 'application/json')
         .send(profileDetails);
 
@@ -105,7 +103,7 @@ describe('/api/v1/users', () => {
 
     it('should return 400 if the token in the header is invalid', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/me`)
+        .patch(`${URL_PREFIX}/profile`)
         .set('Content-Type', 'application/json')
         .set('token', 'lsdjlfsjdlkfjsd')
         .send(profileDetails);
@@ -120,7 +118,7 @@ describe('/api/v1/users', () => {
       const token = await Helper.genToken(payload);
 
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/me`)
+        .patch(`${URL_PREFIX}/profile`)
         .set('Content-Type', 'application/json')
         .set('token', token)
         .send(profileDetails);
@@ -135,8 +133,6 @@ describe('/api/v1/users', () => {
       res.body.data.should.have.property('is_admin');
       res.body.data.should.have.property('is_verified');
       res.body.data.should.have.property('role');
-      res.body.data.should.have.property('department');
-      res.body.data.should.have.property('manager_id');
       res.body.data.should.have.property('gender').eql('Male');
       res.body.data.should.have.property('date_of_birth');
       res.body.data.should.have.property('preferred_language').eql('English');

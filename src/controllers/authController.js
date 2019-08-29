@@ -1,4 +1,7 @@
 import AuthService from '../services/authService';
+import Response from '../utils/response';
+
+const { success, badRequest, successMessage } = Response;
 
 /**
  * Class for authenticating  users
@@ -12,14 +15,43 @@ export default class AuthController {
     try {
       const data = await AuthService.login(email, password);
 
-      res.status(200).json({ status: 'success', data });
+      success(res, data);
     } catch ({ message: error }) {
-      res.status(400).json({ status: 'error', error });
+      badRequest(res, error);
     }
   }
 
   /**
- *
+   * @param {object} req request body
+   * @param {object} res response body
+   * @returns  {object} message
+   */
+  static async forgotPassword({ body: { email } }, res) {
+    try {
+      const data = await AuthService.forgotPassword(email);
+
+      success(res, data);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+   * @param {object} req request body
+   * @param {object} res response body
+   * @returns  {object} message
+   */
+  static async resetPassword({ params: { token }, body: { password } }, res) {
+    try {
+      const message = await AuthService.resetPassword(token, password);
+
+      success(res, message);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
  * @param {object} res - response object
  * @return {object} - user data and status code
  */
@@ -27,9 +59,73 @@ export default class AuthController {
     try {
       const data = await AuthService.signup(body);
 
-      res.status(201).json({ status: 'success', data });
+      await AuthService.verificationLink(data);
+
+      success(res, data, 201);
     } catch ({ message: error }) {
-      res.status(409).json({ status: 'error', error });
+      badRequest(res, error, 409);
+    }
+  }
+
+  /**
+   * @param {req} req - request object
+   * @param {res} res - response object
+   * @return {object} - message
+   */
+  static async verifyUser(req, res) {
+    try {
+      const { token } = req.query;
+      const isVerified = await AuthService.verify(token);
+
+      successMessage(res, isVerified);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+   * @param {res} res - response object
+   * @return {object} - message
+   */
+  static async resendVerification({ body }, res) {
+    try {
+      const resend = await AuthService.verificationLink(body);
+
+      successMessage(res, resend);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+ * @param {object} user - user auth token payload
+ * @param {object} res - response object
+ * @return {object} user - return object containing status and data
+ */
+  static async getProfile({ user }, res) {
+    try {
+      const { id } = user;
+      const userData = await AuthService.getProfile(id);
+
+      success(res, userData);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+* @param {object} user - user auth token payload
+* @param {object} res - response object
+* @return {object} user - return object containing status and data
+*/
+  static async updateProfile({ body, user }, res) {
+    try {
+      const { id } = user;
+      const updatedData = await AuthService.updateProfile(id, body);
+
+      success(res, updatedData);
+    } catch ({ message: error }) {
+      badRequest(res, error);
     }
   }
 }
