@@ -10,11 +10,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       first_name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+
       },
       last_name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+
       },
       email: {
         type: DataTypes.STRING,
@@ -35,6 +37,9 @@ module.exports = (sequelize, DataTypes) => {
       is_verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+      },
+      reset_token: {
+        type: DataTypes.STRING
       },
     },
     { },

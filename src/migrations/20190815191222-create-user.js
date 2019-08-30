@@ -8,11 +8,13 @@ module.exports = {
     },
     first_name: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
+
     },
     last_name: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
+
     },
     email: {
       type: Sequelize.STRING,
@@ -33,6 +35,9 @@ module.exports = {
     is_admin: {
       type: Sequelize.BOOLEAN,
       defaultValue: false
+    },
+    reset_token: {
+      type: Sequelize.STRING
     },
     createdAt: {
       allowNull: false,

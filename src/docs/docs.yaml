@@ -6,80 +6,11 @@ info:
   title: Barefoot Nomad
 
 tags:
-  - name: users
-    description: Manage User Accout
+  - name: auth
+    description: Authentication routes
 host: localhost:3000
 basePath: /api/v1
 paths:
-  /users:
-    post:
-      tags:
-        - users
-      summary: Add a new user account
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: User details
-          required: true
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-              email:
-                type: string
-              password:
-                type: string
-      responses:
-        401:
-          description: Invalid input
-        200:
-          description: Success
-        409:
-          description: Email Address already exist
-        400:
-          description: Bad request
-        201:
-          description: created
-    put:
-      tags:
-        - users
-      summary: Updates user details
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: field to be updated
-          required: true
-          schema:
-            type: object
-            properties:
-              field:
-                type: string
-      responses:
-        401:
-          description: Invalid input
-        200:
-          description: Success
-    get:
-      tags:
-        - users
-      summary: Get user details
-      produces:
-        - application/json
-      responses:
-        401:
-          description: Invalid input
-        200:
-          description: Success
-
   /auth/login:
     post:
       tags:
@@ -140,6 +71,108 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthReponse'
+      
+  /auth/verify?token:
+    get:
+      tags:
+        - auth
+      summary: Verifies User Email
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: token
+          description: User token
+          required: true
+          schema:
+            type: string
+            properties:
+              email:
+                type: string
+      responses:
+        400:
+          description: Error
+        200:
+          description: Success
+
+  /auth/resend_verification_link:
+    post:
+      tags:
+        - auth
+      summary: Resend Verification Link
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: email
+          description: User email
+          required: true
+          schema:
+            type: string
+            properties:
+              email:
+                type: string
+      responses:
+        400:
+          description: error
+        200:
+          description: Success
+  /auth/forgot_password:
+    post:
+      tags:
+        - auth
+      summary: sends change mail paswword
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: email
+          description: User Email
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        404:
+          description: Email Not Found
+        200:
+          description: Success
+  /auth/reset_password/{token}:
+    patch:
+      tags:
+        - auth
+      summary: changes user password
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: password
+          description: New password
+          required: true
+          schema:
+            type: object
+            properties:
+              password:
+                type: string
+        - in: path
+          name: token
+          required: true
+          type: string
+      responses:
+        404:
+          description: Email Not Found
+        200:
+          description: Success
 definitions:
   AuthReponse:
     properties:
@@ -167,14 +200,3 @@ definitions:
 schemes:
   - https
   - http
-
-
-
-
-
-
-
-
-
-
-

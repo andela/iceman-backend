@@ -6,6 +6,7 @@ const secret = process.env.JWTSECRET;
 
 const verifyUser = (req, res, next) => {
   const { token } = req.headers;
+
   try {
     if (!token) {
       return res.status(403).json({
@@ -14,6 +15,7 @@ const verifyUser = (req, res, next) => {
       });
     }
     const decoded = jwt.verify(token, secret);
+
     if (decoded) {
       req.decoded = decoded;
       return next();
@@ -21,7 +23,7 @@ const verifyUser = (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       status: 401,
-      error: 'Access Denied',
+      error: 'Access Denied, Invalid or Expired Token',
     });
   }
 };

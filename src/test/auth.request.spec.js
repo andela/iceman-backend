@@ -30,6 +30,14 @@ describe('TRIP REQUEST ROUTE', () => {
 
       res.should.have.status(200);
       res.body.should.be.an('object');
+      res.body.should.have.property('status').eql('success');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('triptype');
+      res.body.data.should.have.property('traveldate');
+      res.body.data.should.have.property('returndate');
+      res.body.data.should.have.property('reason');
+      res.body.data.should.have.property('accommodation');
     });
 
     it('should deny user access when not logged in', async () => {
@@ -39,9 +47,10 @@ describe('TRIP REQUEST ROUTE', () => {
 
       res.should.have.status(403);
       res.body.should.be.an('object');
+      res.body.error.should.equal('Authentication failed, please login');
     });
 
-    it('should not update a trip that has been accepted or rejected', async () => {
+    it('should not update a trip that has been accepted', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/request/2`)
         .set('token', userToken)
@@ -49,6 +58,18 @@ describe('TRIP REQUEST ROUTE', () => {
 
       res.should.have.status(400);
       res.body.should.be.an('object');
+      res.body.error.should.equal('Request has been accepted. cannot edit');
+    });
+
+    it('should not update a trip that has been rejected', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/request/3`)
+        .set('token', userToken)
+        .send(requestDetails);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Request has been rejected. cannot edit');
     });
 
     it('should not throw not found error when request does not exist', async () => {
@@ -59,7 +80,9 @@ describe('TRIP REQUEST ROUTE', () => {
 
       res.should.have.status(400);
       res.body.should.be.an('object');
+      res.body.error.should.equal('Trip request not found');
     });
+
     it('should deny access when token is invalid', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/request/1`)
@@ -68,6 +91,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
       res.should.have.status(401);
       res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, Invalid or Expired Token');
     });
 
     it('should not update when source is not provided', async () => {

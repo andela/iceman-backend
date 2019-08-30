@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
 /**
  * Helper class
  */
@@ -61,8 +60,19 @@ export default class Helper {
    */
   static genToken(payloader) {
     const secret = process.env.JWTSECRET;
-    const token = jwt.sign(payloader, secret, { expiresIn: '12h' });
+    const token = jwt.sign(payloader, secret, { expiresIn: '1hr' });
 
     return token;
+  }
+
+  /**
+   * Method authenticate token
+   * @param {string} token - token
+   * @returns {string} - user details
+   */
+  static verifyToken(token) {
+    const verify = jwt.verify(token, process.env.JWTSECRET, (err, decoded) => decoded);
+
+    return verify;
   }
 }

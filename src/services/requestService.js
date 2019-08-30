@@ -5,8 +5,8 @@ import { Request } from '../models';
  */
 export default class RequestService {
   /**
-  *update trip rquest
-  * @param {Number} id - request id
+  * update trip rquest
+  * @param {number} id - request id
   * @param {object} data - request object
   * @return {object} - updated request
   */
@@ -17,8 +17,8 @@ export default class RequestService {
     const { status } = userRequest;
 
     if (status !== 'pending') throw new Error(`Request has been ${status}. cannot edit`);
-
     const updatedRequest = await Request.update(data, { where: { id }, returning: true });
+
     return updatedRequest[1][0].dataValues;
   }
 }

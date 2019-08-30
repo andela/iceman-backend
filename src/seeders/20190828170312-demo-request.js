@@ -16,7 +16,8 @@ const demoRequest = (id, status) => ({
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.bulkInsert('Requests', [
     demoRequest(1, 'pending'),
-    demoRequest(2, 'accepted')
+    demoRequest(2, 'accepted'),
+    demoRequest(3, 'rejected')
   ], {}),
 
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Requests', null, {})

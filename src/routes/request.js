@@ -6,7 +6,9 @@ import verifyUser from '../middlewares/auth';
 
 const router = Router();
 
-router.patch('/request/:id', validate(requestSchema, 'body'), verifyUser, requestController.updateRequest);
+const { update } = requestController;
+
+router.patch('/:id', validate(requestSchema, 'body'), verifyUser, update);
 
 
 export default router;

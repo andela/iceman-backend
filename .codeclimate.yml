@@ -33,7 +33,7 @@ checks:
     config:
       threshold: 4
   similar-code:
-    enabled: true
+    enabled: false
     config:
       threshold: #language-specific defaults. overrides affect all languages.
   identical-code:
@@ -51,6 +51,7 @@ exclude_patterns:
   - 'src/database'
   - 'src/docs'
   - 'src/migrations'
+  - 'src/seeders'
   - 'src/models'
   - 'src/models'
   - 'dist/'
