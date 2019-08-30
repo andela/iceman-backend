@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Op } from 'sequelize';
 import Helper from '../utils/helpers';
 import { User } from '../models';
+import Response from '../utils/response';
 
 /**
  * Class for managing passport strategies
@@ -58,7 +59,7 @@ export default class PassportController {
 
       return done(null, Helper.omitFields(result.dataValues, ['password', 'social_id']));
     } catch (error) {
-      return new Error(error);
+      Response.error(error);
     }
   }
 }
