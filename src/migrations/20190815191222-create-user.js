@@ -8,14 +8,16 @@ module.exports = {
     },
     first_name: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
+
     },
     middle_name: {
       type: Sequelize.STRING
     },
     last_name: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
+
     },
     email: {
       type: Sequelize.STRING,
