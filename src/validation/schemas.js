@@ -41,6 +41,36 @@ export const verifyEmail = Joi.object().keys({
     .required()
     .error(() => ({
       message: 'Email must be a valid email'
+    }))
+});
+
+/**
+ * Return trip validation
+ */
+export const returnTrip = Joi.object().keys({
+  origin: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Origin is required'
+    })),
+  destination: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Destination is required'
+    })),
+  travelDate: Joi.string().regex(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/).required()
+    .error(() => ({
+      message: 'Invalid travel date format (e.g day/month/year)',
+    })),
+  returnDate: Joi.string().regex(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/).required()
+    .error(() => ({
+      message: 'Invalid return date format (e.g day/month/year)',
+    })),
+  reason: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Reason is required'
+    })),
+  accommodation: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Accommodation is required'
     })),
 });
 
@@ -84,7 +114,7 @@ export const requestSchema = Joi.object().keys({
   destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
   travelDate: Joi.date().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
   returnDate: Joi.date(),
-  reason: Joi.string(),
+  reason: Joi.string().error(() => ({ message: 'Reason is required' })),
   status: Joi.string(),
-  accommodation: Joi.string()
+  accommodation: Joi.string().error(() => ({ message: 'Accommodation is required' }))
 });
