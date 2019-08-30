@@ -80,7 +80,7 @@ describe('/api/v1/auth', () => {
         .post(`${URL_PREFIX}/login`)
         .set('Content-Type', 'application/json')
         .send(Helper.pickFields(user, ['email', 'password']));
-      console.log(res);
+
       res.should.have.status(200);
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');

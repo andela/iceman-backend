@@ -91,7 +91,7 @@ export default class Helper {
     }
     return user;
   }
-  
+
   /**
    * Method authenticate token
    * @param {string} token - token
