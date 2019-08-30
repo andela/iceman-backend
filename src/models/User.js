@@ -1,3 +1,4 @@
+/* eslint-disable arrow-parens */
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
@@ -11,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
       first_name: {
         type: DataTypes.STRING,
         allowNull: false,
-
       },
       last_name: {
         type: DataTypes.STRING,
@@ -30,23 +30,21 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      is_admin: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      is_verified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
+      roleId: {
+        type: DataTypes.INTEGER,
+        defaultValue: 6,
       },
       reset_token: {
         type: DataTypes.STRING
       },
     },
-    { },
   );
   User.associate = (models) => {
     User.hasMany(models.Request, {
       foreignKey: 'userId'
+    });
+    User.belongsTo(models.Role, {
+      foreignKey: 'roleId'
     });
   };
   return User;

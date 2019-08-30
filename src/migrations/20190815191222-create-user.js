@@ -9,12 +9,10 @@ module.exports = {
     first_name: {
       type: Sequelize.STRING,
       allowNull: false,
-
     },
     last_name: {
       type: Sequelize.STRING,
       allowNull: false,
-
     },
     email: {
       type: Sequelize.STRING,
@@ -28,13 +26,9 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false
     },
-    is_verified: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false,
-    },
-    is_admin: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false
+    roleId: {
+      type: Sequelize.INTEGER,
+      defaultValue: 6,
     },
     reset_token: {
       type: Sequelize.STRING

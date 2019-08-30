@@ -5,6 +5,7 @@ import sinon from 'sinon';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
+import db from '../models';
 
 chai.use(chaiHttp);
 chai.should();
@@ -13,8 +14,42 @@ let send;
 let userToken;
 
 const URL_PREFIX = '/api/v1/auth';
-
 const apiEndpoint = '/api/v1/auth/login';
+const insertRoles = [
+  {
+    id: 1,
+    type: 'super_admin'
+  },
+  {
+    id: 2,
+    type: 'travel_admin',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 3,
+    type: 'travel_team_member',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 4,
+    type: 'manager',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 5,
+    type: 'user',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 6,
+    type: 'guest',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }];
 
 const user = {
   first_name: 'Samuel',
@@ -37,10 +72,14 @@ describe('/api/v1/auth', () => {
     await TestHelper.destroyModel('User');
   });
 
+  before(async () => {
+    await db.Role.bulkCreate(insertRoles);
+  });
+
   describe('POST /login', () => {
     before(async () => {
       verifiedUser = await TestHelper.createUser({
-        ...user, is_verified: true
+        ...user, roleId: 5
       });
 
       notVerifiedUser = await TestHelper.createUser({
@@ -86,8 +125,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('roleId');
     });
   });
 
@@ -121,8 +159,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('roleId');
     });
   });
 
