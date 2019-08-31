@@ -1,6 +1,9 @@
 import RequestService from '../services/requestService';
 import Response from '../utils/response';
 
+const { success, badRequest } = Response;
+const { updateRequest } = RequestService;
+
 /**
  * Class for Requests
  */
@@ -18,11 +21,11 @@ export default class RequestController {
     try {
       if (data.tripType !== 'return') data.returnDate = null;
 
-      const result = await RequestService.updateRequest(Number(id), data);
+      const result = await updateRequest(Number(id), data);
 
-      Response.success(res, result);
+      success(res, result);
     } catch ({ message: error }) {
-      Response.badRequest(res, error);
+      badRequest(res, error);
     }
   }
 }
