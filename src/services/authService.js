@@ -1,10 +1,11 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { config } from 'dotenv';
 import Helper from '../utils/helpers';
 import { User } from '../models';
 import sendmail from './emailService';
 
-
+config();
 const jwtSecret = process.env.JWTSECRET;
 
 /**
