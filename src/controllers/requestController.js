@@ -1,4 +1,5 @@
 import RequestServices from '../services/requestService';
+import Response from '../utils/response';
 
 /**
  * Class for managing trip request
@@ -12,9 +13,10 @@ export default class RequestController {
   static async multiCityRequest(req, res) {
     try {
       const data = await RequestServices.multiCityRequest(req);
-      res.status(200).json({ status: 'success', data });
+
+      Response.success(res, data);
     } catch ({ message: error }) {
-      res.status(400).json({ status: 'success', error });
+      Response.badRequest(res, error);
     }
   }
 }

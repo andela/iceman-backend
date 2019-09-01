@@ -8,7 +8,7 @@ import { multiRequest, missingRequiredField } from './testData/sampleData';
 chai.use(chaiHttp);
 chai.should();
 
-const URL_PREFIX = '/api/v1/request';
+const URL_PREFIX = '/api/v1/requests';
 let loginUser;
 
 const user = {
@@ -18,7 +18,7 @@ const user = {
   password: 'Ice5m5am0a843r03'
 };
 
-describe('/api/v1/request', () => {
+describe('/api/v1/requests', () => {
   before((done) => {
     TestHelper.destroyModel('User');
     done();
@@ -44,11 +44,12 @@ describe('/api/v1/request', () => {
         .send(multiRequest);
 
       res.should.have.status(200);
-      res.body.data.request.should.have.property('destination');
-      res.body.data.request.should.have.property('source');
-      res.body.data.request.should.have.property('type', 'multi-city');
-      res.body.data.request.should.have.property('return_date');
-      res.body.data.request.should.have.property('travel_date');
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('type', 'multi-city');
+      res.body.data.should.have.property('return_date');
+      res.body.data.should.have.property('travel_date');
+      res.body.data.should.have.property('user_id');
     });
 
     it('should return 400 if pass empty requests', async () => {
@@ -56,7 +57,7 @@ describe('/api/v1/request', () => {
         .post(`${URL_PREFIX}/multi-city`)
         .set('Content-Type', 'application/json')
         .set('token', loginUser.body.data.token)
-        .send([]);
+        .send({});
 
       res.should.have.status(400);
     });

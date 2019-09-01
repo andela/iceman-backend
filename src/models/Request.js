@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     destination: {
-      type: DataTypes.STRING,
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false
     },
     type: {
@@ -39,10 +39,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'user_id',
         onDelete: 'CASCADE'
       }
-    });
-    Request.hasMany(models.MultiRequest, {
-      foreignKey: 'request_id',
-      onDelete: 'CASCADE'
     });
   };
   return Request;

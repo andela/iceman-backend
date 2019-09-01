@@ -1,12 +1,17 @@
 import express from 'express';
 import AuthController from '../controllers/authController';
 import PassportController from '../controllers/passportController';
-import { signUpSchema, passwordResetSchema, verifyEmail } from '../validation/schemas';
+import {
+  signUpSchema,
+  passwordResetSchema,
+  verifyEmail,
+  LogInSchema
+} from '../validation/schemas';
 import validate from '../validation/validator';
 
 const router = express.Router();
 
-router.post('/login', AuthController.loginUser);
+router.post('/login', validate(LogInSchema, 'body'), AuthController.loginUser);
 router.get('/facebook', PassportController.authenticate('facebook', ['email', 'public_profile']));
 router.get('/facebook/callback', PassportController.callback('facebook'));
 router.get('/google', PassportController.authenticate('google', ['email', 'profile']));

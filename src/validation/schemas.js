@@ -43,3 +43,31 @@ export const verifyEmail = Joi.object().keys({
       message: 'Email must be a valid email'
     })),
 });
+
+/**
+ * user schema to be used for validating user login credential
+ */
+export const LogInSchema = Joi.object().keys({
+  email: Joi.string().email().trim().lowercase()
+    .required()
+    .error(() => ({
+      message: 'Email must be a valid email address e.g example@mail.com or example@mail.co.uk',
+    })),
+  password: Joi.string().regex(/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{8,20}$/).required()
+    .error(() => ({
+      message: 'Password must contain at least one letter, at least one number, and be atleast 8 digits long',
+    })),
+});
+
+/**
+ * Verify Email schema to be used for resending verification link
+ */
+export const multiCitySchema = Joi.object().keys({
+  source: Joi.string().required().error(() => ({ message: 'Please provide your current location' })),
+  type: Joi.string().required().error(() => ({ message: 'Please select a valid request type' })),
+  destination: Joi.array().items(Joi.string()).required().error(() => ({ message: 'Please provide multiple destination' })),
+  travel_date: Joi.string().required().error(() => ({ message: 'Please provide date of travel' })),
+  return_date: Joi.string().required().error(() => ({ message: 'Please provide return date' })),
+  reason: Joi.string(),
+  accommodation: Joi.string()
+});

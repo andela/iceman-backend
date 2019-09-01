@@ -12,7 +12,7 @@ module.exports = {
       allowNull: false
     },
     destination: {
-      type: Sequelize.STRING,
+      type: Sequelize.ARRAY(Sequelize.STRING),
       allowNull: false
     },
     travel_date: {
@@ -47,11 +47,11 @@ module.exports = {
       type: Sequelize.STRING,
       defaultValue: 'pending',
     },
-    createdat: {
+    createdAt: {
       allowNull: false,
       type: Sequelize.DATE
     },
-    updatedat: {
+    updatedAt: {
       allowNull: false,
       type: Sequelize.DATE
     },

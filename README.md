@@ -35,14 +35,11 @@ docker run -p 3000:3000 iceman-backend
 <table>
 <tr><th>HTTP VERB</th><th>ENDPOINTS</th><th>DESCRIPTION</th></tr>
 <tr><td>POST</td><td>/api/v1/auth/signup</td><td>Creates user account</td></tr>
-<<<<<<< HEAD
 <tr><td>POST</td><td>/api/v1/auth/signup</td><td>Login user account</td></tr>
 <tr><td>GET</td><td>/api/v1/auth/verify?activate&&id</td><td>Creates user account</td></tr>
-=======
 <tr><td>POST</td><td>/api/v1/auth/login</td><td>Logs in user</td></tr>
 <tr><td>GET</td><td>/api/v1/auth/facebook</td><td>Authenticate user using Facebook</td></tr>
 <tr><td>GET</td><td>/api/v1/auth/google</td><td>Authenticate user using Google</td></tr>
-<tr><td>POST</td><td>/api/v1/request/multi-city</td><td>Allow user to make multi city request</td></tr>
->>>>>>> ft(multicity): made modification to the models
+<tr><td>POST</td><td>/api/v1/requests/multi-city</td><td>Allow user to make multi city request</td></tr>
 
 </table>

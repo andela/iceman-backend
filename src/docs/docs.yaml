@@ -71,11 +71,11 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthReponse'
-      
+
   /auth/verify?token:
     get:
       tags:
-        - auth
+        - Auth
       summary: Verifies User Email
       consumes:
         - application/json
@@ -100,7 +100,7 @@ paths:
   /auth/resend_verification_link:
     post:
       tags:
-        - auth
+        - Auth
       summary: Resend Verification Link
       consumes:
         - application/json
@@ -195,27 +195,29 @@ paths:
           description: Multiple Request Destination
           required: true
           schema:
-            type: array
-            items:
-              properties:
-                source:
+            properties:
+              source:
+                type: string
+                required: true
+              destination:
+                type: array
+                items:
                   type: string
-                  required: true
-                destination:
-                  type: string
-                  required: true
-                travel_date:
-                  type: string
-                  format: date
-                  required: true
-                return_date:
-                  type: string
-                  format: date
-                  required: true
-                reason:
-                  type: string
-                accommodation:
-                  type: string
+              type:
+                type: string
+                required: true
+              travel_date:
+                type: string
+                format: date
+                required: true
+              return_date:
+                type: string
+                format: date
+                required: true
+              reason:
+                type: string
+              accommodation:
+                type: string
       responses:
         400:
           description: The request cannot be empty
@@ -250,6 +252,7 @@ definitions:
           is_verified:
             type: boolean
             default: false
+
   MultiCityReponse:
     properties:
       status:
@@ -257,55 +260,33 @@ definitions:
       data:
         type: object
         properties:
-          request:
-            type: object
-            properties:
-              id:
-                type: integer
-              source:
-                type: string
-                required: true
-              destination:
-                type: string
-                required: true
-              travel_date:
-                type: string
-                format: date
-                required: true
-              return_date:
-                type: string
-                format: date
-                required: true
-              reason:
-                type: string
-              accommodation:
-                type: string
-              user_id:
-                type: integer
-          multiRequest:
+          id:
+            type: integer
+          source:
+            type: string
+            required: true
+          destination:
             type: array
             items:
-              properties:
-                source:
-                  type: string
-                  required: true
-                destination:
-                  type: string
-                  required: true
-                travel_date:
-                  type: string
-                  format: date
-                  required: true
-                return_date:
-                  type: string
-                  format: date
-                  required: true
-                reason:
-                  type: string
-                accommodation:
-                  type: string
-                request_id:
-                  type: integer
+              type: string
+            required: true
+          type:
+            type: string
+          travel_date:
+            type: string
+            format: date
+            required: true
+          return_date:
+            type: string
+            format: date
+            required: true
+          reason:
+            type: string
+          accommodation:
+            type: string
+          user_id:
+            type: integer
+
 schemes:
   - https
   - http

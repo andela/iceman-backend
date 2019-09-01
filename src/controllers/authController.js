@@ -59,7 +59,7 @@ export default class AuthController {
 
       await AuthService.verificationLink(data);
 
-      res.status(201).json({ status: 'success', data });
+      Response.success(res, data, 201);
     } catch ({ message: error }) {
       Response.badRequest(res, error, 409);
     }
@@ -75,9 +75,9 @@ export default class AuthController {
       const { token } = req.query;
       const isVerified = await AuthService.verify(token);
 
-      return res.status(200).json({ status: 'success', message: isVerified });
+      Response.successMessage(res, isVerified);
     } catch ({ message: error }) {
-      res.status(400).json({ status: 'error', error });
+      Response.badRequest(res, error);
     }
   }
 
@@ -89,9 +89,9 @@ export default class AuthController {
     try {
       const resend = await AuthService.verificationLink(body);
 
-      return res.status(200).json({ status: 'success', message: resend });
+      Response.successMessage(res, resend);
     } catch ({ message: error }) {
-      res.status(400).json({ status: 'error', error });
+      Response.badRequest(res, error);
     }
   }
 }

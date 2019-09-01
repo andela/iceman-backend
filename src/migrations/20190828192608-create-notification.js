@@ -20,14 +20,14 @@ module.exports = {
     date: {
       type: Sequelize.DATE
     },
-    createdat: {
+    createdAt: {
       allowNull: false,
       type: Sequelize.DATE
     },
-    updatedat: {
+    updatedAt: {
       allowNull: false,
       type: Sequelize.DATE
     },
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Notifications')
+  down: queryInterface => queryInterface.dropTable('Notifications')
 };

@@ -57,6 +57,15 @@ describe('/api/v1/auth', () => {
       res.should.have.status(400);
     });
 
+    it('should return 400 if passed an empty object', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/login`)
+        .set('Content-Type', 'application/json')
+        .send({ });
+
+      res.should.have.status(400);
+    });
+
     it('should return 400 if the user account is not yet verified', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/login`)
