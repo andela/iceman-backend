@@ -1,4 +1,3 @@
-
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Requests', {
     id: {
@@ -7,19 +6,7 @@ module.exports = {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-<<<<<<< HEAD
     source: {
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-    source: {
-=======
-    origin: {
->>>>>>> feature(return-trip):add user return trip
-=======
-    source: {
->>>>>>> implementation of feedback
->>>>>>> implementation of feedback
       type: Sequelize.STRING,
       allowNull: false
     },
