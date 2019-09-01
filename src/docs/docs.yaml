@@ -6,7 +6,7 @@ info:
   title: Barefoot Nomad
 
 tags:
-  - name: auth
+  - name: Auth
     description: Authentication routes
 host: localhost:3000
 basePath: /api/v1
@@ -14,7 +14,7 @@ paths:
   /auth/login:
     post:
       tags:
-        - auth
+        - Auth
       summary: Logs in a user
       consumes:
         - application/json
@@ -35,6 +35,8 @@ paths:
       responses:
         400:
           description: Invalid Credentials
+        500:
+          description: Unexpected Error
         200:
           description: Success
           schema:
@@ -42,7 +44,7 @@ paths:
   /auth/signup:
     post:
       tags:
-        - auth
+        - Auth
       summary: Create User Account
       consumes:
         - application/json
@@ -71,11 +73,89 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthReponse'
-      
+  /auth/facebook:
+    get:
+      tags:
+        - Auth
+      summary: Logs in a user using facebook
+      produces:
+        - application/json
+      responses:
+        500:
+          description: Unexpected Error
+        400:
+          description: Invalid Credentials
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+  /auth/facebook:
+    get:
+      tags:
+        - Auth
+      summary: Logs in a user using facebook
+      produces:
+        - application/json
+      responses:
+        400:
+          description: Invalid Credentials
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+  /auth/google:
+    get:
+      tags:
+        - Auth
+      summary: Logs in a user using google
+      produces:
+        - application/json
+      responses:
+        500:
+          description: Unexpected Error
+        400:
+          description: Invalid Credentials
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: Create User Account
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User details
+          required: true
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        409:
+          description: Email already exists
+        201:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+
   /auth/verify?token:
     get:
       tags:
-        - auth
+        - Auth
       summary: Verifies User Email
       consumes:
         - application/json
@@ -96,11 +176,10 @@ paths:
           description: Error
         200:
           description: Success
-
   /auth/resend_verification_link:
     post:
       tags:
-        - auth
+        - Auth
       summary: Resend Verification Link
       consumes:
         - application/json
@@ -124,7 +203,7 @@ paths:
   /auth/forgot_password:
     post:
       tags:
-        - auth
+        - Auth
       summary: sends change mail paswword
       consumes:
         - application/json
@@ -148,7 +227,7 @@ paths:
   /auth/reset_password/{token}:
     patch:
       tags:
-        - auth
+        - Auth
       summary: changes user password
       consumes:
         - application/json
