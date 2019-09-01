@@ -4,6 +4,9 @@ import { config } from 'dotenv';
 import Helper from '../utils/helpers';
 import { User } from '../models';
 import sendmail from './emailService';
+import Response from '../utils/response';
+
+const { error } = Response;
 
 config();
 const jwtSecret = process.env.JWTSECRET;
@@ -20,12 +23,12 @@ export default class AuthService {
   static async login(email, password) {
     const result = await User.findOne({ where: { email, is_verified: true } });
 
-    if (!result) throw new Error('The account does not exists or not yet verified');
+    if (!result) error('The account does not exists or not yet verified');
 
     const { dataValues: user } = result;
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) throw new Error('Please provide valid login credentials');
+    if (!isPasswordValid) error('Please provide valid login credentials');
 
     const payload = { id: user.id, is_admin: user.is_admin };
     const token = await jwt.sign(payload, jwtSecret, { expiresIn: '1hr' });
@@ -41,7 +44,7 @@ export default class AuthService {
   static async forgotPassword(email) {
     const result = await User.findOne({ where: { email } });
 
-    if (!result) throw new Error('Email not found');
+    if (!result) error('Email not found');
 
     const { dataValues: { first_name: name, } } = result;
     const token = await jwt.sign({
@@ -75,7 +78,7 @@ export default class AuthService {
   static async resetPassword(token, password) {
     const { email } = await jwt.verify(token, jwtSecret);
     const { dataValues: { reset_token: tokenSaved } } = await User.findOne({ where: { email } });
-    if (token !== tokenSaved) throw new Error('Invalid token');
+    if (token !== tokenSaved) error('Invalid token');
 
     const newPassword = await Helper.encryptor(password);
     const options = {
@@ -96,7 +99,7 @@ export default class AuthService {
     const { email, password } = userDetails;
     const checkEmail = await User.findOne({ where: { email } });
 
-    if (checkEmail) throw new Error(`Email '${email}' already exists`);
+    if (checkEmail) error(`Email '${email}' already exists`);
 
     userDetails.password = await Helper.encryptor(password);
 
@@ -130,14 +133,14 @@ export default class AuthService {
     const isExpire = Helper.verifyToken(token);
 
     if (!isExpire) {
-      throw new Error('Expired Verification Link, resend verification Link');
+      error('Expired Verification Link, resend verification Link');
     }
 
     const isUser = await User.findOne({ where: { id: isExpire.id } });
 
-    if (!isUser) throw new Error('User not find');
+    if (!isUser) error('User not find');
 
-    if (isUser.dataValues.is_verified) throw new Error('User Email is Already Verified');
+    if (isUser.dataValues.is_verified) error('User Email is Already Verified');
 
     await User.update({ is_verified: true }, { where: { id: isExpire.id } });
 
@@ -152,9 +155,9 @@ export default class AuthService {
     const { email } = body;
     const isUser = await User.findOne({ where: { email } });
 
-    if (!isUser) throw new Error('User not found');
+    if (!isUser) error('User not found');
 
-    if (isUser.dataValues.is_verified) throw new Error('User Email is Already Verified');
+    if (isUser.dataValues.is_verified) error('User Email is Already Verified');
 
     const token = Helper.genToken({ id: isUser.dataValues.id });
     const url = `${process.env.APP_URL}/verify?token=${token}`;
