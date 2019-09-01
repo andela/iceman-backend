@@ -38,13 +38,13 @@ describe('Request Trip', () => {
       token = res.body.data.token;
     });
 
-    it('should return 200 if return trip was created', async () => {
+    it('should return 201 if return trip was created', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/requests/return`)
         .set('token', token)
         .send(returnTrip);
 
-      res.should.have.status(200);
+      res.should.have.status(201);
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('source');
       res.body.data.should.have.property('destination');
