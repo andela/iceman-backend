@@ -10,7 +10,7 @@ chai.should();
 const URL_PREFIX = '/api/v1';
 
 const returnTrip = {
-  origin: 'Lagos',
+  source: 'Lagos',
   destination: 'Abuja',
   travelDate: '10/02/2019',
   returnDate: '01/01/2018',
@@ -38,14 +38,15 @@ describe('Request Trip', () => {
       token = res.body.data.token;
     });
 
-    it('should return 201 if return trip was created', async () => {
+    it('should return 200 if return trip was created', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/requests/return`)
         .set('token', token)
         .send(returnTrip);
 
-      res.should.have.status(201);
-      res.body.data.should.have.property('origin');
+      res.should.have.status(200);
+      res.body.data.should.have.property('id');
+      res.body.data.should.have.property('source');
       res.body.data.should.have.property('destination');
       res.body.data.should.have.property('travelDate');
       res.body.data.should.have.property('returnDate');
@@ -58,8 +59,8 @@ describe('Request Trip', () => {
         .set('token', token)
         .send(returnTrip);
 
-      res.should.have.status(409);
-      res.body.error.should.equal('Trip details already exist');
+      res.should.have.status(400);
+      res.body.error.should.equal('Trip details already exists');
     });
 
     it('should return 401 error if vaild token is not provided', async () => {
@@ -72,21 +73,21 @@ describe('Request Trip', () => {
       res.body.error.should.equal('Authorization failed, Please Login');
     });
 
-    it('should return 400 error if origin is not provided', async () => {
+    it('should return 400 error if source is not provided', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/requests/return`)
         .set('token', token)
         .send({ ...Helper.pickFields(returnTrip, ['destination', 'travelDate', 'returnDate', 'tripType', 'reason', 'accommodation']) });
 
       res.should.have.status(400);
-      res.body.error.should.equal('Origin is required');
+      res.body.error.should.equal('Source is required');
     });
 
     it('should return 400 error if destination is not provided', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/requests/return`)
         .set('token', token)
-        .send({ ...Helper.pickFields(returnTrip, ['origin', 'travelDate', 'returnDate', 'reason', 'accommodation']) });
+        .send({ ...Helper.pickFields(returnTrip, ['source', 'travelDate', 'returnDate', 'reason', 'accommodation']) });
 
       res.should.have.status(400);
       res.body.error.should.equal('Destination is required');
@@ -96,27 +97,27 @@ describe('Request Trip', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/requests/return`)
         .set('token', token)
-        .send({ ...Helper.pickFields(returnTrip, ['origin', 'destination', 'returnDate', 'reason', 'accommodation']) });
+        .send({ ...Helper.pickFields(returnTrip, ['source', 'destination', 'returnDate', 'reason', 'accommodation']) });
 
       res.should.have.status(400);
-      res.body.error.should.equal('Invalid travel date format (e.g day/month/year)');
+      res.body.error.should.equal('Travel date should be in YYYY-MM-DD format');
     });
 
     it('should return 400 error if return date is not provided', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/requests/return`)
         .set('token', token)
-        .send({ ...Helper.pickFields(returnTrip, ['origin', 'destination', 'travelDate', 'reason', 'accommodation']) });
+        .send({ ...Helper.pickFields(returnTrip, ['source', 'destination', 'travelDate', 'reason', 'accommodation']) });
 
       res.should.have.status(400);
-      res.body.error.should.equal('Invalid return date format (e.g day/month/year)');
+      res.body.error.should.equal('Return date should be in YYYY-MM-DD format');
     });
 
     it('should return 400 error if reason is not provided', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/requests/return`)
         .set('token', token)
-        .send({ ...Helper.pickFields(returnTrip, ['origin', 'destination', 'travelDate', 'returnDate', 'accommodation']) });
+        .send({ ...Helper.pickFields(returnTrip, ['source', 'destination', 'travelDate', 'returnDate', 'accommodation']) });
 
       res.should.have.status(400);
       res.body.error.should.equal('Reason is required');
@@ -126,7 +127,7 @@ describe('Request Trip', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/requests/return`)
         .set('token', token)
-        .send({ ...Helper.pickFields(returnTrip, ['origin', 'destination', 'travelDate', 'returnDate', 'reason']) });
+        .send({ ...Helper.pickFields(returnTrip, ['source', 'destination', 'travelDate', 'returnDate', 'reason']) });
 
       res.should.have.status(400);
       res.body.error.should.equal('Accommodation is required');

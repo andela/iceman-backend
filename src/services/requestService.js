@@ -70,7 +70,6 @@ export default class RequestService {
   }
 
   /**
-<<<<<<< HEAD
    * @param {object} body - arrays of request object
    * @returns {object} obej - return object
    */
@@ -80,8 +79,9 @@ export default class RequestService {
     if (result.length === 0) error('You\'ve not make any requests');
 
     return result;
-=======
-     *
+  }
+
+  /**
      * @param {object} details - user trip details
      * @returns {object} trip - details
      */
@@ -101,6 +101,5 @@ export default class RequestService {
     const { dataValues } = await Request.create({ ...body, userId: id });
 
     return dataValues;
->>>>>>> feature(return-trip):add user return trip
   }
 }
