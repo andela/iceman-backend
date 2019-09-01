@@ -24,7 +24,7 @@ describe('TRIP REQUEST ROUTE', () => {
   describe('Edit Request', () => {
     it('should update an open trip request when user is logged in and required details are provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .set('token', userToken)
         .send(requestDetails);
 
@@ -42,7 +42,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should deny user access when not logged in', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .send(requestDetails);
 
       res.should.have.status(403);
@@ -52,7 +52,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update a trip that has been accepted', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/2`)
+        .patch(`${URL_PREFIX}/requests/22`)
         .set('token', userToken)
         .send(requestDetails);
 
@@ -63,7 +63,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update a trip that has been rejected', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/3`)
+        .patch(`${URL_PREFIX}/requests/33`)
         .set('token', userToken)
         .send(requestDetails);
 
@@ -85,7 +85,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should deny access when token is invalid', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .set('token', 'invalid token')
         .send(requestDetails);
 
@@ -96,7 +96,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when source is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .set('token', userToken)
         .send({
           source: ' ',
@@ -115,7 +115,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when destination is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .set('token', userToken)
         .send({
           source: 'lagos ',
@@ -133,7 +133,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when trip type is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .set('token', userToken)
         .send({
           source: 'lagos ',
@@ -150,7 +150,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when travel date is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .set('token', userToken)
         .send({
           source: 'lagos ',
@@ -167,7 +167,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when reason is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .set('token', userToken)
         .send({
           source: 'lagos',
@@ -185,7 +185,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when accomodation is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .set('token', userToken)
         .send({
           source: 'lagos',
@@ -203,7 +203,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when dates are not well formatted', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1`)
+        .patch(`${URL_PREFIX}/requests/11`)
         .set('token', userToken)
         .send({
           source: 'lagos',
