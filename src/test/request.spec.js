@@ -59,7 +59,7 @@ describe('Request Trip', () => {
         .set('token', token)
         .send(returnTrip);
 
-      res.should.have.status(400);
+      res.should.have.status(409);
       res.body.error.should.equal('Trip details already exists');
     });
 
