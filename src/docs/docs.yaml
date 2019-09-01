@@ -173,7 +173,7 @@ paths:
           description: Email Not Found
         200:
           description: Success
-  /request/{id}:
+  /requests/{id}:
     patch:
       tags:
         - Requests
