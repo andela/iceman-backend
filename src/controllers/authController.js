@@ -60,7 +60,7 @@ export default class AuthController {
       const data = await AuthService.signup(body);
 
       await AuthService.verificationLink(data);
-      
+
       success(res, data, 201);
     } catch ({ message: error }) {
       badRequest(res, error, 409);

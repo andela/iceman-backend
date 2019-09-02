@@ -14,6 +14,9 @@ export default class RequestService {
    */
   static async getRequest(id) {
     const userRequest = await Request.findOne({ where: { id }, returning: true });
+
+    if (!userRequest) error('Trip request not found');
+
     return userRequest;
   }
 

@@ -21,9 +21,6 @@ export default class RequestController {
 
     try {
       const userRequest = await getRequest(requestId);
-
-      if (!userRequest) error('Trip request not found');
-
       const { userId } = userRequest;
 
       if (userId !== id) error('You are not allowed to edit this request');
