@@ -252,11 +252,11 @@ describe('/api/v1/auth', () => {
 
   describe('Verify User email', () => {
     beforeEach(async () => {
-      send = sinon.stub(sgMail, 'send').resolves({});
+      send = await sinon.stub(sgMail, 'send').resolves({});
     });
 
     afterEach(async () => {
-      send.restore();
+      await send.restore();
     });
 
     it('should sign up a new user', async () => {

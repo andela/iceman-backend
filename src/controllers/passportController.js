@@ -25,13 +25,16 @@ export default class PassportController {
     return (req, res, next) => {
       passport.authenticate(provider, { session: false }, (err, user, info) => {
         if (err || !user) {
-          return Response.badRequest(res, 'Something is not right');
+          return res.status(400).json({
+            status: 'error',
+            error: 'Something is not right',
+          });
         }
 
         const payload = Helper.pickFields(user, ['id', 'is_admin']);
         const token = Helper.genToken(payload);
 
-        Response.success(res, { token, ...user });
+        return res.json({ status: 'success', data: { token, ...user } });
       })(req, res, next);
     };
   }
