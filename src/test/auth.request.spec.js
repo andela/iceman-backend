@@ -8,7 +8,9 @@ chai.should();
 
 const URL_PREFIX = '/api/v1';
 const payload = { id: 1, email: 'cleave@mail.com', is_admin: true };
+const payload2 = { id: 2, email: 'cleave2@mail.com', is_admin: true };
 const userToken = Helper.genToken(payload);
+const userToken2 = Helper.genToken(payload2);
 
 const requestDetails = {
   source: ' lagos',
@@ -38,6 +40,28 @@ describe('TRIP REQUEST ROUTE', () => {
       res.body.data.should.have.property('returndate');
       res.body.data.should.have.property('reason');
       res.body.data.should.have.property('accommodation');
+    });
+
+    it('should throw not found error when request does not exist', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/requests/1144`)
+        .set('token', userToken)
+        .send(requestDetails);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Trip request not found');
+    });
+
+    it('should not be able to update the request of another user', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/requests/11`)
+        .set('token', userToken2)
+        .send(requestDetails);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You are not allowed to edit this request');
     });
 
     it('should deny user access when not logged in', async () => {
@@ -70,17 +94,6 @@ describe('TRIP REQUEST ROUTE', () => {
       res.should.have.status(400);
       res.body.should.be.an('object');
       res.body.error.should.equal('Request has been rejected. cannot edit');
-    });
-
-    it('should not throw not found error when request does not exist', async () => {
-      const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/457`)
-        .set('token', userToken)
-        .send(requestDetails);
-
-      res.should.have.status(400);
-      res.body.should.be.an('object');
-      res.body.error.should.equal('Trip request not found');
     });
 
     it('should deny access when token is invalid', async () => {

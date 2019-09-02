@@ -1,7 +1,7 @@
 import AuthService from '../services/authService';
 import Response from '../utils/response';
 
-const { success, badRequest } = Response;
+const { success, badRequest, successMessage } = Response;
 
 /**
  * Class for authenticating  users
@@ -77,7 +77,7 @@ export default class AuthController {
       const { token } = req.query;
       const isVerified = await AuthService.verify(token);
 
-      return res.status(200).json({ status: 'success', message: isVerified });
+      successMessage(res, isVerified);
     } catch ({ message: error }) {
       badRequest(res, error);
     }
@@ -91,7 +91,7 @@ export default class AuthController {
     try {
       const resend = await AuthService.verificationLink(body);
 
-      return res.status(200).json({ status: 'success', message: resend });
+      successMessage(res, resend);
     } catch ({ message: error }) {
       badRequest(res, error);
     }

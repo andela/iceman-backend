@@ -8,6 +8,16 @@ const { error } = Response;
  */
 export default class RequestService {
   /**
+   * Getting a request
+   * @param {number} id -request id
+   * @return {object} - request object
+   */
+  static async getRequest(id) {
+    const userRequest = await Request.findOne({ where: { id }, returning: true });
+    return userRequest;
+  }
+
+  /**
   * update trip rquest
   * @param {number} id - request id
   * @param {object} data - request object

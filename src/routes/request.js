@@ -8,7 +8,7 @@ const router = Router();
 
 const { update } = requestController;
 
-router.patch('/:id', validate(requestSchema, 'body'), verifyUser, update);
+router.patch('/:requestId', validate(requestSchema, 'body'), verifyUser, update);
 
 
 export default router;
