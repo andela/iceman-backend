@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import Response from './../utils/response';
+import Response from '../utils/response';
 
 const jwtSecret = process.env.JWTSECRET;
 
