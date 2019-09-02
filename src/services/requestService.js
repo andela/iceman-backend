@@ -32,7 +32,7 @@ export default class RequestService {
     if (!userRequest) error('Trip request not found');
     const { status } = userRequest;
 
-    if (status !== 'pending') error(`Request has been ${status}. cannot edit`);
+    if (status !== 'open') error(`Request has been ${status}. cannot edit`);
     const updatedRequest = await Request.update(data, { where: { id }, returning: true });
 
     return updatedRequest[1][0].dataValues;
