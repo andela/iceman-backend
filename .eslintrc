@@ -28,6 +28,7 @@
     "no-shadow": ["error", {
       "allow": ["req", "done", "res", "err"]
     }],
+    "arrow-parens": 0,
     "no-console": 0,
     "import/prefer-default-export": 0,
     "valid-jsdoc": [

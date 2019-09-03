@@ -114,7 +114,7 @@ export default class AuthService {
     const payload = Helper.pickFields(user, ['id', 'roleId']);
     const token = await Helper.genToken(payload);
 
-    return { token, ...Helper.omitFields(user, ['password']) };
+    return { token, ...Helper.omitFields(user, ['password', 'roleid', 'createdat', 'updatedat']) };
   }
 
   /**
@@ -178,5 +178,27 @@ export default class AuthService {
     await sendmail(userDetails);
 
     return 'Verification Link Sent';
+  }
+
+  /**
+   * @param {object} body user details
+   * @return {string} - success message;
+   */
+  static async assignUser(body) {
+    const { email, roleId } = body;
+    const checkRole = await Role.findOne({ where: { id: Number(roleId) } });
+    const getUser = await User.findOne({ where: { email }, include: [{ model: Role, attributes: ['type'] }] });
+
+    if (!getUser) throw new Error('User not found');
+
+    if (!checkRole) throw new Error('Role does not exit');
+
+    if (getUser.dataValues.Role.dataValues.type === 'guest') throw new Error('User email is not verified');
+
+    if (getUser.dataValues.roleId === roleId) throw new Error('User is already assigned this role');
+
+    await User.update({ roleId: Number(roleId) }, { where: { email } });
+
+    return 'User Role Assigned Successfully';
   }
 }

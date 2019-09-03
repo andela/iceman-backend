@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   },
   {});
-  // eslint-disable-next-line arrow-parens
   Role.associate = models => {
     Role.hasMany(models.User, {
       foreignKey: 'roleId'

@@ -6,6 +6,11 @@ import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
 import db from '../models';
+import insertRoles from '../utils/insertTestRoles';
+
+// console.log(insert, 'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+
+// const { insertRoles } = insert;
 
 chai.use(chaiHttp);
 chai.should();
@@ -15,41 +20,6 @@ let userToken;
 
 const URL_PREFIX = '/api/v1/auth';
 const apiEndpoint = '/api/v1/auth/login';
-const insertRoles = [
-  {
-    id: 1,
-    type: 'super_admin'
-  },
-  {
-    id: 2,
-    type: 'travel_admin',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 3,
-    type: 'travel_team_member',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 4,
-    type: 'manager',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 5,
-    type: 'user',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 6,
-    type: 'guest',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }];
 
 const user = {
   first_name: 'Samuel',

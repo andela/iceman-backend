@@ -96,4 +96,18 @@ export default class AuthController {
       badRequest(res, error);
     }
   }
+
+  /**
+   * @param {object} res response object
+   * @return {object} message
+   */
+  static async assignRole({ body }, res) {
+    try {
+      const assign = await AuthService.assignUser(body);
+
+      successMessage(res, assign);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
 }

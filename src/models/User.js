@@ -1,4 +1,3 @@
-/* eslint-disable arrow-parens */
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
