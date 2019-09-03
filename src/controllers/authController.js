@@ -1,7 +1,7 @@
 import AuthService from '../services/authService';
 import Response from '../utils/response';
 
-const { badRequest, success, successMessage } = Response;
+const { success, badRequest, successMessage } = Response;
 
 /**
  * Class for authenticating  users

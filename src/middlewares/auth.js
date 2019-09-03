@@ -1,19 +1,31 @@
 import jwt from 'jsonwebtoken';
-import Response from '../utils/response';
+import dotenv from 'dotenv';
 
-const jwtSecret = process.env.JWTSECRET;
+dotenv.config();
+const secret = process.env.JWTSECRET;
 
-export default async (req, res, next) => {
-  const token = req.header('token') || req.header('Authorization');
-
-  if (!token) return Response.badRequest(res, 'Access Denied, No token provided', 401);
+const verifyUser = (req, res, next) => {
+  const { token } = req.headers;
 
   try {
-    const payload = await jwt.verify(token, jwtSecret);
+    if (!token) {
+      return res.status(403).json({
+        status: 403,
+        error: 'Authentication failed, please login',
+      });
+    }
+    const decoded = jwt.verify(token, secret);
 
-    req.user = payload;
-    next();
+    if (decoded) {
+      req.decoded = decoded;
+      return next();
+    }
   } catch (error) {
-    Response.badRequest(res, 'Access Denied, Invalid token');
+    return res.status(401).json({
+      status: 401,
+      error: 'Access Denied, Invalid or Expired Token',
+    });
   }
 };
+
+export default verifyUser;

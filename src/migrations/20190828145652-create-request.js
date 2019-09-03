@@ -45,7 +45,7 @@ module.exports = {
     },
     status: {
       type: Sequelize.STRING,
-      defaultValue: 'pending',
+      defaultValue: 'open',
     },
     createdAt: {
       allowNull: false,

@@ -41,5 +41,5 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>GET</td><td>/api/v1/auth/facebook</td><td>Authenticate user using Facebook</td></tr>
 <tr><td>GET</td><td>/api/v1/auth/google</td><td>Authenticate user using Google</td></tr>
 <tr><td>POST</td><td>/api/v1/requests/multi-city</td><td>Allow user to make multi city request</td></tr>
-
+<tr><td>PATCH</td><td>/api/v1/request/:id</td><td>Updates trip requests</td></tr>
 </table>

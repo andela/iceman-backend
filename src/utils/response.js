@@ -15,7 +15,7 @@ export default class Response {
 
   /**
    * @param {object} res - response object
-   * @param {object} message - response message
+   * @param {object} message - success message
    * @param {integer} statusCode - status code
    * @param {string} status - status
    * @returns {object} response - success response
