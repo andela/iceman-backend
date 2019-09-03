@@ -45,8 +45,8 @@ export default class RequestController {
       const data = await RequestService.oneway(body);
 
       success(res, data, 201);
-    } catch ({ message: error }) {
-      badRequest(res, error, 409);
+    } catch ({ message: err }) {
+      badRequest(res, err, 409);
     }
   }
 }

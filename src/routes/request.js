@@ -6,7 +6,7 @@ import verifyUser from '../middlewares/auth';
 
 const router = Router();
 
-const { update,  } = requestController;
+const { update, oneWay } = requestController;
 
 router.post('/oneway', validate(oneWaySchema, 'body'), verifyUser, oneWay);
 router.patch('/:requestId', validate(requestSchema, 'body'), verifyUser, update);

@@ -78,12 +78,8 @@ export default class AuthService {
   static async resetPassword(token, password) {
     const { email } = await jwt.verify(token, jwtSecret);
     const { dataValues: { reset_token: tokenSaved } } = await User.findOne({ where: { email } });
-<<<<<<< HEAD
-    if (token !== tokenSaved) error('Invalid token');
-=======
 
-    if (token !== tokenSaved) throw new Error('Invalid token');
->>>>>>> bd59f5e06b65ebd7ff48fb97cce87d73f9d7db03
+    if (token !== tokenSaved) error('Invalid token');
 
     const newPassword = await Helper.encryptor(password);
     const options = {

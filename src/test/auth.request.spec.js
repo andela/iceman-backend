@@ -1,4 +1,4 @@
-import chai, { expect }  from 'chai';
+import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
@@ -8,8 +8,10 @@ chai.use(chaiHttp);
 chai.should();
 
 const URL_PREFIX = '/api/v1';
+const payload = { id: 1, email: 'cleave@mail.com', is_admin: true };
 const payload2 = { id: 2, email: 'cleave2@mail.com', is_admin: true };
-let userToken, verifiedUser, request1, request2, request3;
+let verifiedUser, request1, request2, request3;
+const userToken = Helper.genToken(payload);
 const userToken2 = Helper.genToken(payload2);
 
 const requestDetails = {
@@ -46,16 +48,6 @@ describe('TRIP REQUEST ROUTE', () => {
     verifiedUser = await TestHelper.createUser({
       ...user, is_verified: true
     });
-  });
-
-  before(async () => {
-    const res = await chai.request(app)
-      .post('/api/v1/auth/login')
-      .send({
-        email: 'cleave@mail.com',
-        password: 'cleave12345',
-      });
-    userToken = res.body.data.token;
   });
 
   before(async () => {
@@ -333,11 +325,11 @@ describe('TRIP REQUEST ROUTE', () => {
       it('should return 401 error if vaild token is not provided', async () => {
         const { text, status } = await chai.request(app)
           .post(`${URL_PREFIX}/requests/oneway`)
-          .set('token', 'token')
+          .set('token', 'invalid token')
           .send(oneWayTrip);
 
         expect(status).to.equal(401);
-        expect(JSON.parse(text).error).to.equal('jwt malformed');
+        expect(JSON.parse(text).error).to.equal('Access Denied, Invalid or Expired Token');
       });
 
       it('should return 201 if one way trip was created', async () => {
@@ -350,14 +342,14 @@ describe('TRIP REQUEST ROUTE', () => {
         expect(status).to.equal(201);
       });
 
-      it('should return 409 error if trip is already booked', async () => {
+      it('should return 409 if the trip is already booked', async () => {
         const { text, status } = await chai.request(app)
           .post(`${URL_PREFIX}/requests/oneway`)
           .set('token', userToken)
           .send(oneWayTrip);
 
-        expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
         expect(status).to.equal(409);
+        expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
       });
     });
   });
