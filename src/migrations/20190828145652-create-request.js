@@ -25,9 +25,8 @@ module.exports = {
       allowNull: true,
     },
     tripType: {
-      type: Sequelize.ENUM,
+      type: Sequelize.STRING,
       allowNull: false,
-      values: ['one-way', 'return'],
     },
     reason: {
       type: Sequelize.STRING
@@ -36,7 +35,8 @@ module.exports = {
       type: Sequelize.STRING
     },
     status: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      defaultValue: 'open'
     },
     userId: {
       type: Sequelize.INTEGER,

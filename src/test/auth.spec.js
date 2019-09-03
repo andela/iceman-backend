@@ -33,9 +33,8 @@ const user2 = {
 describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
-  before((done) => {
-    TestHelper.destroyModel('User');
-    done();
+  before(async () => {
+    await TestHelper.destroyModel('User');
   });
 
   describe('POST /login', () => {

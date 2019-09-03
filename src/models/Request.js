@@ -24,9 +24,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     tripType: {
-      type: DataTypes.ENUM,
+      type: DataTypes.STRING,
       allowNull: false,
-      values: ['one-way', 'return'],
     },
     reason: {
       type: DataTypes.STRING
@@ -35,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     status: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      defaultValue: 'open'
     },
   }, {});
   Request.associate = (models) => {

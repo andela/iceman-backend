@@ -1,6 +1,8 @@
 import AuthService from '../services/authService';
 import Response from '../utils/response';
 
+const { success, badRequest, successMessage } = Response;
+
 /**
  * Class for authenticating  users
  */
@@ -13,9 +15,9 @@ export default class AuthController {
     try {
       const data = await AuthService.login(email, password);
 
-      Response.success(res, data);
+      success(res, data);
     } catch ({ message: error }) {
-      Response.badRequest(res, error);
+      badRequest(res, error);
     }
   }
 
@@ -28,9 +30,9 @@ export default class AuthController {
     try {
       const data = await AuthService.forgotPassword(email);
 
-      Response.success(res, data);
+      success(res, data);
     } catch ({ message: error }) {
-      Response.badRequest(res, error);
+      badRequest(res, error);
     }
   }
 
@@ -43,9 +45,9 @@ export default class AuthController {
     try {
       const message = await AuthService.resetPassword(token, password);
 
-      Response.success(res, message);
+      success(res, message);
     } catch ({ message: error }) {
-      Response.badRequest(res, error);
+      badRequest(res, error);
     }
   }
 
@@ -59,9 +61,9 @@ export default class AuthController {
 
       await AuthService.verificationLink(data);
 
-      res.status(201).json({ status: 'success', data });
+      success(res, data, 201);
     } catch ({ message: error }) {
-      Response.badRequest(res, error, 409);
+      badRequest(res, error, 409);
     }
   }
 
@@ -75,9 +77,9 @@ export default class AuthController {
       const { token } = req.query;
       const isVerified = await AuthService.verify(token);
 
-      return res.status(200).json({ status: 'success', message: isVerified });
+      successMessage(res, isVerified);
     } catch ({ message: error }) {
-      res.status(400).json({ status: 'error', error });
+      badRequest(res, error);
     }
   }
 
@@ -89,9 +91,9 @@ export default class AuthController {
     try {
       const resend = await AuthService.verificationLink(body);
 
-      return res.status(200).json({ status: 'success', message: resend });
+      successMessage(res, resend);
     } catch ({ message: error }) {
-      res.status(400).json({ status: 'error', error });
+      badRequest(res, error);
     }
   }
 }
