@@ -1,15 +1,15 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
+import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
 
 chai.use(chaiHttp);
 chai.should();
 
 const URL_PREFIX = '/api/v1';
-const payload = { id: 1, email: 'cleave@mail.com', is_admin: true };
 const payload2 = { id: 2, email: 'cleave2@mail.com', is_admin: true };
-const userToken = Helper.genToken(payload);
+let userToken, verifiedUser, request1, request2, request3;
 const userToken2 = Helper.genToken(payload2);
 
 const requestDetails = {
@@ -22,11 +22,50 @@ const requestDetails = {
   accommodation: ' Lorem ipsum',
 };
 
+const user = {
+  first_name: 'cleave',
+  last_name: 'owhiroro',
+  email: 'cleave@mail.com',
+  password: 'cleave12345'
+};
+
 describe('TRIP REQUEST ROUTE', () => {
+  before(async () => {
+    await TestHelper.destroyModel('User');
+  });
+
+  before(async () => {
+    verifiedUser = await TestHelper.createUser({
+      ...user, is_verified: true
+    });
+  });
+
+  before(async () => {
+    const res = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'cleave@mail.com',
+        password: 'cleave12345',
+      });
+    userToken = res.body.data.token;
+  });
+
+  before(async () => {
+    request1 = await TestHelper.createRequest({
+      ...requestDetails, userId: 1
+    });
+    request2 = await TestHelper.createRequest({
+      ...requestDetails, userId: 1, status: 'accepted'
+    });
+    request3 = await TestHelper.createRequest({
+      ...requestDetails, userId: 1, status: 'rejected'
+    });
+  });
+
   describe('Edit Request', () => {
     it('should update an open trip request when user is logged in and required details are provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', userToken)
         .send(requestDetails);
 
@@ -44,7 +83,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should throw not found error when request does not exist', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/1144`)
+        .patch(`${URL_PREFIX}/requests/144`)
         .set('token', userToken)
         .send(requestDetails);
 
@@ -55,7 +94,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not be able to update the request of another user', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', userToken2)
         .send(requestDetails);
 
@@ -66,7 +105,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should deny user access when not logged in', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .send(requestDetails);
 
       res.should.have.status(403);
@@ -76,7 +115,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update a trip that has been accepted', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/22`)
+        .patch(`${URL_PREFIX}/requests/2`)
         .set('token', userToken)
         .send(requestDetails);
 
@@ -87,7 +126,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update a trip that has been rejected', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/33`)
+        .patch(`${URL_PREFIX}/requests/3`)
         .set('token', userToken)
         .send(requestDetails);
 
@@ -98,7 +137,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should deny access when token is invalid', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', 'invalid token')
         .send(requestDetails);
 
@@ -109,7 +148,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when source is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', userToken)
         .send({
           source: ' ',
@@ -128,7 +167,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when destination is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', userToken)
         .send({
           source: 'lagos ',
@@ -146,7 +185,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when trip type is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', userToken)
         .send({
           source: 'lagos ',
@@ -163,7 +202,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when travel date is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', userToken)
         .send({
           source: 'lagos ',
@@ -180,7 +219,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when reason is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', userToken)
         .send({
           source: 'lagos',
@@ -198,7 +237,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when accomodation is not provided', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', userToken)
         .send({
           source: 'lagos',
@@ -216,7 +255,7 @@ describe('TRIP REQUEST ROUTE', () => {
 
     it('should not update when dates are not well formatted', async () => {
       const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/requests/11`)
+        .patch(`${URL_PREFIX}/requests/1`)
         .set('token', userToken)
         .send({
           source: 'lagos',
