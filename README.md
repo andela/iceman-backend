@@ -37,5 +37,6 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>POST</td><td>/api/v1/auth/signup</td><td>Creates user account</td></tr>
 <tr><td>POST</td><td>/api/v1/auth/signup</td><td>Login user account</td></tr>
 <tr><td>GET</td><td>/api/v1/auth/verify?activate&&id</td><td>Creates user account</td></tr>
+<tr><td>PATCH</td><td>/api/v1/request/:id</td><td>Updates trip requests</td></tr>
 
 </table>

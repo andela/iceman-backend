@@ -24,6 +24,40 @@ export const signUpSchema = Joi.object().keys({
 });
 
 /**
+ * request schema to be used for validating user input
+ */
+export const requestSchema = Joi.object().keys({
+  source: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Source is required'
+    })),
+  destination: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Please select your destination'
+    })),
+  travelDate: Joi.date().required()
+    .error(() => ({
+      message: 'Travel date is required e.g YYYY-MM-DD',
+    })),
+  returnDate: Joi.date().allow(null).optional()
+    .error(() => ({
+      message: 'Return date should be in YYYY-MM-DD format',
+    })),
+  tripType: Joi.string().valid('oneway', 'return', 'multicity').lowercase().required()
+    .error(() => ({
+      message: 'Please select your trip type. Should be oneway, return or multicity',
+    })),
+  reason: Joi.string().lowercase().required()
+    .error(() => ({
+      message: 'Reason is required',
+    })),
+  accommodation: Joi.string().lowercase().required()
+    .error(() => ({
+      message: 'Accommodation is required',
+    }))
+});
+
+/**
  * password schema to be used for validating password change
  */
 export const passwordResetSchema = Joi.object().keys({
@@ -41,5 +75,31 @@ export const verifyEmail = Joi.object().keys({
     .required()
     .error(() => ({
       message: 'Email must be a valid email'
+    })),
+});
+
+/**
+ * Schema for one way trip request
+ */
+export const oneWaySchema = Joi.object().keys({
+  source: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Source is required'
+    })),
+  destination: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Please select your destination'
+    })),
+  travelDate: Joi.date().required()
+    .error(() => ({
+      message: 'Travel date is required e.g YYYY-MM-DD',
+    })),
+  reason: Joi.string().lowercase().required()
+    .error(() => ({
+      message: 'Reason is required',
+    })),
+  accommodation: Joi.string().lowercase().required()
+    .error(() => ({
+      message: 'Accommodation is required',
     })),
 });

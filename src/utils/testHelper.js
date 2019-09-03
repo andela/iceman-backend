@@ -32,10 +32,20 @@ export default class TestHelper {
 
   /**
    * Method to exclude properties from an object
+   * @param {object} data - object containing request details
+   * @returns {void}
+   */
+  static async createRequest(data) {
+    const request = { ...data };
+    await db.Request.create(request);
+  }
+
+  /**
+   * Method to exclude properties from an object
    * @param {string} modelName - model to droped
    * @returns {integer} - return 1 if success or 0 if failed
    */
   static destroyModel(modelName) {
-    db[modelName].destroy({ truncate: true, restartIdentity: true });
+    db[modelName].destroy({ truncate: true, cascade: true, restartIdentity: true });
   }
 }
