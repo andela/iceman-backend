@@ -37,6 +37,41 @@ export const profileSchema = Joi.object().keys({
   preferred_currency: Joi.string().trim(),
   date_of_birth: Joi.date(),
 });
+
+/**
+ * request schema to be used for validating user input
+ */
+export const requestSchema = Joi.object().keys({
+  source: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Source is required'
+    })),
+  destination: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Please select your destination'
+    })),
+  travelDate: Joi.date().required()
+    .error(() => ({
+      message: 'Travel date is required e.g YYYY-MM-DD',
+    })),
+  returnDate: Joi.date().allow(null).optional()
+    .error(() => ({
+      message: 'Return date should be in YYYY-MM-DD format',
+    })),
+  tripType: Joi.string().valid('oneway', 'return', 'multicity').lowercase().required()
+    .error(() => ({
+      message: 'Please select your trip type. Should be oneway, return or multicity',
+    })),
+  reason: Joi.string().lowercase().required()
+    .error(() => ({
+      message: 'Reason is required',
+    })),
+  accommodation: Joi.string().lowercase().required()
+    .error(() => ({
+      message: 'Accommodation is required',
+    }))
+});
+
 /**
  * password schema to be used for validating password change
  */

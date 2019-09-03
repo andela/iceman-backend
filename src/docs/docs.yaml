@@ -10,13 +10,11 @@ info:
 
 tags:
   - name: Auth
-    description: Manage User Authentication
-  - name: Users
-    description: Manage User Account
+    description: Manage User Authentication and Profile
 host: localhost:3000
 basePath: /api/v1
 paths:
-  /users/profile:
+  /auth/profile:
     get:
       tags:
         - Users
@@ -265,7 +263,7 @@ paths:
   /requests/oneway:
     post:
       tags:
-        - Request Trip
+        - Requests
       summary: Return Trip
       security:
         - BasicAuth: []
@@ -274,6 +272,15 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: id
+          in: path
+          description: ID of request to update
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          description: Updated request object
         - in: body
           name: body
           description: Trip request details
@@ -285,17 +292,43 @@ paths:
                 type: string
               destination:
                 type: string
+              tripType:
+                type: string
+                description: Trip type
+                enum:
+                  - oneway
+                  - return
+                  - multicity
+              travelDate:
+                type: string
+                format: date-time
+              returnDate:
+                type: string
+                format: date-time
               travelDate:
                 type: string
               reason:
                 type: string
               accommodation:
                 type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Request'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
         - in: header
           name: token
           description: an authorization header
           required: true
-          type: string        
+          type: string
       security:
         - Basic: []
       responses:
@@ -306,7 +339,66 @@ paths:
         401:
           description: Authorization failure
         201:
-          description: Success        
+          description: Success
+  /requests/{id}:
+    patch:
+      tags:
+        - Requests
+      summary: Update request by id
+      description: Updates a single request
+      operationId: updateRequestById
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of request to update
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          description: Updated request object
+          required: true
+          schema:
+            type: object
+            properties:
+              source:
+                type: string
+              destination:
+                type: string
+              tripType:
+                type: string
+                description: Trip type
+                enum:
+                  - oneway
+                  - return
+                  - multicity
+              travelDate:
+                type: string
+                format: date-time
+              returnDate:
+                type: string
+                format: date-time
+              reason:
+                type: string
+              accommodation:
+                type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Request'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
 definitions:
   AuthResponse:
     properties:
@@ -382,18 +474,12 @@ definitions:
           role:
             type: string
             default: requester
-          manager_id:
-            type: integer
-            nullable: true
           gender:
             type: string
             nullable: true
           date_of_birth:
             type: string
             format: date
-            nullable: true
-          department:
-            type: string
             nullable: true
           preferred_language:
             type: string
@@ -416,6 +502,48 @@ definitions:
         type: string
       error:
         type: string
+  Request:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          source:
+            type: string
+          destination:
+            type: string
+          tripType:
+            type: string
+            description: Trip type
+            enum:
+              - oneway
+              - return
+              - multicity
+          travelDate:
+            type: string
+            format: date-time
+          returnDate:
+            type: string
+            format: date-time
+          reason:
+            type: string
+          accommodation:
+            type: string
+          status:
+            type: string
+          userId:
+            type: integer
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: token
+    in: header
+definitions:
+  Request:
+    type: object
 schemes:
   - https
   - http

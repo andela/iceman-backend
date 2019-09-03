@@ -48,10 +48,6 @@ module.exports = {
       type: Sequelize.DATE,
       allowNull: true
     },
-    department: {
-      type: Sequelize.STRING,
-      allowNull: true
-    },
     preferred_language: {
       type: Sequelize.STRING,
       allowNull: true

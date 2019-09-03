@@ -51,6 +51,7 @@ exclude_patterns:
   - 'src/database'
   - 'src/docs'
   - 'src/migrations'
+  - 'src/seeders'
   - 'src/models'
   - 'src/models'
   - 'dist/'

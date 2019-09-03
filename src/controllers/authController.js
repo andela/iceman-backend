@@ -2,6 +2,14 @@ import AuthService from '../services/authService';
 import Response from '../utils/response';
 
 const { success, badRequest, successMessage } = Response;
+const {
+  login,
+  signup,
+  verify,
+  verificationLink,
+  getProfile,
+  updateProfile,
+} = AuthService;
 
 /**
  * Class for authenticating  users
@@ -13,7 +21,7 @@ export default class AuthController {
  */
   static async loginUser({ body: { email, password } }, res) {
     try {
-      const data = await AuthService.login(email, password);
+      const data = await login(email, password);
 
       success(res, data);
     } catch ({ message: error }) {
@@ -57,9 +65,9 @@ export default class AuthController {
  */
   static async signupUser({ body }, res) {
     try {
-      const data = await AuthService.signup(body);
+      const data = await signup(body);
 
-      await AuthService.verificationLink(data);
+      await verificationLink(data);
 
       success(res, data, 201);
     } catch ({ message: error }) {
@@ -75,7 +83,7 @@ export default class AuthController {
   static async verifyUser(req, res) {
     try {
       const { token } = req.query;
-      const isVerified = await AuthService.verify(token);
+      const isVerified = await verify(token);
 
       successMessage(res, isVerified);
     } catch ({ message: error }) {
@@ -89,7 +97,7 @@ export default class AuthController {
    */
   static async resendVerification({ body }, res) {
     try {
-      const resend = await AuthService.verificationLink(body);
+      const resend = await verificationLink(body);
 
       successMessage(res, resend);
     } catch ({ message: error }) {
@@ -102,10 +110,10 @@ export default class AuthController {
  * @param {object} res - response object
  * @return {object} user - return object containing status and data
  */
-  static async getProfile({ user }, res) {
+  static async getProfile({ decoded }, res) {
     try {
-      const { id } = user;
-      const userData = await AuthService.getProfile(id);
+      const { id } = decoded;
+      const userData = await getProfile(id);
 
       success(res, userData);
     } catch ({ message: error }) {
@@ -118,10 +126,10 @@ export default class AuthController {
 * @param {object} res - response object
 * @return {object} user - return object containing status and data
 */
-  static async updateProfile({ body, user }, res) {
+  static async updateProfile({ body, decoded }, res) {
     try {
-      const { id } = user;
-      const updatedData = await AuthService.updateProfile(id, body);
+      const { id } = decoded;
+      const updatedData = await updateProfile(id, body);
 
       success(res, updatedData);
     } catch ({ message: error }) {

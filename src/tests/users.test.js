@@ -38,7 +38,7 @@ describe('/api/v1/auth', () => {
 
       res.should.have.status(401);
       res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('error').eql('Access Denied, No token provided');
+      res.body.should.have.property('error').eql('Authentication failed, please login');
     });
 
     it('should return 400 if the token in the header is invalid', async () => {
@@ -49,7 +49,7 @@ describe('/api/v1/auth', () => {
 
       res.should.have.status(400);
       res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('error').eql('Access Denied, Invalid token');
+      res.body.should.have.property('error').eql('Access Denied, Invalid or Expired Token');
     });
 
     it('should get the user\'s details successfully if all conditions are met', async () => {
@@ -98,7 +98,7 @@ describe('/api/v1/auth', () => {
 
       res.should.have.status(401);
       res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('error').eql('Access Denied, No token provided');
+      res.body.should.have.property('error').eql('Authentication failed, please login');
     });
 
     it('should return 400 if the token in the header is invalid', async () => {
@@ -110,7 +110,7 @@ describe('/api/v1/auth', () => {
 
       res.should.have.status(400);
       res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('error').eql('Access Denied, Invalid token');
+      res.body.should.have.property('error').eql('Access Denied, Invalid or Expired Token');
     });
 
     it('should update the user\'s profile successfully if all conditions are met', async () => {

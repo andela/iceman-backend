@@ -39,6 +39,7 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>GET</td><td>/api/v1/users/profile</td><td>Gets user profile information</td></tr>
 <tr><td>PATCH</td><td>/api/v1/users/profile</td><td>Updates user profile information</td></tr>
 <tr><td>GET</td><td>/api/v1/auth/verify?activate&&id</td><td>Creates user account</td></tr>
+<tr><td>PATCH</td><td>/api/v1/request/:id</td><td>Updates trip requests</td></tr>
 </table>
 
 ## API Documentation
