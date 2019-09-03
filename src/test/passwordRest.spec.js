@@ -7,20 +7,21 @@ import TestHelper from '../utils/testHelper';
 import db from '../models';
 
 chai.use(chaiHttp);
+
 let stub;
+const urlPrefix = '/api/v1';
 
 describe('/api/v1/auth', () => {
   let passwordResetToken;
 
-  before((done) => {
-    TestHelper.destroyModel('User');
-    db.User.create({
+  before(async () => {
+    await TestHelper.destroyModel('User');
+    await db.User.create({
       first_name: 'irellevant',
       last_name: 'Tester',
       email: 'testa@test.com',
       password: 'PasswordTest123'
     });
-    done();
   });
 
   beforeEach(async () => {
@@ -34,7 +35,7 @@ describe('/api/v1/auth', () => {
   describe('POST /forgot_password', () => {
     it('should return an error for an unregistered user', async () => {
       const { status, text } = await chai.request(app)
-        .post('/api/v1/auth/forgot_password')
+        .post(`${urlPrefix}/auth/forgot_password`)
         .send({
           email: 'yahan@mail.com'
         });
@@ -45,7 +46,7 @@ describe('/api/v1/auth', () => {
 
     it('should send a message, token and an email for a registered user', async () => {
       const { status, text } = await chai.request(app)
-        .post('/api/v1/auth/forgot_password')
+        .post(`${urlPrefix}/auth/forgot_password`)
         .send({
           email: 'testa@test.com'
         });
@@ -61,7 +62,7 @@ describe('/api/v1/auth', () => {
   describe('POST /reset_password/:token', () => {
     it('should return an error for invalid password', async () => {
       const { status, text } = await chai.request(app)
-        .patch(`/api/v1/auth/reset_password/${passwordResetToken}`)
+        .patch(`${urlPrefix}/auth/reset_password/${passwordResetToken}`)
         .send();
 
       expect(JSON.parse(text).error).to.equal('Password must contain at least one letter, at least one number, and be atleast 8 digits long');
@@ -70,7 +71,7 @@ describe('/api/v1/auth', () => {
 
     it('should return an error for an invalid token', async () => {
       const { status, text } = await chai.request(app)
-        .patch('/api/v1/auth/reset_password/token')
+        .patch(`${urlPrefix}/auth/reset_password/token`)
         .send({
           password: 'testa567890testcom'
         });
@@ -81,7 +82,7 @@ describe('/api/v1/auth', () => {
 
     it('should return a message on succesful update', async () => {
       const { status, text } = await chai.request(app)
-        .patch(`/api/v1/auth/reset_password/${passwordResetToken}`)
+        .patch(`${urlPrefix}/auth/reset_password/${passwordResetToken}`)
         .send({
           password: 'pas888swogrd'
         });

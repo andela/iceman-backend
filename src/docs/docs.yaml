@@ -262,6 +262,51 @@ paths:
           description: Email Not Found
         200:
           description: Success
+  /requests/oneway:
+    post:
+      tags:
+        - Request Trip
+      summary: Return Trip
+      security:
+        - BasicAuth: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Trip request details
+          required: true
+          schema:
+            type: object
+            properties:
+              source:
+                type: string
+              destination:
+                type: string
+              travelDate:
+                type: string
+              reason:
+                type: string
+              accommodation:
+                type: string
+        - in: header
+          name: token
+          description: an authorization header
+          required: true
+          type: string        
+      security:
+        - Basic: []
+      responses:
+        400:
+          description: Invalid Credentials
+        409:
+          description: Conflict
+        401:
+          description: Authorization failure
+        201:
+          description: Success        
 definitions:
   AuthResponse:
     properties:
