@@ -15,5 +15,6 @@ before_script:
   - npm i -g sequelize-cli
   - npm run undo:migration
   - npm run db:migration
+  - npm run seed
 script:
   - npm test
