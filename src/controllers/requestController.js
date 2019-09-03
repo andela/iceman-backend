@@ -34,4 +34,19 @@ export default class RequestController {
       badRequest(res, err);
     }
   }
+
+  /**
+ * @param {object} body request body
+ * @param {object} res response body
+ * @returns {object} res
+ */
+  static async oneWay({ body }, res) {
+    try {
+      const data = await RequestService.oneway(body);
+
+      success(res, data, 201);
+    } catch ({ message: error }) {
+      badRequest(res, error, 409);
+    }
+  }
 }

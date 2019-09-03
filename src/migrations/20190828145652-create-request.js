@@ -1,3 +1,4 @@
+/* eslint-disable arrow-parens */
 
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Requests', {
@@ -35,7 +36,7 @@ module.exports = {
     },
     status: {
       type: Sequelize.STRING,
-      defaultValue: 'pending',
+      defaultValue: 'open'
     },
     userId: {
       type: Sequelize.INTEGER,

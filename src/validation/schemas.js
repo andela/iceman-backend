@@ -77,3 +77,29 @@ export const verifyEmail = Joi.object().keys({
       message: 'Email must be a valid email'
     })),
 });
+
+/**
+ * Schema for one way trip request
+ */
+export const oneWaySchema = Joi.object().keys({
+  source: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Source is required'
+    })),
+  destination: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Please select your destination'
+    })),
+  travelDate: Joi.date().required()
+    .error(() => ({
+      message: 'Travel date is required e.g YYYY-MM-DD',
+    })),
+  reason: Joi.string().lowercase().required()
+    .error(() => ({
+      message: 'Reason is required',
+    })),
+  accommodation: Joi.string().lowercase().required()
+    .error(() => ({
+      message: 'Accommodation is required',
+    })),
+});

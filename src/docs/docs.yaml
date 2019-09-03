@@ -180,6 +180,13 @@ paths:
       summary: Update request by id
       description: Updates a single request
       operationId: updateRequestById
+  /requests/oneway:
+    post:
+      tags:
+        - Request Trip
+      summary: Return Trip
+      security:
+        - BasicAuth: []
       consumes:
         - application/json
       produces:
@@ -194,6 +201,9 @@ paths:
         - in: body
           name: body
           description: Updated request object
+        - in: body
+          name: body
+          description: Trip request details
           required: true
           schema:
             type: object
@@ -215,6 +225,8 @@ paths:
               returnDate:
                 type: string
                 format: date-time
+              travelDate:
+                type: string
               reason:
                 type: string
               accommodation:
@@ -232,6 +244,22 @@ paths:
           description: Authentication failed
       security:
         - api_key: []
+        - in: header
+          name: token
+          description: an authorization header
+          required: true
+          type: string        
+      security:
+        - Basic: []
+      responses:
+        400:
+          description: Invalid Credentials
+        409:
+          description: Conflict
+        401:
+          description: Authorization failure
+        201:
+          description: Success        
 definitions:
   AuthReponse:
     properties:

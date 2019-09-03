@@ -78,13 +78,19 @@ export default class AuthService {
   static async resetPassword(token, password) {
     const { email } = await jwt.verify(token, jwtSecret);
     const { dataValues: { reset_token: tokenSaved } } = await User.findOne({ where: { email } });
+<<<<<<< HEAD
     if (token !== tokenSaved) error('Invalid token');
+=======
+
+    if (token !== tokenSaved) throw new Error('Invalid token');
+>>>>>>> bd59f5e06b65ebd7ff48fb97cce87d73f9d7db03
 
     const newPassword = await Helper.encryptor(password);
     const options = {
       password: newPassword,
       reset_token: null
     };
+
     this.updateUser({ email }, options);
 
     return 'Password reset successfully';
@@ -130,7 +136,7 @@ export default class AuthService {
    * @returns {String} success message
    */
   static async verify(token) {
-    const isExpire = Helper.verifyToken(token);
+    const isExpire = await Helper.verifyToken(token);
 
     if (!isExpire) {
       error('Expired Verification Link, resend verification Link');
