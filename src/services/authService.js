@@ -134,7 +134,7 @@ export default class AuthService {
    */
   static async verify(token) {
     const isExpire = await Helper.verifyToken(token);
-    
+
     if (!isExpire) {
       error('Expired Verification Link, resend verification Link');
     }
