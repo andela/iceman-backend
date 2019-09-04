@@ -69,6 +69,12 @@ export default class RequestService {
     return dataValues;
   }
 
+<<<<<<< HEAD
+=======
+    return returnFields;
+  }
+
+>>>>>>> feedback implementation
   /**
    * @param {object} body - arrays of request object
    * @returns {object} obej - return object
@@ -100,6 +106,10 @@ export default class RequestService {
 
     const { dataValues } = await Request.create({ ...body, userId: id });
 
+<<<<<<< HEAD
     return dataValues;
+=======
+    return { ...Helper.pickFields(dataValues, ['id', 'source', 'destination', 'travelDate', 'returnDate', 'tripType', 'reason', 'accommodation']) };
+>>>>>>> feedback implementation
   }
 }

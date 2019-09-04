@@ -1,24 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const Request = sequelize.define('Request', {
-<<<<<<< HEAD
     source: {
-=======
-    id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
-    },
-<<<<<<< HEAD
-<<<<<<< HEAD
-    source: {
-=======
-    origin: {
->>>>>>> feature(return-trip):add user return trip
-=======
-    source: {
->>>>>>> implementation of feedback
->>>>>>> implementation of feedback
       type: DataTypes.STRING,
       allowNull: false
     },

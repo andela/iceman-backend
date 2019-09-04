@@ -71,7 +71,7 @@ export default class RequestController {
     }
   }
 
-  /*
+  /**
     @param {object} req - request object
    * @param {object} res - reponse object
    * @returns {object} data - trip details
@@ -80,9 +80,9 @@ export default class RequestController {
     try {
       const data = await returnRequest(req);
 
-      success(res, data);
+      success(res, data, 201);
     } catch ({ message: err }) {
-      badRequest(res, err);
+      badRequest(res, err, 409);
     }
   }
 }

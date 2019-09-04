@@ -47,7 +47,7 @@ export const verifyEmail = Joi.object().keys({
 /**
  * Return trip validation
  */
-export const returnTrip = Joi.object().keys({
+export const returnSchema = Joi.object().keys({
   source: Joi.string().trim().required()
     .error(() => ({
       message: 'Source is required'
