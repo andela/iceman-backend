@@ -119,6 +119,8 @@ paths:
           description: Invalid Credentials
           schema:
             $ref: '#definitions/ErrorResponse'
+        500:
+          description: Unexpected Error
         200:
           description: Success
           schema:
@@ -158,6 +160,38 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthResponse'
+  /auth/facebook:
+    get:
+      tags:
+        - Auth
+      summary: Logs in a user using facebook
+      produces:
+        - application/json
+      responses:
+        500:
+          description: Unexpected Error
+        400:
+          description: Invalid Credentials
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthResponse'
+  /auth/google:
+    get:
+      tags:
+        - Auth
+      summary: Logs in a user using google
+      produces:
+        - application/json
+      responses:
+        500:
+          description: Unexpected Error
+        400:
+          description: Invalid Credentials
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthResponse'
 
   /auth/verify?token:
     get:
@@ -183,7 +217,6 @@ paths:
           description: Error
         200:
           description: Success
-
   /auth/resend_verification_link:
     post:
       tags:

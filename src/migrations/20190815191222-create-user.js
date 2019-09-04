@@ -1,5 +1,5 @@
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('users', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Users', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -10,6 +10,9 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false,
 
+    },
+    middle_name: {
+      type: Sequelize.STRING
     },
     last_name: {
       type: Sequelize.STRING,
@@ -23,6 +26,9 @@ module.exports = {
       validate: {
         isEmail: true
       }
+    },
+    social_id: {
+      type: Sequelize.STRING,
     },
     password: {
       type: Sequelize.STRING,

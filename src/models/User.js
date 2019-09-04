@@ -2,16 +2,13 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: DataTypes.INTEGER,
-      },
       first_name: {
         type: DataTypes.STRING,
         allowNull: false,
 
+      },
+      middle_name: {
+        type: DataTypes.STRING
       },
       last_name: {
         type: DataTypes.STRING,
@@ -28,7 +25,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: false
+      },
+      social_id: {
+        type: DataTypes.STRING,
       },
       is_admin: {
         type: DataTypes.BOOLEAN,

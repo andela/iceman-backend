@@ -1,27 +1,16 @@
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const mongoose = require('mongoose');
 
-const User = mongoose.model('User');
+import passport from 'passport';
+import GoogleStrategy from 'passport-google-oauth20';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
+import config from './config';
+import PassportController from '../controllers/passportController';
+import MockStrategy from './mockedStrategy';
 
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: 'user[email]',
-      passwordField: 'user[password]'
-    },
-    ((email, password, done) => {
-      User.findOne({ email })
-        .then((user) => {
-          if (!user || !user.validPassword(password)) {
-            return done(null, false, {
-              errors: { 'email or password': 'is invalid' }
-            });
-          }
-
-          return done(null, user);
-        })
-        .catch(done);
-    })
-  )
-);
+if (process.env.NODE_ENV === 'test') {
+  passport.use(new MockStrategy('google', PassportController.strategyCallback));
+  passport.use(new MockStrategy('facebook', PassportController.strategyCallback));
+  passport.use(new MockStrategy('unauthorized', PassportController.strategyCallback));
+} else {
+  passport.use(new GoogleStrategy(config.googleApp, PassportController.strategyCallback));
+  passport.use(new FacebookStrategy(config.facebookApp, PassportController.strategyCallback));
+}
