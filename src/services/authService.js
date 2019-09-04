@@ -7,8 +7,8 @@ import sendmail from './emailService';
 import Response from '../utils/response';
 
 const { error } = Response;
-
 config();
+
 const jwtSecret = process.env.JWTSECRET;
 
 /**

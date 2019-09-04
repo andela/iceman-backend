@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import sgMail from '@sendgrid/mail';
+import Response from '../utils/response';
 
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -33,7 +34,7 @@ export const sendMail = async (data) => {
   try {
     await sgMail.send(message);
   } catch (error) {
-    throw new Error(error);
+    Response.error(error);
   }
 };
 
