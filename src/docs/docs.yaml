@@ -35,6 +35,8 @@ paths:
       responses:
         400:
           description: Invalid Credentials
+        500:
+          description: Unexpected Error
         200:
           description: Success
           schema:
@@ -71,7 +73,85 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthReponse'
-      
+  /auth/facebook:
+    get:
+      tags:
+        - Auth
+      summary: Logs in a user using facebook
+      produces:
+        - application/json
+      responses:
+        500:
+          description: Unexpected Error
+        400:
+          description: Invalid Credentials
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+  /auth/facebook:
+    get:
+      tags:
+        - Auth
+      summary: Logs in a user using facebook
+      produces:
+        - application/json
+      responses:
+        400:
+          description: Invalid Credentials
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+  /auth/google:
+    get:
+      tags:
+        - Auth
+      summary: Logs in a user using google
+      produces:
+        - application/json
+      responses:
+        500:
+          description: Unexpected Error
+        400:
+          description: Invalid Credentials
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: Create User Account
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User details
+          required: true
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        409:
+          description: Email already exists
+        201:
+          description: Success
+          schema:
+            $ref: '#definitions/AuthReponse'
+
   /auth/verify?token:
     get:
       tags:
@@ -96,7 +176,6 @@ paths:
           description: Error
         200:
           description: Success
-
   /auth/resend_verification_link:
     post:
       tags:
