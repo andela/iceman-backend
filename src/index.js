@@ -1,12 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import session from 'express-session';
 import cors from 'cors';
 import errorhandler from 'errorhandler';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import 'dotenv/config';
 import router from './routes';
+import './config/passport';
 
 const swaggerDocument = YAML.load(`${process.cwd()}/src/docs/docs.yaml`);
 const isProduction = process.env.NODE_ENV === 'production';
@@ -20,22 +20,11 @@ app.use(require('morgan')('dev'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 app.use(require('method-override')());
-
-app.use(
-  session({
-    secret: 'authorshaven',
-    cookie: { maxAge: 60000 },
-    resave: false,
-    saveUninitialized: false
-  })
-);
 
 if (!isProduction) {
   app.use(errorhandler());
 }
-
 // versioning api
 app.use('/api/v1', router);
 

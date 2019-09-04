@@ -11,6 +11,9 @@ module.exports = {
       allowNull: false,
 
     },
+    middle_name: {
+      type: Sequelize.STRING
+    },
     last_name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -23,6 +26,9 @@ module.exports = {
       validate: {
         isEmail: true
       }
+    },
+    social_id: {
+      type: Sequelize.STRING,
     },
     password: {
       type: Sequelize.STRING,

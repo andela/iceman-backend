@@ -7,8 +7,8 @@ import sendmail from './emailService';
 import Response from '../utils/response';
 
 const { error } = Response;
-
 config();
+
 const jwtSecret = process.env.JWTSECRET;
 
 /**
@@ -22,6 +22,7 @@ export default class AuthService {
  */
   static async login(email, password) {
     const result = await User.findOne({ where: { email, is_verified: true } });
+
 
     if (!result) error('The account does not exists or not yet verified');
 
