@@ -29,7 +29,7 @@ const user2 = {
 };
 
 describe('/api/v1/auth', () => {
-  let verifiedUser, notVerifiedUser;
+  let notVerifiedUser;
 
   before(async () => {
     await TestHelper.destroyModel('User');
@@ -37,7 +37,7 @@ describe('/api/v1/auth', () => {
 
   describe('POST /login', () => {
     before(async () => {
-      verifiedUser = await TestHelper.createUser({
+      await TestHelper.createUser({
         ...user, is_verified: true
       });
 
@@ -74,15 +74,6 @@ describe('/api/v1/auth', () => {
       res.should.have.status(400);
     });
 
-    it('should return 400 if the user account is verified but password not valid', async () => {
-      const res = await chai.request(app)
-        .post(`${URL_PREFIX}/login`)
-        .set('Content-Type', 'application/json')
-        .send({ email: verifiedUser.email, password: 'password' });
-
-      res.should.have.status(400);
-    });
-
     it('should return 200 if the user account is verified', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/login`)
@@ -95,6 +86,15 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('email');
       res.body.data.should.have.property('is_admin');
       res.body.data.should.have.property('is_verified');
+    });
+
+    it('should return 400 if the user account is verified but password not valid', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/login`)
+        .set('Content-Type', 'application/json')
+        .send({ email: user.email, password: '3545trfgvcvv' });
+
+      res.should.have.status(400);
     });
   });
 
