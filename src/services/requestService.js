@@ -1,6 +1,5 @@
 import { Request } from '../models';
 import Response from '../utils/response';
-import Helper from '../utils/helpers';
 
 const { error } = Response;
 
@@ -53,10 +52,6 @@ export default class RequestService {
       ...details, tripType: 'one-way', status: 'open'
     });
 
-    delete details.userId;
-
-    const returnFields = Helper.pickFields(data, Object.keys(details));
-
-    return returnFields;
+    return data;
   }
 }
