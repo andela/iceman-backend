@@ -29,9 +29,8 @@ module.exports = (sequelize, DataTypes) => {
       social_id: {
         type: DataTypes.STRING,
       },
-      roleId: {
+      role_id: {
         type: DataTypes.INTEGER,
-        defaultValue: 6,
       },
       reset_token: {
         type: DataTypes.STRING
@@ -43,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId'
     });
     User.belongsTo(models.Role, {
-      foreignKey: 'roleId'
+      foreignKey: 'role_id'
     });
   };
   return User;

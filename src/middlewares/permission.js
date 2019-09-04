@@ -5,7 +5,7 @@ import { Role } from '../models';
  * @returns {object} - next
  */
 const permitUser = role => async (req, res, next) => {
-  const value = await Role.findOne({ where: { id: req.decoded.roleId } });
+  const value = await Role.findOne({ where: { id: req.decoded.role_id } });
   const isPermitted = role.map(userRole => value.dataValues.type === userRole)
     .find(isRole => isRole === true);
 

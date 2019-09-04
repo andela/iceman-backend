@@ -44,7 +44,7 @@ describe('/api/v1/auth', () => {
   describe('POST /login', () => {
     before(async () => {
       verifiedUser = await TestHelper.createUser({
-        ...user, roleId: 5
+        ...user, role_id: 5
       });
 
       notVerifiedUser = await TestHelper.createUser({
@@ -90,7 +90,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('roleId');
+      res.body.data.should.have.property('role_id');
     });
   });
 
@@ -102,8 +102,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('role_id');
     });
 
     it('Should return 200 if user is authenticated with Facebook', async () => {
@@ -113,8 +112,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('role_id');
     });
   });
 
@@ -148,7 +146,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('roleId');
+      res.body.data.should.have.property('role_id');
     });
   });
 

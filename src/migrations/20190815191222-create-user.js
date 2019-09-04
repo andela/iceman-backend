@@ -32,7 +32,7 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false
     },
-    roleId: {
+    role_id: {
       type: Sequelize.INTEGER,
       defaultValue: 6,
     },

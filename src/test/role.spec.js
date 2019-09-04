@@ -46,7 +46,7 @@ describe('Assign User Role', () => {
   describe('PATCH /assign_role', () => {
     before(async () => {
       await TestHelper.createUser({
-        ...superAdmin, roleId: 1
+        ...superAdmin, role_id: 1
       });
     });
 
@@ -94,7 +94,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter@trtr.com', roleId: 5 });
+        .send({ email: 'ter@trtr.com', role_id: 5 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
@@ -114,7 +114,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter@trtr.com', roleId: 4 });
+        .send({ email: 'ter@trtr.com', role_id: 4 });
 
       res.should.have.status(200);
       res.body.should.have.property('message');
@@ -125,7 +125,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', userToken)
-        .send({ email: 'ter@trtr.com', roleId: 5 });
+        .send({ email: 'ter@trtr.com', role_id: 5 });
 
       res.should.have.status(403);
       res.body.should.have.property('error');
@@ -136,7 +136,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter@trtr.com', roleId: 4 });
+        .send({ email: 'ter@trtr.com', role_id: 4 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
@@ -147,7 +147,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'te@trtr.com', roleId: 5 });
+        .send({ email: 'te@trtr.com', role_id: 5 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
@@ -158,18 +158,18 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter@trtr.com', roleId: 6 });
+        .send({ email: 'ter@trtr.com', role_id: 6 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
-      res.body.error.should.equal('Invalid Role');
+      res.body.error.should.equal('Invalid Role Input');
     });
 
     it('should not assign role with invalid token', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', 'ghghjghj')
-        .send({ email: 'ter@trtr.com', roleId: '5' });
+        .send({ email: 'ter@trtr.com', role_id: 5 });
 
       res.should.have.status(401);
       res.body.should.have.property('error');
@@ -180,7 +180,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter', roleId: '5' });
+        .send({ email: 'ter', role_id: 5 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');

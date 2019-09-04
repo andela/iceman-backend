@@ -113,9 +113,9 @@ export const roleSchema = Joi.object().keys({
     .error(() => ({
       message: 'Email must be a valid email address e.g example@mail.com or example@mail.co.uk',
     })),
-  roleId: Joi.number().min(1).max(5)
+  role_id: Joi.number().min(1).max(5)
     .required()
     .error(() => ({
-      message: 'Invalid Role',
+      message: 'Invalid Role Input',
     })),
 });

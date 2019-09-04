@@ -81,6 +81,7 @@ export default class Helper {
       user.social_id = data.sub;
       user.first_name = data.given_name;
       user.last_name = data.family_name;
+      user.role_id = 5;
     } else {
       user.social_id = data.id;
       user.email = data.email;
@@ -88,6 +89,7 @@ export default class Helper {
       user.last_name = data.last_name;
       user.middle_name = data.middle_name;
       user.image = data.picture.data.url;
+      user.role_id = 5;
     }
     return user;
   }

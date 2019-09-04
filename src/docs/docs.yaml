@@ -392,7 +392,7 @@ paths:
       security:
         - api_key: []
 
-  /user/{roleId}/assign_role:
+  /auth/assign_role:
     patch:
       tags:
         - Assign Role
@@ -403,9 +403,9 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: roleId
-          in: path
-          description: Role ID range from 1-6
+        - name: role_id
+          in: body
+          description: Role ID 
           required: true
           type: integer
           format: int64

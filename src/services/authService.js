@@ -25,7 +25,7 @@ export default class AuthService {
 
     if (!result) throw new Error('The account does not exist');
 
-    const userRole = await Role.findOne({ where: { id: result.dataValues.roleId } });
+    const userRole = await Role.findOne({ where: { id: result.dataValues.role_id } });
 
     if (userRole.dataValues.type === 'guest') throw new Error('Please Verify Your Email Address');
 
@@ -34,7 +34,7 @@ export default class AuthService {
 
     if (!isPasswordValid) error('Please provide valid login credentials');
 
-    const payload = { id: user.id, roleId: user.roleId };
+    const payload = { id: user.id, role_id: user.role_id };
     const token = await jwt.sign(payload, jwtSecret, { expiresIn: '1hr' });
 
     return { token, ...Helper.omitFields(user, ['password']) };
@@ -111,10 +111,10 @@ export default class AuthService {
 
     const result = await User.create(userDetails);
     const { dataValues: user } = result;
-    const payload = Helper.pickFields(user, ['id', 'roleId']);
+    const payload = Helper.pickFields(user, ['id', 'role_id']);
     const token = await Helper.genToken(payload);
 
-    return { token, ...Helper.omitFields(user, ['password', 'roleid', 'createdat', 'updatedat']) };
+    return { token, ...Helper.omitFields(user, ['password', 'createdat', 'updatedat']) };
   }
 
   /**
@@ -142,13 +142,22 @@ export default class AuthService {
       error('Expired Verification Link, resend verification Link');
     }
 
-    const isUser = await User.findOne({ where: { id: isExpire.id }, include: [{ model: Role, attributes: ['type'] }] });
+    const isUser = await User.findOne({
+      where:
+      {
+        id: isExpire.id
+      },
+      include: [{
+        model: Role,
+        attributes: ['type']
+      }]
+    });
 
     if (!isUser) error('User not find');
 
     if (isUser.dataValues.Role.dataValues.type !== 'guest') throw new Error('User Email is Already Verified');
 
-    await User.update({ roleId: 5 }, { where: { id: isExpire.id } });
+    await User.update({ role_id: 5 }, { where: { id: isExpire.id } });
 
     return 'Email Verification Successful';
   }
@@ -159,7 +168,15 @@ export default class AuthService {
    */
   static async verificationLink(body) {
     const { email } = body;
-    const isUser = await User.findOne({ where: { email }, include: [{ model: Role, attributes: ['type'] }] });
+    const isUser = await User.findOne({
+      where: {
+        email
+      },
+      include: [{
+        model: Role,
+        attributes: ['type']
+      }]
+    });
 
     if (!isUser) error('User not found');
 
@@ -185,9 +202,17 @@ export default class AuthService {
    * @return {string} - success message;
    */
   static async assignUser(body) {
-    const { email, roleId } = body;
-    const checkRole = await Role.findOne({ where: { id: Number(roleId) } });
-    const getUser = await User.findOne({ where: { email }, include: [{ model: Role, attributes: ['type'] }] });
+    const { email, role_id } = body;
+    const checkRole = await Role.findOne({ where: { id: Number(role_id) } });
+    const getUser = await User.findOne({
+      where: {
+        email
+      },
+      include: [{
+        model: Role,
+        attributes: ['type']
+      }]
+    });
 
     if (!getUser) throw new Error('User not found');
 
@@ -195,9 +220,9 @@ export default class AuthService {
 
     if (getUser.dataValues.Role.dataValues.type === 'guest') throw new Error('User email is not verified');
 
-    if (getUser.dataValues.roleId === roleId) throw new Error('User is already assigned this role');
+    if (getUser.dataValues.role_id === Number(role_id)) throw new Error('User is already assigned this role');
 
-    await User.update({ roleId: Number(roleId) }, { where: { email } });
+    await User.update({ role_id: Number(role_id) }, { where: { email } });
 
     return 'User Role Assigned Successfully';
   }
