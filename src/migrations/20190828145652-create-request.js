@@ -20,10 +20,9 @@ module.exports = {
       allowNull: false
     },
     return_date: {
-      type: Sequelize.DATE,
-      allowNull: false
+      type: Sequelize.DATE
     },
-    type: {
+    trip_type: {
       type: Sequelize.ENUM,
       allowNull: false,
       values: ['one-way', 'return', 'multi-city'],

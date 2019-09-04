@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false
     },
-    type: {
+    trip_type: {
       type: DataTypes.ENUM,
       allowNull: false,
       values: ['one-way', 'return', 'multi-city'],
@@ -19,8 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     return_date: {
-      type: DataTypes.DATE,
-      allowNull: false
+      type: DataTypes.DATE
     },
     reason: {
       type: DataTypes.STRING
@@ -30,15 +29,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     status: {
       type: DataTypes.STRING,
-      defaultValue: 'pending',
+      defaultValue: 'open',
     }
   }, {});
   Request.associate = (models) => {
     Request.belongsTo(models.User, {
-      references: {
-        foreignKey: 'user_id',
-        onDelete: 'CASCADE'
-      }
+      foreignKey: 'user_id',
+      onDelete: 'CASCADE'
     });
   };
   return Request;

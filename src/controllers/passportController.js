@@ -34,7 +34,7 @@ export default class PassportController {
         const payload = Helper.pickFields(user, ['id', 'is_admin']);
         const token = Helper.genToken(payload);
 
-        return res.json({ status: 'success', data: { token, ...user } });
+        return Response.success(res, { token, ...user });
       })(req, res, next);
     };
   }

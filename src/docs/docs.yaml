@@ -173,7 +173,7 @@ paths:
           description: Email Not Found
         200:
           description: Success
-  /request/multi-city:
+  /requests/multi-city:
     post:
       tags:
         - Requests
@@ -223,29 +223,22 @@ paths:
         200:
           description: Success
           schema:
-            $ref: '#definitions/MultiCityReponse'
+            $ref: '#definitions/Request'
 
-  /requests/oneway:
+  /requests/one-way:
     post:
       tags:
         - Requests
       summary: Return Trip
-      security:
-        - BasicAuth: []
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
-        - name: id
-          in: path
-          description: ID of request to update
-          required: true
-          type: integer
-          format: int64
-        - in: body
-          name: body
-          description: Updated request object
+        - in: header
+          name: token
+          description: Authenticate User
+          required: truet
         - in: body
           name: body
           description: Trip request details
@@ -257,28 +250,28 @@ paths:
                 type: string
               destination:
                 type: string
-              tripType:
+              trip_type:
                 type: string
                 description: Trip type
                 enum:
-                  - oneway
+                  - one-way
                   - return
-                  - multicity
-              travelDate:
+                  - multi-city
+              travel_date:
                 type: string
                 format: date-time
-              returnDate:
+              return_date:
                 type: string
                 format: date-time
-              travelDate:
+              travel_date:
                 type: string
               reason:
                 type: string
               accommodation:
                 type: string
       responses:
-        200:
-          description: successful operation
+        201:
+          description: success
           schema:
             $ref: '#/definitions/Request'
         400:
@@ -287,25 +280,8 @@ paths:
           description: Access Denied
         403:
           description: Authentication failed
-      security:
-        - api_key: []
-        - in: header
-          name: token
-          description: an authorization header
-          required: true
-          type: string        
-      security:
-        - Basic: []
-      responses:
-        400:
-          description: Invalid Credentials
-        409:
-          description: Conflict
-        401:
-          description: Authorization failure
-        201:
-          description: Success
-  /requests/{id}:
+
+  /requests/{requestId}:
     patch:
       tags:
         - Requests
@@ -317,7 +293,11 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: id
+        - in: header
+          name: token
+          description: Authenticate User
+          required: true
+        - name: requestId
           in: path
           description: ID of request to update
           required: true
@@ -334,17 +314,17 @@ paths:
                 type: string
               destination:
                 type: string
-              tripType:
+              trip_type:
                 type: string
                 description: Trip type
                 enum:
-                  - oneway
+                  - one-way
                   - return
-                  - multicity
-              travelDate:
+                  - multi-city
+              travel_date:
                 type: string
                 format: date-time
-              returnDate:
+              return_date:
                 type: string
                 format: date-time
               reason:
@@ -361,9 +341,7 @@ paths:
         401:
           description: Access Denied
         403:
-          description: Authentication failed
-      security:
-        - api_key: []        
+          description: Authentication failed   
 definitions:
   AuthReponse:
     properties:
@@ -388,7 +366,7 @@ definitions:
           is_verified:
             type: boolean
             default: false
-  MultiCityReponse:
+  Request:
     properties:
       status:
         type: string
@@ -421,40 +399,7 @@ definitions:
             type: string
           user_id:
             type: integer
-  Request:
-    properties:
-      status:
-        type: string
-      data:
-        type: object
-        properties:
-          id:
-            type: integer
-          source:
-            type: string
-          destination:
-            type: string
-          tripType:
-            type: string
-            description: Trip type
-            enum:
-              - oneway
-              - return
-              - multicity
-          travelDate:
-            type: string
-            format: date-time
-          returnDate:
-            type: string
-            format: date-time
-          reason:
-            type: string
-          accommodation:
-            type: string
-          status:
-            type: string
-          userId:
-            type: integer
+
 securityDefinitions:
   api_key:
     type: apiKey
