@@ -48,6 +48,15 @@ export const oneWayTrip = {
   reason: 'reason',
   accommodation: 'accommodation'
 };
+export const oneWayTrip2 = {
+  source: 'Lagos',
+  tripType: 'one-way',
+  destination: 'Abuja',
+  travelDate: '10/02/2019',
+  returnDate: Date.now(),
+  reason: 'reason',
+  accommodation: 'accommodation'
+};
 
 export const testRequest = {
   source: 'Lagos',
@@ -82,4 +91,64 @@ export const returnRequest = {
   returnDate: '01/01/2018',
   reason: 'Work',
   accommodation: 'Radison Blu'
+};
+
+export const user1 = {
+  id: 1,
+  email: 'earl@ragner.com',
+  firstName: 'John',
+  lastName: 'lennon',
+  password: 'letmebe123'
+};
+
+export const user2 = {
+  id: 2,
+  email: 'earl@borg.com',
+  firstName: 'John',
+  lastName: 'lennon',
+  password: 'letmebe123'
+};
+
+export const user3 = {
+  id: 3,
+  email: 'earl@ingstad.com',
+  firstName: 'John',
+  lastName: 'lennon',
+  password: 'letmebe123'
+};
+
+export const userDepartments = [
+  {
+    userId: 1,
+    departmentId: 1,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    userId: 2,
+    departmentId: 2,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+];
+
+export const departments = [
+  {
+    id: 1,
+    department: 'devOps',
+    manager: 1,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 2,
+    department: 'devOps',
+    manager: 2,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+];
+
+export const commentBody = {
+  comment: 'this is a comment'
 };
