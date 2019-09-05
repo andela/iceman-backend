@@ -116,4 +116,50 @@ export default class RequestController {
       badRequest(res, err);
     }
   }
+
+  /**
+ * View a trip request
+ * @param {object} req - request object
+ * @param {object} res - response object
+ * @return {json} - json
+ */
+  static async getRequest({ params, decoded }, res) {
+    const { requestId } = params;
+    const { id } = decoded;
+
+    try {
+      const userRequest = await getRequest(parseInt(requestId, 10));
+      const { userId } = userRequest;
+
+      if (userId !== id) return badRequest(res, 'You are not allowed to view this request', 403);
+
+      success(res, userRequest);
+    } catch ({ message: err }) {
+      badRequest(res, err);
+    }
+  }
+
+  /**
+ * Update a pending trip request
+ * @param {object} req - request object
+ * @param {object} res - response object
+ * @return {json} - json
+ */
+  static async reject({ params, decoded }, res) {
+    const { requestId } = params;
+    const { id } = decoded;
+
+    try {
+      const userRequest = await getRequest(parseInt(requestId, 10));
+      const { userId } = userRequest;
+
+      if (userId !== id) return badRequest(res, 'You are not allowed to reject this request', 403);
+
+      const result = await rejectRequest(parseInt(requestId, 10));
+
+      success(res, result);
+    } catch ({ message: err }) {
+      badRequest(res, err);
+    }
+  }
 }

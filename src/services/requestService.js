@@ -11,7 +11,24 @@ const { error } = Response;
  */
 export default class RequestService {
   /**
+<<<<<<< HEAD
   * update trip rquest
+=======
+   * Getting a request
+   * @param {number} id -request id
+   * @return {object} - request object
+   */
+  static async getRequest(id) {
+    const userRequest = await Request.findOne({ where: { id }, returning: true });
+
+    if (!userRequest) error('Trip request not found');
+
+    return userRequest;
+  }
+
+  /**
+  * update trip request
+>>>>>>> feature(requests): setup travel request rejection
   * @param {number} id - request id
   * @param {object} data - request object
   * @return {object} - updated request
@@ -19,6 +36,7 @@ export default class RequestService {
   static async updateRequest({ body, params, user: { id } }) {
     const userRequest = await Request.findOne({ where: { id: params.requestId } });
 
+<<<<<<< HEAD
     if (!userRequest) error('Trip request not found');
 
     const { userId, status } = userRequest;
@@ -26,6 +44,9 @@ export default class RequestService {
     if (userId !== id) error('You are not allowed to edit this request');
 
     if (body.tripType === 'one-way') body.returnDate = null;
+=======
+    const { status } = userRequest;
+>>>>>>> feature(requests): setup travel request rejection
 
     if (status !== 'open') error(`Request has been ${status}. cannot edit`);
 
@@ -41,8 +62,10 @@ export default class RequestService {
 
   /**
    * @param {object} details trip details
+   * @param {number} userId ID of the user creating the request
    * @returns{void}
    */
+<<<<<<< HEAD
   static async oneway({ body, user: { id } }) {
     const { travelDate } = body;
     const destination = body.destination.split(',');
@@ -87,9 +110,15 @@ export default class RequestService {
    */
   static async getRequests({ user: { id } }) {
     const result = await Request.findAll({ where: { userId: id } });
+=======
+  static async oneway(details, userId) {
+    const { travelDate } = details;
+    const existingRequest = await Request.count({ where: { travelDate } });
+>>>>>>> feature(requests): setup travel request rejection
 
     if (result.length === 0) error('You\'ve not made any requests');
 
+<<<<<<< HEAD
     return result;
   }
 
@@ -121,6 +150,10 @@ export default class RequestService {
           },
         ]
       }]
+=======
+    const data = await Request.create({
+      ...details, tripType: 'one-way', status: 'open', userId,
+>>>>>>> feature(requests): setup travel request rejection
     });
 
     if (openRequests.length < 1) error('There are no pending requests');
@@ -177,5 +210,17 @@ export default class RequestService {
     if (data.length === 0) error('No result found');
 
     return data;
+  }
+
+  /**
+  * update trip request
+  * @param {number} id - request id
+  * @param {object} data - request object
+  * @return {object} - updated request
+  */
+  static async rejectRequest(id) {
+    const [, [{ dataValues }]] = await Request.update({ status: 'rejected' }, { where: { id }, returning: true });
+
+    return dataValues;
   }
 }

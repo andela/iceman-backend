@@ -91,6 +91,7 @@ export const roleSchema = Joi.object().keys({
 });
 
 /**
+<<<<<<< HEAD
  * Schema for validating multi city request
  */
 export const requestSchema = Joi.object().keys({
@@ -126,4 +127,13 @@ export const roomSchema = Joi.object().keys({
   price: Joi.string(),
   status: Joi.string(),
   description: Joi.string(),
+=======
+ * Schema for request ID
+ */
+export const requestIdSchema = Joi.object().keys({
+  requestId: Joi.number().integer().min(1).required()
+    .error(() => ({
+      message: 'Request ID must be an integer greater than or equal to 1',
+    })),
+>>>>>>> feature(requests): setup travel request rejection
 });
