@@ -66,8 +66,8 @@ export const requestSchema = Joi.object().keys({
   source: Joi.string().required().error(() => ({ message: 'Source is required' })),
   tripType: Joi.string().required().error(() => ({ message: 'Please select your trip type. Should be oneway, return or multicity' })),
   destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
-  travelDate: Joi.string().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
-  returnDate: Joi.string(),
+  travelDate: Joi.date().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
+  returnDate: Joi.date(),
   reason: Joi.string(),
   status: Joi.string(),
   accommodation: Joi.string()
