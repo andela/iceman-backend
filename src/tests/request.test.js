@@ -241,4 +241,28 @@ describe('/api/v1/requests', () => {
       res.body.should.be.an('object');
     });
   });
+  describe('GET /', () => {
+    it('should retrieve all requests made by the users', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/my-requests`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.data[0].should.have.property('destination');
+      res.body.data[0].should.have.property('source');
+      res.body.data[0].should.have.property('tripType');
+      res.body.data[0].should.have.property('returnDate');
+      res.body.data[0].should.have.property('travelDate');
+      res.body.data[0].should.have.property('userId');
+      res.body.data[0].should.have.property('status');
+    });
+    it('should return 404 if the user has no requests', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/my-requests`)
+        .set('token', loginUser3.body.data.token);
+
+      res.should.have.status(404);
+      expect(JSON.parse(res.text).error).to.equal('You\'ve not make any requests');
+    });
+  });
 });

@@ -66,4 +66,16 @@ export default class RequestService {
 
     return dataValues;
   }
+
+  /**
+   * @param {object} body - arrays of request object
+   * @returns {object} obej - return object
+   */
+  static async myRequests({ user: { id } }) {
+    const result = await Request.findAll({ where: { userId: id } });
+
+    if (result.length === 0) error('You\'ve not make any requests');
+
+    return result;
+  }
 }
