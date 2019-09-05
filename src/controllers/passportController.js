@@ -24,7 +24,7 @@ export default class PassportController {
   static callback(provider) {
     return (req, res, next) => {
       passport.authenticate(provider, { session: false }, (err, user, info) => {
-        if (!err || user) {
+        if (user) {
           const payload = Helper.pickFields(user, ['id', 'isAdmin']);
           const token = Helper.genToken(payload);
 
