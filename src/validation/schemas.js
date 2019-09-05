@@ -45,36 +45,6 @@ export const verifyEmail = Joi.object().keys({
 });
 
 /**
- * Return trip validation
- */
-export const returnSchema = Joi.object().keys({
-  source: Joi.string().trim().required()
-    .error(() => ({
-      message: 'Source is required'
-    })),
-  destination: Joi.string().trim().required()
-    .error(() => ({
-      message: 'Destination is required'
-    })),
-  travelDate: Joi.date().required()
-    .error(() => ({
-      message: 'Travel date should be in YYYY-MM-DD format',
-    })),
-  returnDate: Joi.date().required()
-    .error(() => ({
-      message: 'Return date should be in YYYY-MM-DD format',
-    })),
-  reason: Joi.string().trim().required()
-    .error(() => ({
-      message: 'Reason is required'
-    })),
-  accommodation: Joi.string().trim().required()
-    .error(() => ({
-      message: 'Accommodation is required'
-    })),
-});
-
-/**
  * user schema to be used for validating user login credential
  */
 export const LogInSchema = Joi.object().keys({
@@ -114,7 +84,7 @@ export const requestSchema = Joi.object().keys({
   destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
   travelDate: Joi.date().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
   returnDate: Joi.date(),
-  reason: Joi.string().error(() => ({ message: 'Reason is required' })),
+  reason: Joi.string().required().error(() => ({ message: 'Reason is required' })),
   status: Joi.string(),
-  accommodation: Joi.string().error(() => ({ message: 'Accommodation is required' }))
+  accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' }))
 });

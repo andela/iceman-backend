@@ -69,12 +69,6 @@ export default class RequestService {
     return dataValues;
   }
 
-<<<<<<< HEAD
-=======
-    return returnFields;
-  }
-
->>>>>>> feedback implementation
   /**
    * @param {object} body - arrays of request object
    * @returns {object} obej - return object
@@ -100,16 +94,12 @@ export default class RequestService {
 
     if (body.tripType !== 'return') error('Trip type must be return trip');
 
-    if (body.returnDate !== '') error('Return date is required');
+    if (!body.returnDate) error('Return date is required');
 
     body.destination = body.destination.split(',');
 
     const { dataValues } = await Request.create({ ...body, userId: id });
 
-<<<<<<< HEAD
     return dataValues;
-=======
-    return { ...Helper.pickFields(dataValues, ['id', 'source', 'destination', 'travelDate', 'returnDate', 'tripType', 'reason', 'accommodation']) };
->>>>>>> feedback implementation
   }
 }

@@ -54,5 +54,6 @@ module.exports = {
       type: Sequelize.DATE
     },
   }, { freezeTableName: true }),
+
   down: queryInterface => queryInterface.dropTable('Requests')
 };

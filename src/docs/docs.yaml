@@ -238,6 +238,7 @@ paths:
           description: Email Not Found
         200:
           description: Success
+<<<<<<< HEAD
   
   /requests:
     get:
@@ -265,6 +266,12 @@ paths:
     post:
       tags:
         - Requests
+=======
+  /requests/multi-city:
+    post:
+      tags:
+        - Requests
+>>>>>>> resolve conflicts
       summary: Multi City Request
       consumes:
         - application/json
@@ -427,6 +434,7 @@ paths:
         401:
           description: Access Denied
         403:
+<<<<<<< HEAD
           description: Authentication failed
       security:
         - api_key: []
@@ -532,6 +540,9 @@ paths:
       security:
         - api_key: []  
 
+=======
+          description: Authentication failed   
+>>>>>>> resolve conflicts
 definitions:
   AuthReponse:
     properties:

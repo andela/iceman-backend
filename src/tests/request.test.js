@@ -3,12 +3,16 @@ import chaiHttp from 'chai-http';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
+<<<<<<< HEAD
 import {
   multiRequest,
   missingRequiredField,
   oneWayTrip,
   user
 } from './testData/sampleData';
+=======
+import { multiRequest, missingRequiredField, returnRequest } from './testData/sampleData';
+>>>>>>> resolve conflicts
 
 chai.use(chaiHttp);
 chai.should();
@@ -239,6 +243,7 @@ describe('/api/v1/requests', () => {
       res.body.should.be.an('object');
     });
   });
+<<<<<<< HEAD
   describe('GET /', () => {
     it('should retrieve all requests made by the users', async () => {
       const res = await chai.request(app)
@@ -261,6 +266,61 @@ describe('/api/v1/requests', () => {
 
       res.should.have.status(404);
       expect(JSON.parse(res.text).error).to.equal('You\'ve not make any requests');
+=======
+  describe('POST / ReturnTrip', () => {
+    it('should return 200 if return trip was created', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send(returnRequest);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data.should.have.property('id');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('returnDate');
+      res.body.data.should.have.property('tripType');
+    });
+
+    it('should return 400 error if trip is already booked', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send(returnRequest);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('You\'ve already booked this trip');
+    });
+
+    it('should return 401 error if vaild token is not provided', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', 'token')
+        .send(returnRequest);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('Access Denied, Invalid token');
+    });
+
+    it('should return 400 error if source is not provided', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send({ ...Helper.pickFields(returnRequest, []) });
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error[0].should.equal('Source is required');
+      res.body.error[1].should.equal('Please select your trip type. Should be oneway, return or multicity');
+      res.body.error[2].should.equal('Please select your destination(s)');
+      res.body.error[3].should.equal('Travel date is required e.g YYYY-MM-DD');
+      res.body.error[4].should.equal('Reason is required');
+      res.body.error[5].should.equal('Accommodation is required');
+>>>>>>> resolve conflicts
     });
   });
 });

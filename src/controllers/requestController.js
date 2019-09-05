@@ -80,9 +80,9 @@ export default class RequestController {
     try {
       const data = await returnRequest(req);
 
-      success(res, data, 201);
+      success(res, data,);
     } catch ({ message: err }) {
-      badRequest(res, err, 409);
+      badRequest(res, err);
     }
   }
 }

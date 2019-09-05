@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'open',
     }
   }, {});
+
   Request.associate = (models) => {
     Request.belongsTo(models.User, {
       foreignKey: 'userId',

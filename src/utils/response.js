@@ -36,28 +36,6 @@ export default class Response {
   }
 
   /**
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> codeclimate duplication fix
-   * @param {object} res - response object
-   * @param {string} message - error message
-   * @param {integer} statusCode - status code
-   * @param {string} status - response status
-   * @returns {object} response - success response
-   */
-  static contentRemoved(res, message, statusCode = 200, status = 'success') {
-    return res.status(statusCode).json({ status, data: { message } });
-  }
-
-  /**
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> implementation of feedback
-=======
->>>>>>> codeclimate duplication fix
    * @param {string} errorMessage error message
    * @returns {object} errorMessage
    */
