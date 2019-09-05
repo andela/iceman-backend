@@ -1,4 +1,3 @@
-/* eslint-disable arrow-parens */
 
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Requests', {
@@ -13,7 +12,7 @@ module.exports = {
       allowNull: false
     },
     destination: {
-      type: Sequelize.STRING,
+      type: Sequelize.ARRAY(Sequelize.STRING),
       allowNull: false
     },
     travelDate: {
@@ -21,22 +20,18 @@ module.exports = {
       allowNull: false
     },
     returnDate: {
-      type: Sequelize.DATE,
-      allowNull: true,
+      type: Sequelize.DATE
     },
     tripType: {
-      type: Sequelize.STRING,
+      type: Sequelize.ENUM,
       allowNull: false,
+      values: ['one-way', 'return', 'multi-city'],
     },
     reason: {
       type: Sequelize.STRING
     },
     accommodation: {
       type: Sequelize.STRING
-    },
-    status: {
-      type: Sequelize.STRING,
-      defaultValue: 'open'
     },
     userId: {
       type: Sequelize.INTEGER,
@@ -47,6 +42,10 @@ module.exports = {
         as: 'userId'
       }
     },
+    status: {
+      type: Sequelize.STRING,
+      defaultValue: 'open',
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE
@@ -54,7 +53,7 @@ module.exports = {
     updatedAt: {
       allowNull: false,
       type: Sequelize.DATE
-    }
-  }),
+    },
+  }, { freezeTableName: true }),
   down: queryInterface => queryInterface.dropTable('Requests')
 };

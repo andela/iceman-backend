@@ -30,11 +30,10 @@ export default class PassportController {
             error: 'Something is not right',
           });
         }
-
-        const payload = Helper.pickFields(user, ['id', 'is_admin']);
+        const payload = Helper.pickFields(user, ['id', 'isAdmin']);
         const token = Helper.genToken(payload);
 
-        return res.json({ status: 'success', data: { token, ...user } });
+        return Response.success(res, { token, ...user });
       })(req, res, next);
     };
   }
@@ -49,15 +48,15 @@ export default class PassportController {
   static async strategyCallback(token, tokenSecret, profile, done) {
     try {
       const user = Helper.getUserSocialDetails(profile);
-      const { email, social_id } = user;
-      let result = await User.findOne({ where: { [Op.or]: [{ email }, { social_id }] } });
+      const { email, socialId } = user;
+      let result = await User.findOne({ where: { [Op.or]: [{ email }, { socialId }] } });
 
       if (!result) {
         result = await User.create(user);
-        return done(null, Helper.omitFields(result.dataValues, ['password', 'social_id']));
+        return done(null, Helper.omitFields(result.dataValues, ['password', 'socialId']));
       }
 
-      return done(null, Helper.omitFields(result.dataValues, ['password', 'social_id']));
+      return done(null, Helper.omitFields(result.dataValues, ['password', 'socialId']));
     } catch (error) {
       Response.error(error);
     }

@@ -1,6 +1,5 @@
 import { Request } from '../models';
 import Response from '../utils/response';
-import Helper from '../utils/helpers';
 
 const { error } = Response;
 
@@ -9,32 +8,27 @@ const { error } = Response;
  */
 export default class RequestService {
   /**
-   * Getting a request
-   * @param {number} id -request id
-   * @return {object} - request object
-   */
-  static async getRequest(id) {
-    const userRequest = await Request.findOne({ where: { id }, returning: true });
-
-    if (!userRequest) error('Trip request not found');
-
-    return userRequest;
-  }
-
-  /**
   * update trip rquest
   * @param {number} id - request id
   * @param {object} data - request object
   * @return {object} - updated request
   */
-  static async updateRequest(id, data) {
-    const userRequest = await Request.findOne({ where: { id } });
+  static async updateRequest({ body, params, user: { id } }) {
+    const userRequest = await Request.findOne({ where: { id: params.requestId } });
 
     if (!userRequest) error('Trip request not found');
-    const { status } = userRequest;
+
+    const { userId, status } = userRequest;
+
+    if (userId !== id) error('You are not allowed to edit this request');
+
+    if (body.tripType === 'one-way') body.returnDate = null;
 
     if (status !== 'open') error(`Request has been ${status}. cannot edit`);
-    const updatedRequest = await Request.update(data, { where: { id }, returning: true });
+
+    body.destination = body.destination.split(',');
+
+    const updatedRequest = await Request.update(body, { where: { id }, returning: true });
 
     return updatedRequest[1][0].dataValues;
   }
@@ -43,20 +37,33 @@ export default class RequestService {
    * @param {object} details trip details
    * @returns{void}
    */
-  static async oneway(details) {
-    const { travelDate } = details;
-    const existingRequest = await Request.count({ where: { travelDate } });
+  static async oneway({ body, user: { id } }) {
+    const { travelDate } = body;
+    const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
     if (existingRequest) error('You\'ve already booked this trip');
 
-    const data = await Request.create({
-      ...details, tripType: 'one-way', status: 'open'
-    });
+    body.destination = body.destination.split(',');
 
-    delete details.userId;
+    return Request.create({ ...body, userId: id });
+  }
 
-    const returnFields = Helper.pickFields(data, Object.keys(details));
+  /**
+   * @param {object} body - arrays of request object
+   * @returns {object} obej - return object
+   */
+  static async multiCityRequest({ body, user: { id } }) {
+    const { travelDate } = body;
+    const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
-    return returnFields;
+    if (existingRequest) error('You\'ve already booked this trip');
+
+    if (body.tripType !== 'multi-city') error('Trip type must be mulit city');
+
+    body.destination = body.destination.split(',');
+
+    const { dataValues } = await Request.create({ ...body, userId: id });
+
+    return dataValues;
   }
 }
