@@ -54,15 +54,17 @@ export default class RequestService {
    */
   static async multiCityRequest({ body, user: { id } }) {
     const { travelDate } = body;
+    const destination = body.destination.split(',');
+
+    if (destination.length <= 1) error('Request must be more than one');
+
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
     if (existingRequest) error('You\'ve already booked this trip');
 
     if (body.tripType !== 'multi-city') error('Trip type must be mulit city');
 
-    body.destination = body.destination.split(',');
-
-    const { dataValues } = await Request.create({ ...body, userId: id });
+    const { dataValues } = await Request.create({ ...body, destination, userId: id });
 
     return dataValues;
   }

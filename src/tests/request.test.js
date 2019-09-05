@@ -94,6 +94,16 @@ describe('/api/v1/requests', () => {
       expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
     });
 
+    it('should return 400 if the reuest is less than 2', async () => {
+      const { text, status } = await chai.request(app)
+        .post(`${URL_PREFIX}/multi-city`)
+        .set('token', loginUser.body.data.token)
+        .send(oneWayTrip);
+
+      expect(status).to.equal(400);
+      expect(JSON.parse(text).error).to.equal('Request must be more than one');
+    });
+
     it('should return 400 if pass empty requests', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/multi-city`)
