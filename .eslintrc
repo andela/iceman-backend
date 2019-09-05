@@ -20,6 +20,7 @@
     "one-var-declaration-per-line": 0,
     "new-cap": 0,
     "camelcase": 0,
+    "arrow-parens": 0,
     "import/named": 0,
     "no-underscore-dangle": 0,
     "import/no-named-as-default": 0,
@@ -29,10 +30,12 @@
     "import/no-unresolved": 0,
     "comma-dangle": 0,
     "curly": ["error", "multi-line"],
-    "no-shadow": ["error", {
-      "allow": ["req", "done", "res", "err"]
-    }],
-    "arrow-parens": 0,
+    "no-shadow": [
+      "error",
+      {
+        "allow": ["req", "done", "res", "err"]
+      }
+    ],
     "no-console": 0,
     "import/prefer-default-export": 0,
     "valid-jsdoc": [
@@ -54,7 +57,5 @@
         }
       }
     ]
-    
   }
-  
 }

@@ -6,14 +6,14 @@ module.exports = {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    first_name: {
+    firstName: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    middle_name: {
+    middleName: {
       type: Sequelize.STRING
     },
-    last_name: {
+    lastName: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -25,18 +25,18 @@ module.exports = {
         isEmail: true
       }
     },
-    social_id: {
+    socialId: {
       type: Sequelize.STRING,
     },
     password: {
       type: Sequelize.STRING,
       allowNull: false
     },
-    role_id: {
+    roleId: {
       type: Sequelize.INTEGER,
       defaultValue: 6,
     },
-    reset_token: {
+    resetToken: {
       type: Sequelize.STRING
     },
     createdAt: {
@@ -46,7 +46,7 @@ module.exports = {
     updatedAt: {
       allowNull: false,
       type: Sequelize.DATE
-    },
-  }),
-  down: (queryInterface) => queryInterface.dropTable('Users')
+    }
+  }, { freezeTableName: true }),
+  down: queryInterface => queryInterface.dropTable('Users')
 };

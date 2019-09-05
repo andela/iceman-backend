@@ -16,8 +16,8 @@ let adminToken;
 
 const URL_PREFIX = '/api/v1/auth';
 const superAdmin = {
-  first_name: 'Super',
-  last_name: 'Administrator',
+  firstName: 'Super',
+  lastName: 'Administrator',
   email: process.env.SUPER_ADMIN_EMAIL,
   password: process.env.SUPER_ADMIN_PASSWORD
 };
@@ -46,7 +46,7 @@ describe('Assign User Role', () => {
   describe('PATCH /assign_role', () => {
     before(async () => {
       await TestHelper.createUser({
-        ...superAdmin, role_id: 1
+        ...superAdmin, roleId: 1
       });
     });
 
@@ -54,8 +54,8 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'qqqq',
-          last_name: 'qqqq',
+          firstName: 'qqqq',
+          lastName: 'qqqq',
           email: 'ter@trtr.com',
           password: '1111ghghjh'
         });
@@ -66,8 +66,8 @@ describe('Assign User Role', () => {
       res.should.have.status(201);
       res.body.should.have.property('data');
       res.body.data.should.have.property('token');
-      res.body.data.first_name.should.equal('qqqq');
-      res.body.data.last_name.should.equal('qqqq');
+      res.body.data.firstName.should.equal('qqqq');
+      res.body.data.lastName.should.equal('qqqq');
       res.body.data.email.should.equal('ter@trtr.com');
     });
 
@@ -86,15 +86,15 @@ describe('Assign User Role', () => {
       res.should.have.status(200);
       res.body.should.have.property('data');
       res.body.data.should.have.property('token');
-      res.body.data.first_name.should.equal('Super');
-      res.body.data.last_name.should.equal('Administrator');
+      res.body.data.firstName.should.equal('Super');
+      res.body.data.lastName.should.equal('Administrator');
     });
 
     it('should not assign role if user email is not verified', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter@trtr.com', role_id: 5 });
+        .send({ email: 'ter@trtr.com', roleId: 5 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
@@ -114,7 +114,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter@trtr.com', role_id: 4 });
+        .send({ email: 'ter@trtr.com', roleId: 4 });
 
       res.should.have.status(200);
       res.body.should.have.property('message');
@@ -125,7 +125,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', userToken)
-        .send({ email: 'ter@trtr.com', role_id: 5 });
+        .send({ email: 'ter@trtr.com', roleId: 5 });
 
       res.should.have.status(403);
       res.body.should.have.property('error');
@@ -136,7 +136,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter@trtr.com', role_id: 4 });
+        .send({ email: 'ter@trtr.com', roleId: 4 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
@@ -147,7 +147,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'te@trtr.com', role_id: 5 });
+        .send({ email: 'te@trtr.com', roleId: 5 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
@@ -158,7 +158,7 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter@trtr.com', role_id: 6 });
+        .send({ email: 'ter@trtr.com', roleId: 6 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
@@ -169,18 +169,18 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', 'ghghjghj')
-        .send({ email: 'ter@trtr.com', role_id: 5 });
+        .send({ email: 'ter@trtr.com', roleId: 5 });
 
-      res.should.have.status(401);
+      res.should.have.status(400);
       res.body.should.have.property('error');
-      res.body.error.should.equal('Access Denied, Invalid or Expired Token');
+      res.body.error.should.equal('Access Denied, Invalid token');
     });
 
     it('should not assign role with invalid email', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/assign_role`)
         .set('token', adminToken)
-        .send({ email: 'ter', role_id: 5 });
+        .send({ email: 'ter', roleId: 5 });
 
       res.should.have.status(400);
       res.body.should.have.property('error');

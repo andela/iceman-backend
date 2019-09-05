@@ -25,7 +25,7 @@ export default class AuthService {
 
     if (!result) throw new Error('The account does not exist');
 
-    const userRole = await Role.findOne({ where: { id: result.dataValues.role_id } });
+    const userRole = await Role.findOne({ where: { id: result.dataValues.roleId } });
 
     if (userRole.dataValues.type === 'guest') throw new Error('Please Verify Your Email Address');
 
@@ -34,7 +34,7 @@ export default class AuthService {
 
     if (!isPasswordValid) error('Please provide valid login credentials');
 
-    const payload = { id: user.id, role_id: user.role_id };
+    const payload = { id: user.id, roleId: user.roleId };
     const token = await jwt.sign(payload, jwtSecret, { expiresIn: '1hr' });
 
     return { token, ...Helper.omitFields(user, ['password']) };
@@ -50,7 +50,7 @@ export default class AuthService {
 
     if (!result) error('Email not found');
 
-    const { dataValues: { first_name: name, } } = result;
+    const { dataValues: { firstName: name, } } = result;
     const token = await jwt.sign({
       email
     }, jwtSecret, { expiresIn: '1h' });
@@ -65,7 +65,7 @@ export default class AuthService {
     await sendmail(emailDetails);
 
     const options = {
-      reset_token: token
+      resetToken: token
     };
 
     this.updateUser({ email }, options);
@@ -81,14 +81,14 @@ export default class AuthService {
    * */
   static async resetPassword(token, password) {
     const { email } = await jwt.verify(token, jwtSecret);
-    const { dataValues: { reset_token: tokenSaved } } = await User.findOne({ where: { email } });
+    const { dataValues: { resetToken: tokenSaved } } = await User.findOne({ where: { email } });
 
     if (token !== tokenSaved) error('Invalid token');
 
     const newPassword = await Helper.encryptor(password);
     const options = {
       password: newPassword,
-      reset_token: null
+      resetToken: null
     };
 
     this.updateUser({ email }, options);
@@ -111,10 +111,11 @@ export default class AuthService {
 
     const result = await User.create(userDetails);
     const { dataValues: user } = result;
-    const payload = Helper.pickFields(user, ['id', 'role_id']);
+
+    const payload = Helper.pickFields(user, ['id', 'roleId']);
     const token = await Helper.genToken(payload);
 
-    return { token, ...Helper.omitFields(user, ['password', 'createdat', 'updatedat']) };
+    return { token, ...Helper.omitFields(user, ['password']) };
   }
 
   /**
@@ -157,7 +158,7 @@ export default class AuthService {
 
     if (isUser.dataValues.Role.dataValues.type !== 'guest') throw new Error('User Email is Already Verified');
 
-    await User.update({ role_id: 5 }, { where: { id: isExpire.id } });
+    await User.update({ roleId: 5 }, { where: { id: isExpire.id } });
 
     return 'Email Verification Successful';
   }
@@ -188,7 +189,7 @@ export default class AuthService {
       receiver: isUser.dataValues.email,
       sender: process.env.SENDER,
       templateName: 'verify_email',
-      name: isUser.dataValues.first_name,
+      name: isUser.dataValues.firstName,
       url
     };
 
@@ -202,8 +203,8 @@ export default class AuthService {
    * @return {string} - success message;
    */
   static async assignUser(body) {
-    const { email, role_id } = body;
-    const checkRole = await Role.findOne({ where: { id: Number(role_id) } });
+    const { email, roleId } = body;
+    const checkRole = await Role.findOne({ where: { id: Number(roleId) } });
     const getUser = await User.findOne({
       where: {
         email
@@ -220,9 +221,9 @@ export default class AuthService {
 
     if (getUser.dataValues.Role.dataValues.type === 'guest') throw new Error('User email is not verified');
 
-    if (getUser.dataValues.role_id === Number(role_id)) throw new Error('User is already assigned this role');
+    if (getUser.dataValues.roleId === Number(roleId)) throw new Error('User is already assigned this role');
 
-    await User.update({ role_id: Number(role_id) }, { where: { email } });
+    await User.update({ roleId: Number(roleId) }, { where: { email } });
 
     return 'User Role Assigned Successfully';
   }

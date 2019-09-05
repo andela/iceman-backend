@@ -1,15 +1,15 @@
 import { Router } from 'express';
-import requestController from '../controllers/requestController';
-import { requestSchema, oneWaySchema } from '../validation/schemas';
-import validate from '../validation/validator';
-import verifyUser from '../middlewares/auth';
+import RequestController from '../controllers/requestController';
+import { requestSchema } from '../validation/schemas';
+import { validator } from '../validation/validator';
+import middlewares from '../middlewares';
 
 const router = Router();
+const { auth } = middlewares;
+const { update, oneWay, multiCityRequest } = RequestController;
 
-const { update, oneWay } = requestController;
-
-router.post('/oneway', validate(oneWaySchema, 'body'), verifyUser, oneWay);
-router.patch('/:requestId', validate(requestSchema, 'body'), verifyUser, update);
-
+router.post('/multi-city', [auth, validator(requestSchema)], multiCityRequest);
+router.post('/one-way', [auth, validator(requestSchema)], oneWay);
+router.patch('/:requestId', [auth, validator(requestSchema)], update);
 
 export default router;

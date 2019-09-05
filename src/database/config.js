@@ -7,10 +7,8 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.HOST,
     dialect: 'postgres',
-    quoteIdentifiers: false
   },
   test: {
-    quoteIdentifiers: false,
     use_env_variable: 'DATABASE_URL_TEST'
   },
   production: {

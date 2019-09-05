@@ -2,17 +2,16 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
-      first_name: {
+      firstName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      middle_name: {
+      middleName: {
         type: DataTypes.STRING
       },
-      last_name: {
+      lastName: {
         type: DataTypes.STRING,
         allowNull: false,
-
       },
       email: {
         type: DataTypes.STRING,
@@ -26,23 +25,24 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
-      social_id: {
+      socialId: {
         type: DataTypes.STRING,
       },
-      role_id: {
+      roleId: {
         type: DataTypes.INTEGER,
       },
-      reset_token: {
+      resetToken: {
         type: DataTypes.STRING
       },
     },
+    { },
   );
   User.associate = (models) => {
     User.hasMany(models.Request, {
       foreignKey: 'userId'
     });
     User.belongsTo(models.Role, {
-      foreignKey: 'role_id'
+      foreignKey: 'roleId'
     });
   };
   return User;

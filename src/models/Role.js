@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
   {});
   Role.associate = models => {
     Role.hasMany(models.User, {
-      foreignKey: 'role_id',
+      foreignKey: 'roleId',
       define: {
         undersored: true
       }

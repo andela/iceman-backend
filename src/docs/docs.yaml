@@ -58,9 +58,9 @@ paths:
           schema:
             type: object
             properties:
-              first_name:
+              firstName:
                 type: string
-              last_name:
+              lastName:
                 type: string
               email:
                 type: string
@@ -83,20 +83,6 @@ paths:
       responses:
         500:
           description: Unexpected Error
-        400:
-          description: Invalid Credentials
-        200:
-          description: Success
-          schema:
-            $ref: '#definitions/AuthReponse'
-  /auth/facebook:
-    get:
-      tags:
-        - Auth
-      summary: Logs in a user using facebook
-      produces:
-        - application/json
-      responses:
         400:
           description: Invalid Credentials
         200:
@@ -136,9 +122,9 @@ paths:
           schema:
             type: object
             properties:
-              first_name:
+              firstName:
                 type: string
-              last_name:
+              lastName:
                 type: string
               email:
                 type: string
@@ -252,27 +238,70 @@ paths:
           description: Email Not Found
         200:
           description: Success
-  /requests/oneway:
+  /requests/multi-city:
     post:
       tags:
         - Requests
-      summary: Return Trip
-      security:
-        - BasicAuth: []
+      summary: Multi City Request
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
-        - name: id
-          in: path
-          description: ID of request to update
+        - in: header
+          name: token
+          description: Authenticate User
           required: true
-          type: integer
-          format: int64
         - in: body
           name: body
-          description: Updated request object
+          description: Multiple Request Destination
+          required: true
+          schema:
+            properties:
+              source:
+                type: string
+                required: true
+              destination:
+                type: string
+              tripType:
+                type: string
+                required: true
+              travelDate:
+                type: string
+                format: date
+                required: true
+              returnDate:
+                type: string
+                format: date
+                required: true
+              reason:
+                type: string
+              accommodation:
+                type: string
+      responses:
+        400:
+          description: The request cannot be empty
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Request'
+
+  /requests/one-way:
+    post:
+      tags:
+        - Requests
+      summary: Return Trip
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: token
+          description: Authenticate User
+          required: truet
         - in: body
           name: body
           description: Trip request details
@@ -288,9 +317,9 @@ paths:
                 type: string
                 description: Trip type
                 enum:
-                  - oneway
+                  - one-way
                   - return
-                  - multicity
+                  - multi-city
               travelDate:
                 type: string
                 format: date-time
@@ -304,8 +333,8 @@ paths:
               accommodation:
                 type: string
       responses:
-        200:
-          description: successful operation
+        201:
+          description: success
           schema:
             $ref: '#/definitions/Request'
         400:
@@ -314,25 +343,8 @@ paths:
           description: Access Denied
         403:
           description: Authentication failed
-      security:
-        - api_key: []
-        - in: header
-          name: token
-          description: an authorization header
-          required: true
-          type: string        
-      security:
-        - Basic: []
-      responses:
-        400:
-          description: Invalid Credentials
-        409:
-          description: Conflict
-        401:
-          description: Authorization failure
-        201:
-          description: Success
-  /requests/{id}:
+
+  /requests/{requestId}:
     patch:
       tags:
         - Requests
@@ -344,7 +356,11 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: id
+        - in: header
+          name: token
+          description: Authenticate User
+          required: true
+        - name: requestId
           in: path
           description: ID of request to update
           required: true
@@ -365,9 +381,9 @@ paths:
                 type: string
                 description: Trip type
                 enum:
-                  - oneway
+                  - one-way
                   - return
-                  - multicity
+                  - multi-city
               travelDate:
                 type: string
                 format: date-time
@@ -403,12 +419,11 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: role_id
+        - name: roleId
           in: body
           description: Role ID 
           required: true
           type: integer
-          format: int64
         - in: body
           name: email
           description: User email to be assigned a role
@@ -445,14 +460,14 @@ definitions:
             type: integer
           email:
             type: string
-          first_name:
+          firstName:
             type: string
-          last_name:
+          lastName:
             type: string
-          is_admin:
+          isAdmin:
             type: boolean
             default: false
-          is_verified:
+          isVerified:
             type: boolean
             default: false
   Request:
@@ -466,29 +481,29 @@ definitions:
             type: integer
           source:
             type: string
+            required: true
           destination:
+            type: array
+            items:
+              type: string
+            required: true
+          type:
             type: string
-          tripType:
-            type: string
-            description: Trip type
-            enum:
-              - oneway
-              - return
-              - multicity
           travelDate:
             type: string
-            format: date-time
+            format: date
+            required: true
           returnDate:
             type: string
-            format: date-time
+            format: date
+            required: true
           reason:
             type: string
           accommodation:
             type: string
-          status:
-            type: string
           userId:
             type: integer
+
 securityDefinitions:
   api_key:
     type: apiKey
