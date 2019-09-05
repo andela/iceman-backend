@@ -3,7 +3,12 @@ import chaiHttp from 'chai-http';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
-import { multiRequest, missingRequiredField } from './testData/sampleData';
+import {
+  multiRequest,
+  missingRequiredField,
+  oneWayTrip,
+  user
+} from './testData/sampleData';
 
 chai.use(chaiHttp);
 chai.should();
@@ -13,23 +18,6 @@ let loginUser;
 let loginUser2;
 let loginUser3;
 let request;
-
-const user = {
-  firstName: 'Samuel',
-  lastName: 'koroh',
-  email: 'user1@gmail.com',
-  password: 'Ice5m5am0a843r03'
-};
-
-const oneWayTrip = {
-  source: 'Lagos',
-  tripType: 'one-way',
-  destination: 'Abuja',
-  travelDate: '2038-01-19 03:14:07',
-  returnDate: '2038-01-19 03:14:07',
-  reason: 'reason',
-  accommodation: 'accommodation'
-};
 
 describe('/api/v1/requests', () => {
   before((done) => {
