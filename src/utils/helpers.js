@@ -1,9 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 /**
  * Helper class
@@ -61,9 +58,7 @@ export default class Helper {
    */
   static genToken(payloader) {
     const secret = process.env.JWTSECRET;
-    const token = jwt.sign(payloader, secret, { expiresIn: '1hr' });
-
-    return token;
+    return jwt.sign(payloader, secret, { expiresIn: '1hr' });
   }
 
   /**
