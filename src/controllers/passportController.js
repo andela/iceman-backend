@@ -59,7 +59,7 @@ export default class PassportController {
 
       return done(null, Helper.omitFields(result.dataValues, ['password', 'socialId']));
     } catch (error) {
-      Response.error(error);
+      // Response.error(error);
     }
   }
 }
