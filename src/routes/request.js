@@ -2,7 +2,7 @@ import { Router } from 'express';
 import RequestController from '../controllers/requestController';
 import { requestSchema } from '../validation/schemas';
 import { validator } from '../validation/validator';
-import auth from '../middlewares';
+import auth from '../middlewares/auth';
 
 const router = Router();
 const { update, oneWay, multiCityRequest } = RequestController;

@@ -58,9 +58,9 @@ paths:
           schema:
             type: object
             properties:
-              first_name:
+              firstName:
                 type: string
-              last_name:
+              lastName:
                 type: string
               email:
                 type: string
@@ -122,9 +122,9 @@ paths:
           schema:
             type: object
             properties:
-              first_name:
+              firstName:
                 type: string
-              last_name:
+              lastName:
                 type: string
               email:
                 type: string
@@ -262,17 +262,15 @@ paths:
                 type: string
                 required: true
               destination:
-                type: array
-                items:
-                  type: string
-              type:
+                type: string
+              tripType:
                 type: string
                 required: true
-              travel_date:
+              travelDate:
                 type: string
                 format: date
                 required: true
-              return_date:
+              returnDate:
                 type: string
                 format: date
                 required: true
@@ -315,20 +313,20 @@ paths:
                 type: string
               destination:
                 type: string
-              trip_type:
+              tripType:
                 type: string
                 description: Trip type
                 enum:
                   - one-way
                   - return
                   - multi-city
-              travel_date:
+              travelDate:
                 type: string
                 format: date-time
-              return_date:
+              returnDate:
                 type: string
                 format: date-time
-              travel_date:
+              travelDate:
                 type: string
               reason:
                 type: string
@@ -379,17 +377,17 @@ paths:
                 type: string
               destination:
                 type: string
-              trip_type:
+              tripType:
                 type: string
                 description: Trip type
                 enum:
                   - one-way
                   - return
                   - multi-city
-              travel_date:
+              travelDate:
                 type: string
                 format: date-time
-              return_date:
+              returnDate:
                 type: string
                 format: date-time
               reason:
@@ -421,14 +419,14 @@ definitions:
             type: integer
           email:
             type: string
-          first_name:
+          firstName:
             type: string
-          last_name:
+          lastName:
             type: string
-          is_admin:
+          isAdmin:
             type: boolean
             default: false
-          is_verified:
+          isVerified:
             type: boolean
             default: false
   Request:
@@ -450,11 +448,11 @@ definitions:
             required: true
           type:
             type: string
-          travel_date:
+          travelDate:
             type: string
             format: date
             required: true
-          return_date:
+          returnDate:
             type: string
             format: date
             required: true
@@ -462,7 +460,7 @@ definitions:
             type: string
           accommodation:
             type: string
-          user_id:
+          userId:
             type: integer
 
 securityDefinitions:

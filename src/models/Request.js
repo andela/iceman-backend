@@ -9,16 +9,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false
     },
-    trip_type: {
+    tripType: {
       type: DataTypes.ENUM,
       allowNull: false,
       values: ['one-way', 'return', 'multi-city'],
     },
-    travel_date: {
+    travelDate: {
       type: DataTypes.DATE,
       allowNull: false
     },
-    return_date: {
+    returnDate: {
       type: DataTypes.DATE
     },
     reason: {
@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Request.associate = (models) => {
     Request.belongsTo(models.User, {
-      foreignKey: 'user_id',
+      foreignKey: 'userId',
       onDelete: 'CASCADE'
     });
   };

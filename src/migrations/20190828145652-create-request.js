@@ -15,14 +15,14 @@ module.exports = {
       type: Sequelize.ARRAY(Sequelize.STRING),
       allowNull: false
     },
-    travel_date: {
+    travelDate: {
       type: Sequelize.DATE,
       allowNull: false
     },
-    return_date: {
+    returnDate: {
       type: Sequelize.DATE
     },
-    trip_type: {
+    tripType: {
       type: Sequelize.ENUM,
       allowNull: false,
       values: ['one-way', 'return', 'multi-city'],
@@ -33,13 +33,13 @@ module.exports = {
     accommodation: {
       type: Sequelize.STRING
     },
-    user_id: {
+    userId: {
       type: Sequelize.INTEGER,
       onDelete: 'CASCADE',
       references: {
         model: 'Users',
         key: 'id',
-        as: 'user_id'
+        as: 'userId'
       }
     },
     status: {
@@ -54,6 +54,6 @@ module.exports = {
       allowNull: false,
       type: Sequelize.DATE
     },
-  }),
+  }, { freezeTableName: true }),
   down: queryInterface => queryInterface.dropTable('Requests')
 };

@@ -14,18 +14,18 @@ let loginUser2;
 let request;
 
 const user = {
-  first_name: 'Samuel',
-  last_name: 'koroh',
+  firstName: 'Samuel',
+  lastName: 'koroh',
   email: 'user1@gmail.com',
   password: 'Ice5m5am0a843r03'
 };
 
 const oneWayTrip = {
   source: 'Lagos',
-  trip_type: 'one-way',
-  destination: ['Abuja'],
-  travel_date: '2038-01-19 03:14:07',
-  return_date: '2038-01-19 03:14:07',
+  tripType: 'one-way',
+  destination: 'Abuja',
+  travelDate: '2038-01-19 03:14:07',
+  returnDate: '2038-01-19 03:14:07',
   reason: 'reason',
   accommodation: 'accommodation'
 };
@@ -40,11 +40,11 @@ describe('/api/v1/requests', () => {
   describe('POST /multi-city', () => {
     before(async () => {
       await TestHelper.createUser({
-        ...user, is_verified: true
+        ...user, isVerified: true
       });
 
       await TestHelper.createUser({
-        ...user, email: 'user2@gmail.com', is_verified: true
+        ...user, email: 'user2@gmail.com', isVerified: true
       });
 
       loginUser = await chai.request(app)
@@ -68,10 +68,10 @@ describe('/api/v1/requests', () => {
       request.should.have.status(200);
       request.body.data.should.have.property('destination');
       request.body.data.should.have.property('source');
-      request.body.data.should.have.property('trip_type', 'multi-city');
-      request.body.data.should.have.property('return_date');
-      request.body.data.should.have.property('travel_date');
-      request.body.data.should.have.property('user_id');
+      request.body.data.should.have.property('tripType', 'multi-city');
+      request.body.data.should.have.property('returnDate');
+      request.body.data.should.have.property('travelDate');
+      request.body.data.should.have.property('userId');
     });
 
     it('should return 409 if the trip is already booked', async () => {
@@ -165,9 +165,6 @@ describe('/api/v1/requests', () => {
       res.body.should.be.an('object');
       res.body.should.have.property('status').eql('success');
       res.body.data.should.have.property('source');
-      res.body.data.should.have.property('trip_type');
-      res.body.data.should.have.property('travel_date');
-      res.body.data.should.have.property('return_date');
       res.body.data.should.have.property('reason');
       res.body.data.should.have.property('accommodation');
     });
@@ -182,9 +179,6 @@ describe('/api/v1/requests', () => {
       res.body.should.be.an('object');
       res.body.should.have.property('status').eql('success');
       res.body.data.should.have.property('source');
-      res.body.data.should.have.property('trip_type');
-      res.body.data.should.have.property('travel_date');
-      res.body.data.should.have.property('return_date');
       res.body.data.should.have.property('reason');
       res.body.data.should.have.property('accommodation');
     });

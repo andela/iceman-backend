@@ -9,12 +9,12 @@ module.exports = {
     type: {
       type: Sequelize.STRING
     },
-    user_id: {
+    userId: {
       type: Sequelize.INTEGER,
       references: {
         model: 'Users',
         key: 'id',
-        as: 'user_id'
+        as: 'userId'
       }
     },
     date: {
@@ -28,6 +28,6 @@ module.exports = {
       allowNull: false,
       type: Sequelize.DATE
     },
-  }),
+  }, { freezeTableName: true }),
   down: queryInterface => queryInterface.dropTable('Notifications')
 };

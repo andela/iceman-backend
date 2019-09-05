@@ -4,11 +4,11 @@ import Joi from '@hapi/joi';
  * user schema to be used for validating user input
  */
 export const signUpSchema = Joi.object().keys({
-  first_name: Joi.string().trim().required()
+  firstName: Joi.string().trim().required()
     .error(() => ({
       message: 'First Name is required'
     })),
-  last_name: Joi.string().trim().required()
+  lastName: Joi.string().trim().required()
     .error(() => ({
       message: 'Last Name is required'
     })),
@@ -64,10 +64,10 @@ export const LogInSchema = Joi.object().keys({
  */
 export const requestSchema = Joi.object().keys({
   source: Joi.string().required().error(() => ({ message: 'Source is required' })),
-  trip_type: Joi.string().required().error(() => ({ message: 'Please select your trip type. Should be oneway, return or multicity' })),
-  destination: Joi.array().items(Joi.string()).required().error(() => ({ message: 'Please select your destination(s)' })),
-  travel_date: Joi.string().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
-  return_date: Joi.string(),
+  tripType: Joi.string().required().error(() => ({ message: 'Please select your trip type. Should be oneway, return or multicity' })),
+  destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
+  travelDate: Joi.string().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
+  returnDate: Joi.string(),
   reason: Joi.string(),
   status: Joi.string(),
   accommodation: Joi.string()

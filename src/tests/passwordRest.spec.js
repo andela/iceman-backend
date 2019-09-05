@@ -17,8 +17,8 @@ describe('/api/v1/auth', () => {
   before(async () => {
     await TestHelper.destroyModel('User');
     await db.User.create({
-      first_name: 'irellevant',
-      last_name: 'Tester',
+      firstName: 'irellevant',
+      lastName: 'Tester',
       email: 'testa@test.com',
       password: 'PasswordTest123'
     });

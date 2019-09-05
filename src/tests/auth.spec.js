@@ -15,15 +15,15 @@ let userToken;
 const URL_PREFIX = '/api/v1/auth';
 
 const user = {
-  first_name: 'Samuel',
-  last_name: 'koroh',
+  firstName: 'Samuel',
+  lastName: 'koroh',
   email: 'user1@gmail.com',
   password: 'Ice5m5am0a843r03'
 };
 
 const user2 = {
-  first_name: 'Test',
-  last_name: 'Tester',
+  firstName: 'Test',
+  lastName: 'Tester',
   email: 'test@test.com',
   password: 'PasswordTest123'
 };
@@ -38,7 +38,7 @@ describe('/api/v1/auth', () => {
   describe('POST /login', () => {
     before(async () => {
       await TestHelper.createUser({
-        ...user, is_verified: true
+        ...user, isVerified: true
       });
 
       notVerifiedUser = await TestHelper.createUser({
@@ -84,8 +84,8 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('isAdmin');
+      res.body.data.should.have.property('isVerified');
     });
 
     it('should return 400 if the user account is verified but password not valid', async () => {
@@ -106,8 +106,8 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('isAdmin');
+      res.body.data.should.have.property('isVerified');
     });
 
     it('Should return 200 if user is authenticated with Facebook', async () => {
@@ -117,8 +117,8 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('isAdmin');
+      res.body.data.should.have.property('isVerified');
     });
   });
 
@@ -152,8 +152,8 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('isAdmin');
+      res.body.data.should.have.property('isVerified');
     });
   });
 
@@ -162,8 +162,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: '',
-          last_name: '',
+          firstName: '',
+          lastName: '',
           email: '',
           password: '',
         });
@@ -177,8 +177,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: '',
+          firstName: 'john',
+          lastName: '',
           email: 'doe@mail.com',
           password: 'john12345',
         });
@@ -192,8 +192,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: 'doe',
+          firstName: 'john',
+          lastName: 'doe',
           email: '',
           password: '',
         });
@@ -207,8 +207,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: 'doe',
+          firstName: 'john',
+          lastName: 'doe',
           email: 'doe@mail.com',
           password: '',
         });
@@ -222,8 +222,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: 'doe',
+          firstName: 'john',
+          lastName: 'doe',
           email: 'doemail.com',
           password: '123345678',
         });
@@ -237,8 +237,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: 'doe',
+          firstName: 'john',
+          lastName: 'doe',
           email: 'doe@mail.com',
           password: '123345678',
         });
@@ -262,8 +262,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'qqqq',
-          last_name: 'qqqq',
+          firstName: 'qqqq',
+          lastName: 'qqqq',
           email: 'tees@trtr.com',
           password: '11111111ghghjh'
         });
@@ -326,8 +326,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'qqqq',
-          last_name: 'qqqq',
+          firstName: 'qqqq',
+          lastName: 'qqqq',
           email: 'teeser@trtr.com',
           password: '11111111ghghjh'
         });

@@ -2,15 +2,15 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
-      first_name: {
+      firstName: {
         type: DataTypes.STRING,
         allowNull: false,
 
       },
-      middle_name: {
+      middleName: {
         type: DataTypes.STRING
       },
-      last_name: {
+      lastName: {
         type: DataTypes.STRING,
         allowNull: false,
 
@@ -27,18 +27,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
-      social_id: {
+      socialId: {
         type: DataTypes.STRING,
       },
-      is_admin: {
+      isAdmin: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
-      is_verified: {
+      isVerified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
-      reset_token: {
+      resetToken: {
         type: DataTypes.STRING
       },
     },
@@ -46,11 +46,11 @@ module.exports = (sequelize, DataTypes) => {
   );
   User.associate = (models) => {
     User.hasMany(models.Request, {
-      foreignKey: 'user_id'
+      foreignKey: 'userId'
     });
 
     User.hasMany(models.Notification, {
-      foreignKey: 'user_id'
+      foreignKey: 'userId'
     });
   };
   return User;

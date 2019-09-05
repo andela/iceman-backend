@@ -18,13 +18,15 @@ export default class RequestService {
 
     if (!userRequest) error('Trip request not found');
 
-    const { user_id, status } = userRequest;
+    const { userId, status } = userRequest;
 
-    if (user_id !== id) error('You are not allowed to edit this request');
+    if (userId !== id) error('You are not allowed to edit this request');
 
-    if (body.trip_type === 'one-way') body.return_date = null;
+    if (body.tripType === 'one-way') body.returnDate = null;
 
     if (status !== 'open') error(`Request has been ${status}. cannot edit`);
+
+    body.destination = body.destination.split(',');
 
     const updatedRequest = await Request.update(body, { where: { id }, returning: true });
 
@@ -36,12 +38,14 @@ export default class RequestService {
    * @returns{void}
    */
   static async oneway({ body, user: { id } }) {
-    const { travel_date } = body;
-    const existingRequest = await Request.count({ where: { travel_date, user_id: id } });
+    const { travelDate } = body;
+    const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
     if (existingRequest) error('You\'ve already booked this trip');
 
-    return Request.create({ ...body, user_id: id });
+    body.destination = body.destination.split(',');
+
+    return Request.create({ ...body, userId: id });
   }
 
   /**
@@ -49,12 +53,14 @@ export default class RequestService {
    * @returns {object} obej - return object
    */
   static async multiCityRequest({ body, user: { id } }) {
-    const { travel_date } = body;
-    const existingRequest = await Request.count({ where: { travel_date, user_id: id } });
+    const { travelDate } = body;
+    const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
     if (existingRequest) error('You\'ve already booked this trip');
 
-    const { dataValues } = await Request.create({ ...body, user_id: id });
+    body.destination = body.destination.split(',');
+
+    const { dataValues } = await Request.create({ ...body, userId: id });
 
     return dataValues;
   }
