@@ -11,6 +11,7 @@ chai.should();
 const URL_PREFIX = '/api/v1/requests';
 let loginUser;
 let loginUser2;
+let loginUser3;
 let request;
 
 const user = {
@@ -47,6 +48,10 @@ describe('/api/v1/requests', () => {
         ...user, email: 'user2@gmail.com', isVerified: true
       });
 
+      await TestHelper.createUser({
+        ...user, email: 'user3@gmail.com', isVerified: true
+      });
+
       loginUser = await chai.request(app)
         .post('/api/v1/auth/login')
         .set('Content-Type', 'application/json')
@@ -56,6 +61,11 @@ describe('/api/v1/requests', () => {
         .post('/api/v1/auth/login')
         .set('Content-Type', 'application/json')
         .send({ email: 'user2@gmail.com', password: user.password });
+
+      loginUser3 = await chai.request(app)
+        .post('/api/v1/auth/login')
+        .set('Content-Type', 'application/json')
+        .send({ email: 'user3@gmail.com', password: user.password });
 
       request = await chai.request(app)
         .post(`${URL_PREFIX}/multi-city`)
@@ -74,13 +84,13 @@ describe('/api/v1/requests', () => {
       request.body.data.should.have.property('userId');
     });
 
-    it('should return 409 if the trip is already booked', async () => {
+    it('should return 400 if the trip is already booked', async () => {
       const { text, status } = await chai.request(app)
         .post(`${URL_PREFIX}/multi-city`)
         .set('token', loginUser.body.data.token)
         .send(multiRequest);
 
-      expect(status).to.equal(409);
+      expect(status).to.equal(400);
       expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
     });
 
@@ -90,6 +100,16 @@ describe('/api/v1/requests', () => {
         .set('Content-Type', 'application/json')
         .set('token', loginUser.body.data.token)
         .send({});
+
+      res.should.have.status(400);
+    });
+
+    it('should return 400 if requests type is not multi city', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/multi-city`)
+        .set('Content-Type', 'application/json')
+        .set('token', loginUser3.body.data.token)
+        .send({ ...multiRequest, tripType: 'one-way' });
 
       res.should.have.status(400);
     });

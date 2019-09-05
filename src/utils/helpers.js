@@ -79,10 +79,12 @@ export default class Helper {
       user.email = data.email;
       user.image = data.picture;
       user.socialId = data.sub;
+      user.isVerified = true;
       user.firstName = data.given_name;
       user.lastName = data.family_name;
     } else {
       user.socialId = data.id;
+      user.isVerified = true;
       user.email = data.email;
       user.firstName = data.first_name;
       user.lastName = data.last_name;

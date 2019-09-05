@@ -58,6 +58,8 @@ export default class RequestService {
 
     if (existingRequest) error('You\'ve already booked this trip');
 
+    if (body.tripType !== 'multi-city') error('Trip type must be mulit city');
+
     body.destination = body.destination.split(',');
 
     const { dataValues } = await Request.create({ ...body, userId: id });

@@ -50,7 +50,7 @@ export default class RequestController {
 
       success(res, data);
     } catch ({ message: err }) {
-      badRequest(res, err, 409);
+      badRequest(res, err);
     }
   }
 }
