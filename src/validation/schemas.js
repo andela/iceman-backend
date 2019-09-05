@@ -6,11 +6,11 @@ Joi.extend(require('@hapi/joi-date'));
  * user schema to be used for validating user input
  */
 export const signUpSchema = Joi.object().keys({
-  first_name: Joi.string().trim().required()
+  firstName: Joi.string().trim().required()
     .error(() => ({
       message: 'First Name is required'
     })),
-  last_name: Joi.string().trim().required()
+  lastName: Joi.string().trim().required()
     .error(() => ({
       message: 'Last Name is required'
     })),
@@ -29,47 +29,13 @@ export const signUpSchema = Joi.object().keys({
  * profile schema to be used for validating user profile
  */
 export const profileSchema = Joi.object().keys({
-  first_name: Joi.string().trim(),
-  last_name: Joi.string().trim(),
-  gender: Joi.string().trim(),
-  preferred_language: Joi.string().trim(),
-  residential_address: Joi.string().trim(),
-  preferred_currency: Joi.string().trim(),
-  date_of_birth: Joi.date(),
-});
-
-/**
- * request schema to be used for validating user input
- */
-export const requestSchema = Joi.object().keys({
-  source: Joi.string().trim().required()
-    .error(() => ({
-      message: 'Source is required'
-    })),
-  destination: Joi.string().trim().required()
-    .error(() => ({
-      message: 'Please select your destination'
-    })),
-  travelDate: Joi.date().required()
-    .error(() => ({
-      message: 'Travel date is required e.g YYYY-MM-DD',
-    })),
-  returnDate: Joi.date().allow(null).optional()
-    .error(() => ({
-      message: 'Return date should be in YYYY-MM-DD format',
-    })),
-  tripType: Joi.string().valid('oneway', 'return', 'multicity').lowercase().required()
-    .error(() => ({
-      message: 'Please select your trip type. Should be oneway, return or multicity',
-    })),
-  reason: Joi.string().lowercase().required()
-    .error(() => ({
-      message: 'Reason is required',
-    })),
-  accommodation: Joi.string().lowercase().required()
-    .error(() => ({
-      message: 'Accommodation is required',
-    }))
+  firstName: Joi.string().trim().optional(),
+  lastName: Joi.string().trim().optional(),
+  gender: Joi.string().trim().optional(),
+  preferredLanguage: Joi.string().trim().optional(),
+  residentialAddress: Joi.string().trim().optional(),
+  preferredCurrency: Joi.string().trim().optional(),
+  dateOfBirth: Joi.date().optional(),
 });
 
 /**
@@ -94,27 +60,30 @@ export const verifyEmail = Joi.object().keys({
 });
 
 /**
- * Schema for one way trip request
+ * user schema to be used for validating user login credential
  */
-export const oneWaySchema = Joi.object().keys({
-  source: Joi.string().trim().required()
+export const LogInSchema = Joi.object().keys({
+  email: Joi.string().email().trim().lowercase()
+    .required()
     .error(() => ({
-      message: 'Source is required'
+      message: 'Email must be a valid email address e.g example@mail.com or example@mail.co.uk',
     })),
-  destination: Joi.string().trim().required()
+  password: Joi.string().regex(/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{8,20}$/).required()
     .error(() => ({
-      message: 'Please select your destination'
+      message: 'Password must contain at least one letter, at least one number, and be atleast 8 digits long',
     })),
-  travelDate: Joi.date().required()
-    .error(() => ({
-      message: 'Travel date is required e.g YYYY-MM-DD',
-    })),
-  reason: Joi.string().lowercase().required()
-    .error(() => ({
-      message: 'Reason is required',
-    })),
-  accommodation: Joi.string().lowercase().required()
-    .error(() => ({
-      message: 'Accommodation is required',
-    })),
+});
+
+/**
+ * Schema for validating multi city request
+ */
+export const requestSchema = Joi.object().keys({
+  source: Joi.string().required().error(() => ({ message: 'Source is required' })),
+  tripType: Joi.string().required().error(() => ({ message: 'Please select your trip type. Should be oneway, return or multicity' })),
+  destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
+  travelDate: Joi.date().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
+  returnDate: Joi.date(),
+  reason: Joi.string(),
+  status: Joi.string(),
+  accommodation: Joi.string()
 });

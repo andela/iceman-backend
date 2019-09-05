@@ -21,16 +21,16 @@ export default class AuthService {
  * @return {string} - token
  */
   static async login(email, password) {
-    const result = await User.findOne({ where: { email, is_verified: true } });
+    const result = await User.findOne({ where: { email, isVerified: true } });
 
-    if (!result) throw new Error('The account does not exist or not yet verified');
+    if (!result) error('The account does not exist or not yet verified');
 
     const { dataValues: user } = result;
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) error('Please provide valid login credentials');
 
-    const payload = { id: user.id, is_admin: user.is_admin };
+    const payload = { id: user.id, isAdmin: user.isAdmin };
     const token = await jwt.sign(payload, jwtSecret, { expiresIn: '1hr' });
 
     return { token, ...Helper.omitFields(user, ['password']) };
@@ -46,7 +46,7 @@ export default class AuthService {
 
     if (!result) error('Email not found');
 
-    const { dataValues: { first_name: name, } } = result;
+    const { dataValues: { firstName: name, } } = result;
     const token = await jwt.sign({
       email
     }, jwtSecret, { expiresIn: '1h' });
@@ -61,7 +61,7 @@ export default class AuthService {
     await sendmail(emailDetails);
 
     const options = {
-      reset_token: token
+      resetToken: token
     };
 
     this.updateUser({ email }, options);
@@ -77,14 +77,14 @@ export default class AuthService {
    * */
   static async resetPassword(token, password) {
     const { email } = await jwt.verify(token, jwtSecret);
-    const { dataValues: { reset_token: tokenSaved } } = await User.findOne({ where: { email } });
+    const { dataValues: { resetToken: tokenSaved } } = await User.findOne({ where: { email } });
 
     if (token !== tokenSaved) error('Invalid token');
 
     const newPassword = await Helper.encryptor(password);
     const options = {
       password: newPassword,
-      reset_token: null
+      resetToken: null
     };
 
     this.updateUser({ email }, options);
@@ -107,7 +107,7 @@ export default class AuthService {
 
     const result = await User.create(userDetails);
     const { dataValues: user } = result;
-    const payload = Helper.pickFields(user, ['id', 'is_admin']);
+    const payload = Helper.pickFields(user, ['id', 'isAdmin']);
     const token = await Helper.genToken(payload);
 
     return { token, ...Helper.omitFields(user, ['password']) };
@@ -134,17 +134,15 @@ export default class AuthService {
   static async verify(token) {
     const isExpire = await Helper.verifyToken(token);
 
-    if (!isExpire) {
-      error('Expired Verification Link, resend verification Link');
-    }
+    if (!isExpire) error('Expired Verification Link, resend verification Link');
 
     const isUser = await User.findOne({ where: { id: isExpire.id } });
 
-    if (!isUser) throw new Error('User not found');
+    if (!isUser) error('User not found');
 
-    if (isUser.dataValues.is_verified) error('User Email is Already Verified');
+    if (isUser.dataValues.isVerified) error('User Email is Already Verified');
 
-    await User.update({ is_verified: true }, { where: { id: isExpire.id } });
+    await User.update({ isVerified: true }, { where: { id: isExpire.id } });
 
     return 'Email Verification Successful';
   }
@@ -159,7 +157,7 @@ export default class AuthService {
 
     if (!isUser) error('User not found');
 
-    if (isUser.dataValues.is_verified) error('User Email is Already Verified');
+    if (isUser.dataValues.isVerified) error('User Email is Already Verified');
 
     const token = Helper.genToken({ id: isUser.dataValues.id });
     const url = `${process.env.APP_URL}/verify?token=${token}`;
@@ -167,7 +165,7 @@ export default class AuthService {
       receiver: isUser.dataValues.email,
       sender: process.env.SENDER,
       templateName: 'verify_email',
-      name: isUser.dataValues.first_name,
+      name: isUser.dataValues.firstName,
       url
     };
 
@@ -182,7 +180,11 @@ export default class AuthService {
  */
   static async getProfile(userId) {
     const result = await User.findOne({ where: { id: userId } });
+
+    if (!result) error('User not found');
+
     const { dataValues: user } = result;
+
     return Helper.omitFields(user, ['password']);
   }
 
@@ -192,17 +194,13 @@ export default class AuthService {
 * @return {object} - object containing updated user profile information
 */
   static async updateProfile(userId, profileDetails) {
-    const importantFields = Helper.pickFields(profileDetails, [
-      'first_name',
-      'last_name',
-      'gender',
-      'preferred_language',
-      'residential_address',
-      'preferred_currency',
-      'date_of_birth',
-    ]);
-    const result = await User.update(importantFields, { returning: true, where: { id: userId } });
+    const isUser = await User.findOne({ where: { id: userId } });
+
+    if (!isUser) error('User not found');
+
+    const result = await User.update(profileDetails, { returning: true, where: { id: userId } });
     const [, [{ dataValues: updatedData }]] = result;
+
     return Helper.omitFields(updatedData, ['password']);
   }
 }

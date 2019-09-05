@@ -110,9 +110,9 @@ export default class AuthController {
  * @param {object} res - response object
  * @return {object} user - return object containing status and data
  */
-  static async getProfile({ decoded }, res) {
+  static async getProfile({ user }, res) {
     try {
-      const { id } = decoded;
+      const { id } = user;
       const userData = await getProfile(id);
 
       success(res, userData);
@@ -126,9 +126,9 @@ export default class AuthController {
 * @param {object} res - response object
 * @return {object} user - return object containing status and data
 */
-  static async updateProfile({ body, decoded }, res) {
+  static async updateProfile({ body, user }, res) {
     try {
-      const { id } = decoded;
+      const { id } = user;
       const updatedData = await updateProfile(id, body);
 
       success(res, updatedData);
