@@ -112,6 +112,7 @@ describe('/api/v1/requests', () => {
         .send({ ...multiRequest, tripType: 'one-way' });
 
       res.should.have.status(400);
+      expect(JSON.parse(res.text).error).to.equal('Trip type must be mulit city');
     });
 
     it('should return 400 if required fields where not passed', async () => {
