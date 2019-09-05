@@ -45,4 +45,5 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>POST</td><td>/api/v1/requests/multi-city</td><td>Allow user to make multi city request</td></tr>
 <tr><td>PATCH</td><td>/api/v1/requests/:id</td><td>Updates trip requests</td></tr>
 <tr><td>GET</td><td>/api/v1/requests</td><td>Retrieve user requests</td></tr>
+<tr><td>GET</td><td>/api/v1/requests/return</td><td>Create a return trip</td></tr>
 </table>

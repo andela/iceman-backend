@@ -275,11 +275,12 @@ describe('/api/v1/requests', () => {
       res.should.have.status(200);
       res.body.should.have.property('status').eql('success');
       res.body.data.should.have.property('id');
-      res.body.data.should.have.property('source');
-      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('source').eql('Lagos');
+      res.body.data.should.have.property('destination').eql(['Abuja']);
+      res.body.data.should.have.property('tripType').eql('return');
+      res.body.data.should.have.property('status').eql('open');
       res.body.data.should.have.property('travelDate');
       res.body.data.should.have.property('returnDate');
-      res.body.data.should.have.property('tripType');
     });
 
     it('should return 400 error if trip is already booked', async () => {
