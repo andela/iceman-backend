@@ -11,23 +11,19 @@ info:
 tags:
   - name: Auth
     description: Manage User Authentication and Profile
+  - name: Requests
+    description: Manage Travel Requests
 host: localhost:3000
 basePath: /api/v1
 paths:
   /auth/profile:
     get:
       tags:
-        - Users
+        - Auth
       summary: View user's profile information
       description: View user's profile information
       produces:
         - application/json
-      parameters:
-        - in: header
-          name: token
-          description: User authentication token
-          required: true
-          type: string
       responses:
         401:
           description: No token provided
@@ -41,9 +37,11 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/UsersResponse'
+      security:
+        - api_key: []
     patch:
       tags:
-        - Users
+        - Auth
       summary: Update user's profile information
       description: Update user's profile information
       consumes:
@@ -91,7 +89,8 @@ paths:
           description: No token provided
           schema:
             $ref: '#definitions/ErrorResponse'
-
+      security:
+        - api_key: []
   /auth/login:
     post:
       tags:
@@ -193,7 +192,7 @@ paths:
           schema:
             $ref: '#definitions/AuthResponse'
 
-  /auth/verify?token:
+  /auth/verify:
     get:
       tags:
         - Auth
@@ -298,22 +297,11 @@ paths:
       tags:
         - Requests
       summary: Return Trip
-      security:
-        - BasicAuth: []
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
-        - name: id
-          in: path
-          description: ID of request to update
-          required: true
-          type: integer
-          format: int64
-        - in: body
-          name: body
-          description: Updated request object
         - in: body
           name: body
           description: Trip request details
@@ -325,21 +313,9 @@ paths:
                 type: string
               destination:
                 type: string
-              tripType:
-                type: string
-                description: Trip type
-                enum:
-                  - oneway
-                  - return
-                  - multicity
               travelDate:
                 type: string
                 format: date-time
-              returnDate:
-                type: string
-                format: date-time
-              travelDate:
-                type: string
               reason:
                 type: string
               accommodation:
@@ -357,13 +333,6 @@ paths:
           description: Authentication failed
       security:
         - api_key: []
-        - in: header
-          name: token
-          description: an authorization header
-          required: true
-          type: string
-      security:
-        - Basic: []
       responses:
         400:
           description: Invalid Credentials
@@ -373,7 +342,62 @@ paths:
           description: Authorization failure
         201:
           description: Success
+  /requests/{id}/reject:
+    patch:
+      tags:
+        - Requests
+      summary: Reject Travel Request
+      description: Rejects a travel request
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of request to update
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Request'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
   /requests/{id}:
+    get:
+      tags:
+        - Requests
+      summary: View request by ID
+      description: Views a single request
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of request to update
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Request'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
     patch:
       tags:
         - Requests

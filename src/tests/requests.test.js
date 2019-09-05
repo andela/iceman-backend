@@ -59,6 +59,74 @@ describe('TRIP REQUEST ROUTE', () => {
     });
   });
 
+  describe('View Request', () => {
+    it('should view a trip request successfully when user is logged in', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/requests/1`)
+        .set('token', userToken);
+
+      res.should.have.status(200);
+      res.body.should.be.an('object');
+      res.body.should.have.property('status').eql('success');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('tripType');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('returnDate');
+      res.body.data.should.have.property('reason');
+      res.body.data.should.have.property('accommodation');
+    });
+
+    it('should fail if request ID entered is not a valid integer', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/requests/a`)
+        .set('token', userToken);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Request ID must be an integer greater than or equal to 1');
+    });
+
+    it('should throw not found error when request does not exist', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/requests/144`)
+        .set('token', userToken);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Trip request not found');
+    });
+
+    it('should not be able to update the request of another user', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/requests/1`)
+        .set('token', userToken2);
+
+      res.should.have.status(403);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You are not allowed to view this request');
+    });
+
+    it('should deny user access when not logged in', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/requests/1`);
+
+      res.should.have.status(401);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Authentication failed, please login');
+    });
+
+    it('should deny access when token is invalid', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/requests/1`)
+        .set('token', 'invalid token');
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, Invalid or Expired Token');
+    });
+  });
+
   describe('Edit Request', () => {
     it('should update an open trip request when user is logged in and required details are provided', async () => {
       const res = await chai.request(app)
@@ -78,6 +146,17 @@ describe('TRIP REQUEST ROUTE', () => {
       res.body.data.should.have.property('accommodation');
     });
 
+    it('should fail if request ID entered is not a valid integer', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/requests/a`)
+        .set('token', userToken)
+        .send(requestDetails);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Request ID must be an integer greater than or equal to 1');
+    });
+
     it('should throw not found error when request does not exist', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/requests/144`)
@@ -95,7 +174,7 @@ describe('TRIP REQUEST ROUTE', () => {
         .set('token', userToken2)
         .send(requestDetails);
 
-      res.should.have.status(400);
+      res.should.have.status(403);
       res.body.should.be.an('object');
       res.body.error.should.equal('You are not allowed to edit this request');
     });
@@ -266,6 +345,75 @@ describe('TRIP REQUEST ROUTE', () => {
       res.should.have.status(400);
       res.body.should.be.an('object');
       res.body.error.should.equal('Return date should be in YYYY-MM-DD format');
+    });
+
+    describe('Reject Request', () => {
+      it('should view a trip request successfully when user is logged in', async () => {
+        const res = await chai.request(app)
+          .patch(`${URL_PREFIX}/requests/1/reject`)
+          .set('token', userToken);
+
+        res.should.have.status(200);
+        res.body.should.be.an('object');
+        res.body.should.have.property('status').eql('success');
+        res.body.data.should.have.property('source');
+        res.body.data.should.have.property('destination');
+        res.body.data.should.have.property('triptype');
+        res.body.data.should.have.property('traveldate');
+        res.body.data.should.have.property('returndate');
+        res.body.data.should.have.property('reason');
+        res.body.data.should.have.property('accommodation');
+        res.body.data.should.have.property('status').eql('rejected');
+      });
+
+      it('should fail if request ID entered is not a valid integer', async () => {
+        const res = await chai.request(app)
+          .patch(`${URL_PREFIX}/requests/a/reject`)
+          .set('token', userToken);
+
+        res.should.have.status(400);
+        res.body.should.be.an('object');
+        res.body.error.should.equal('Request ID must be an integer greater than or equal to 1');
+      });
+
+      it('should throw not found error when request does not exist', async () => {
+        const res = await chai.request(app)
+          .patch(`${URL_PREFIX}/requests/144/reject`)
+          .set('token', userToken);
+
+        res.should.have.status(400);
+        res.body.should.be.an('object');
+        res.body.error.should.equal('Trip request not found');
+      });
+
+      it('should not be able to update the request of another user', async () => {
+        const res = await chai.request(app)
+          .patch(`${URL_PREFIX}/requests/1/reject`)
+          .set('token', userToken2);
+
+        res.should.have.status(403);
+        res.body.should.be.an('object');
+        res.body.error.should.equal('You are not allowed to reject this request');
+      });
+
+      it('should deny user access when not logged in', async () => {
+        const res = await chai.request(app)
+          .patch(`${URL_PREFIX}/requests/1/reject`);
+
+        res.should.have.status(401);
+        res.body.should.be.an('object');
+        res.body.error.should.equal('Authentication failed, please login');
+      });
+
+      it('should deny access when token is invalid', async () => {
+        const res = await chai.request(app)
+          .patch(`${URL_PREFIX}/requests/1/reject`)
+          .set('token', 'invalid token');
+
+        res.should.have.status(400);
+        res.body.should.be.an('object');
+        res.body.error.should.equal('Access Denied, Invalid or Expired Token');
+      });
     });
 
     describe('POST / Oneway Trip', () => {

@@ -118,3 +118,13 @@ export const oneWaySchema = Joi.object().keys({
       message: 'Accommodation is required',
     })),
 });
+
+/**
+ * Schema for request ID
+ */
+export const requestIdSchema = Joi.object().keys({
+  requestId: Joi.number().integer().min(1).required()
+    .error(() => ({
+      message: 'Request ID must be an integer greater than or equal to 1',
+    })),
+});

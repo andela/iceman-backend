@@ -21,7 +21,7 @@ export default class RequestService {
   }
 
   /**
-  * update trip rquest
+  * update trip request
   * @param {number} id - request id
   * @param {object} data - request object
   * @return {object} - updated request
@@ -29,7 +29,6 @@ export default class RequestService {
   static async updateRequest(id, data) {
     const userRequest = await Request.findOne({ where: { id } });
 
-    if (!userRequest) error('Trip request not found');
     const { status } = userRequest;
 
     if (status !== 'open') error(`Request has been ${status}. cannot edit`);
@@ -40,18 +39,31 @@ export default class RequestService {
 
   /**
    * @param {object} details trip details
+   * @param {number} userId ID of the user creating the request
    * @returns{void}
    */
-  static async oneway(details) {
+  static async oneway(details, userId) {
     const { travelDate } = details;
     const existingRequest = await Request.count({ where: { travelDate } });
 
     if (existingRequest) error('You\'ve already booked this trip');
 
     const data = await Request.create({
-      ...details, tripType: 'one-way', status: 'open'
+      ...details, tripType: 'one-way', status: 'open', userId,
     });
 
     return data;
+  }
+
+  /**
+  * update trip request
+  * @param {number} id - request id
+  * @param {object} data - request object
+  * @return {object} - updated request
+  */
+  static async rejectRequest(id) {
+    const [, [{ dataValues }]] = await Request.update({ status: 'rejected' }, { where: { id }, returning: true });
+
+    return dataValues;
   }
 }
