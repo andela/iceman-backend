@@ -435,9 +435,13 @@ paths:
           description: Access Denied
         403:
 <<<<<<< HEAD
+<<<<<<< HEAD
           description: Authentication failed
       security:
         - api_key: []
+=======
+          description: Authentication failed  
+>>>>>>> test fix
   /requests/return:
     post:
       tags:
@@ -502,6 +506,7 @@ paths:
           description: Authorization failure
         201:
           description: Success   
+<<<<<<< HEAD
   /auth/assign_role:
     patch:
       tags:
@@ -543,6 +548,8 @@ paths:
 =======
           description: Authentication failed   
 >>>>>>> resolve conflicts
+=======
+>>>>>>> test fix
 definitions:
   AuthReponse:
     properties:

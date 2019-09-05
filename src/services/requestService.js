@@ -90,11 +90,11 @@ export default class RequestService {
 
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
-    if (existingRequest) error('You\'ve already booked this trip');
-
     if (body.tripType !== 'return') error('Trip type must be return trip');
 
     if (!body.returnDate) error('Return date is required');
+
+    if (existingRequest) error('You\'ve already booked this trip');
 
     body.destination = body.destination.split(',');
 
