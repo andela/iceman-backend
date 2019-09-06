@@ -39,6 +39,9 @@ module.exports = {
     resetToken: {
       type: Sequelize.STRING
     },
+    line_manager: {
+      type: Sequelize.STRING
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE

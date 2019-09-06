@@ -1,4 +1,4 @@
-import { Request } from '../models';
+import { Request, User } from '../models';
 import Response from '../utils/response';
 
 const { error } = Response;
@@ -79,5 +79,27 @@ export default class RequestService {
     if (result.length === 0) error('You\'ve not make any requests');
 
     return result;
+  }
+
+  /**
+   *
+   * @param {number} id - line manager id
+   * @return {obeject} - open requests
+   */
+  static async getOpenRequest(id) {
+    const openRequests = await Request.findAll({
+      where: { status: 'open' },
+      include: [{
+        model: User,
+        attributes: [],
+        where: {
+          line_manager: id
+        },
+      }],
+      raw: true
+    });
+
+    if (openRequests.length < 1) error('There are no pending requests');
+    return openRequests;
   }
 }
