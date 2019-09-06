@@ -30,7 +30,8 @@ export default class PassportController {
             error: 'Something is not right',
           });
         }
-        const payload = Helper.pickFields(user, ['id', 'isAdmin']);
+
+        const payload = Helper.pickFields(user, ['id', 'roleId']);
         const token = Helper.genToken(payload);
 
         return Response.success(res, { token, ...user });

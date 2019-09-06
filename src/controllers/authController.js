@@ -9,6 +9,7 @@ const {
   verificationLink,
   getProfile,
   updateProfile,
+  assignUser,
 } = AuthService;
 
 /**
@@ -132,6 +133,20 @@ export default class AuthController {
       const updatedData = await updateProfile(id, body);
 
       success(res, updatedData);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+   * @param {object} res response object
+   * @return {object} message
+   */
+  static async assignRole({ body }, res) {
+    try {
+      const assign = await assignUser(body);
+
+      successMessage(res, assign);
     } catch ({ message: error }) {
       badRequest(res, error);
     }

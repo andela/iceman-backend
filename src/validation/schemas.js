@@ -75,6 +75,22 @@ export const LogInSchema = Joi.object().keys({
 });
 
 /**
+  * Role schema to assign roles to user
+  */
+export const roleSchema = Joi.object().keys({
+  email: Joi.string().email().trim().lowercase()
+    .required()
+    .error(() => ({
+      message: 'Email must be a valid email address e.g example@mail.com or example@mail.co.uk',
+    })),
+  roleId: Joi.number().min(1).max(5)
+    .required()
+    .error(() => ({
+      message: 'Invalid Role Input',
+    })),
+});
+
+/**
  * Schema for validating multi city request
  */
 export const requestSchema = Joi.object().keys({

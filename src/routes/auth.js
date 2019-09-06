@@ -8,6 +8,7 @@ import {
   verifyEmail,
   LogInSchema,
   profileSchema,
+  roleSchema,
 } from '../validation/schemas';
 import validate from '../validation/validator';
 
@@ -21,9 +22,10 @@ const {
   resendVerification,
   getProfile,
   updateProfile,
+  assignRole,
 } = AuthController;
 const { authenticate, callback } = PassportController;
-const { auth } = middlewares;
+const { auth, permitUser } = middlewares;
 
 router.post('/login', validate(LogInSchema, 'body'), loginUser);
 router.get('/facebook', authenticate('facebook', ['email', 'public_profile']));
@@ -37,5 +39,6 @@ router.get('/verify', verifyUser);
 router.post('/resend_verification_link', validate(verifyEmail, 'body'), resendVerification);
 router.get('/profile', auth, getProfile);
 router.patch('/profile', auth, validate(profileSchema, 'body'), updateProfile);
+router.patch('/assign_role', auth, permitUser(['super_admin']), validate(roleSchema, 'body'), assignRole);
 
 export default router;

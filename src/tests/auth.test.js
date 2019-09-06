@@ -5,6 +5,8 @@ import sinon from 'sinon';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
+import db from '../models';
+import insertRoles from '../utils/insertTestRoles';
 
 chai.use(chaiHttp);
 chai.should();
@@ -42,11 +44,15 @@ describe('/api/v1/auth', () => {
     await TestHelper.destroyModel('User');
   });
 
+  before(async () => {
+    await TestHelper.destroyModel('Role');
+    await db.Role.bulkCreate(insertRoles);
+  });
+
   describe('POST /login', () => {
     before(async () => {
-      await TestHelper.destroyModel('User');
       await TestHelper.createUser({
-        ...user, isVerified: true
+        ...user, roleId: 5
       });
 
       notVerifiedUser = await TestHelper.createUser({
@@ -92,8 +98,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
 
     it('should return 400 if the user account is verified but password not valid', async () => {
@@ -114,8 +119,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
 
     it('Should return 200 if user is authenticated with Facebook', async () => {
@@ -125,8 +129,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
   });
 
@@ -160,8 +163,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
   });
 
@@ -401,7 +403,7 @@ describe('/api/v1/auth', () => {
   describe('GET /profile', () => {
     beforeEach(async () => {
       verifiedUser = await TestHelper.createUser({
-        ...user3, is_verified: true
+        ...user3, roleId: 5,
       });
     });
 
@@ -431,7 +433,7 @@ describe('/api/v1/auth', () => {
     });
 
     it('should return 400 if the user does not exist', async () => {
-      const token = await Helper.genToken({ id: 400, isAdmin: false });
+      const token = await Helper.genToken({ id: 400, roleId: 5 });
 
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/profile`)
@@ -443,7 +445,7 @@ describe('/api/v1/auth', () => {
     });
 
     it('should get the user\'s details successfully if all conditions are met', async () => {
-      const payload = Helper.pickFields(verifiedUser, ['id', 'isAdmin']);
+      const payload = Helper.pickFields(verifiedUser, ['id', 'roleId']);
       const token = await Helper.genToken(payload);
 
       const res = await chai.request(app)
@@ -458,8 +460,6 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('firstName').eql('Elijah');
       res.body.data.should.have.property('lastName').eql('Enuem-Udogu');
       res.body.data.should.have.property('email').eql('koppter.kom@gmail.com');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
       res.body.data.should.have.property('roleId');
       res.body.data.should.have.property('gender');
       res.body.data.should.have.property('dateOfBirth');
@@ -472,7 +472,7 @@ describe('/api/v1/auth', () => {
   describe('PATCH /profile', () => {
     beforeEach(async () => {
       verifiedUser = await TestHelper.createUser({
-        ...user3, is_verified: true
+        ...user3, roleId: 5,
       });
     });
 
@@ -514,7 +514,7 @@ describe('/api/v1/auth', () => {
     });
 
     it('should return 400 if the user does not exist', async () => {
-      const token = await Helper.genToken({ id: 400, isAdmin: false });
+      const token = await Helper.genToken({ id: 400, roleId: 5 });
 
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/profile`)
@@ -527,7 +527,7 @@ describe('/api/v1/auth', () => {
     });
 
     it('should update the user\'s profile successfully if all conditions are met', async () => {
-      const payload = Helper.pickFields(verifiedUser, ['id', 'isAdmin']);
+      const payload = Helper.pickFields(verifiedUser, ['id', 'roleId']);
       const token = await Helper.genToken(payload);
 
       const res = await chai.request(app)
@@ -540,17 +540,15 @@ describe('/api/v1/auth', () => {
       res.body.should.have.property('status').eql('success');
       res.body.should.have.property('data');
       res.body.data.should.be.a('object');
-      res.body.data.should.have.property('firstname').eql('Elijah');
-      res.body.data.should.have.property('lastname').eql('Enuem-Udogu');
+      res.body.data.should.have.property('firstName').eql('Elijah');
+      res.body.data.should.have.property('lastName').eql('Enuem-Udogu');
       res.body.data.should.have.property('email').eql('koppter.kom@gmail.com');
-      res.body.data.should.have.property('isadmin');
-      res.body.data.should.have.property('isverified');
-      res.body.data.should.have.property('roleid');
+      res.body.data.should.have.property('roleId');
       res.body.data.should.have.property('gender').eql('Male');
-      res.body.data.should.have.property('dateofbirth');
-      res.body.data.should.have.property('preferredlanguage').eql('English');
-      res.body.data.should.have.property('preferredcurrency').eql('Nigerian Naira (NGN)');
-      res.body.data.should.have.property('residentialaddress').eql('Benin City, Nigeria');
+      res.body.data.should.have.property('dateOfBirth');
+      res.body.data.should.have.property('preferredLanguage').eql('English');
+      res.body.data.should.have.property('preferredCurrency').eql('Nigerian Naira (NGN)');
+      res.body.data.should.have.property('residentialAddress').eql('Benin City, Nigeria');
     });
   });
 });

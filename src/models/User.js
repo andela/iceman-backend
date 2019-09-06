@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes) => {
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
-
       },
       middleName: {
         type: DataTypes.STRING
@@ -13,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
       lastName: {
         type: DataTypes.STRING,
         allowNull: false,
-
       },
       email: {
         type: DataTypes.STRING,
@@ -29,14 +27,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       socialId: {
         type: DataTypes.STRING,
-      },
-      isAdmin: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      isVerified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
       },
       roleId: {
         type: DataTypes.INTEGER,
@@ -71,9 +61,8 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Request, {
       foreignKey: 'userId'
     });
-
-    User.hasMany(models.Notification, {
-      foreignKey: 'userId'
+    User.belongsTo(models.Role, {
+      foreignKey: 'roleId'
     });
   };
   return User;
