@@ -34,10 +34,6 @@ module.exports = (sequelize, DataTypes) => {
       resetToken: {
         type: DataTypes.STRING
       },
-      line_manager: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
     },
     { },
   );

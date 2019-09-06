@@ -93,7 +93,7 @@ export default class RequestService {
         model: User,
         attributes: [],
         where: {
-          line_manager: id
+          manager: id
         },
       }],
       raw: true

@@ -81,9 +81,9 @@ export default class RequestController {
    * @return {json} - open requests
    */
   static async openRequests(req, res) {
-    const { line_manager } = req.decoded;
+    const { id } = req.user;
     try {
-      const result = await getOpenRequest(line_manager);
+      const result = await getOpenRequest(id);
 
       success(res, result);
     } catch ({ message: err }) {
