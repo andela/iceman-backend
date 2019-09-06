@@ -9,7 +9,6 @@ module.exports = {
     dialect: 'postgres',
   },
   test: {
-    quoteIdentifiers: false,
     use_env_variable: 'DATABASE_URL_TEST'
   },
   production: {

@@ -74,17 +74,17 @@ export default class Helper {
       user.email = data.email;
       user.image = data.picture;
       user.socialId = data.sub;
-      user.isVerified = true;
       user.firstName = data.given_name;
       user.lastName = data.family_name;
+      user.roleId = 5;
     } else {
       user.socialId = data.id;
-      user.isVerified = true;
       user.email = data.email;
       user.firstName = data.first_name;
       user.lastName = data.last_name;
       user.middleName = data.middle_name;
       user.image = data.picture.data.url;
+      user.roleId = 5;
     }
     return user;
   }

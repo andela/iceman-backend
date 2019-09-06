@@ -5,6 +5,8 @@ import sinon from 'sinon';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
+import db from '../models';
+import insertRoles from '../utils/insertTestRoles';
 
 chai.use(chaiHttp);
 chai.should();
@@ -35,10 +37,14 @@ describe('/api/v1/auth', () => {
     await TestHelper.destroyModel('User');
   });
 
+  before(async () => {
+    await db.Role.bulkCreate(insertRoles);
+  });
+
   describe('POST /login', () => {
     before(async () => {
       await TestHelper.createUser({
-        ...user, isVerified: true
+        ...user, roleId: 5
       });
 
       notVerifiedUser = await TestHelper.createUser({
@@ -84,8 +90,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
 
     it('should return 400 if the user account is verified but password not valid', async () => {
@@ -106,8 +111,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
 
     it('Should return 200 if user is authenticated with Facebook', async () => {
@@ -117,8 +121,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
   });
 
@@ -152,8 +155,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
   });
 

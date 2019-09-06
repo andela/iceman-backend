@@ -404,7 +404,48 @@ paths:
         401:
           description: Access Denied
         403:
-          description: Authentication failed   
+          description: Authentication failed
+      security:
+        - api_key: []
+
+  /auth/assign_role:
+    patch:
+      tags:
+        - Assign Role
+      summary: Assign user role
+      description: Assign user role with Super Administrator Access
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: roleId
+          in: body
+          description: Role ID 
+          required: true
+          type: integer
+        - in: body
+          name: email
+          description: User email to be assigned a role
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Error
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []  
+
 definitions:
   AuthReponse:
     properties:

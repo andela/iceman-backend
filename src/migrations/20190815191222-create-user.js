@@ -9,7 +9,6 @@ module.exports = {
     firstName: {
       type: Sequelize.STRING,
       allowNull: false,
-
     },
     middleName: {
       type: Sequelize.STRING
@@ -17,7 +16,6 @@ module.exports = {
     lastName: {
       type: Sequelize.STRING,
       allowNull: false,
-
     },
     email: {
       type: Sequelize.STRING,
@@ -34,13 +32,9 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false
     },
-    isVerified: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false,
-    },
-    isAdmin: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false
+    roleId: {
+      type: Sequelize.INTEGER,
+      defaultValue: 6,
     },
     resetToken: {
       type: Sequelize.STRING
