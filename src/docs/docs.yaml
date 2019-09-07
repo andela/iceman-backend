@@ -239,7 +239,7 @@ paths:
         200:
           description: Success
   
-  /requests/my-requests:
+  /requests:
     get:
       tags:
         - Requests

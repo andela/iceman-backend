@@ -43,6 +43,6 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>GET</td><td>/api/v1/auth/google</td><td>Authenticate user using Google</td></tr>
 <tr><td>PATCH</td><td>/api/v1/auth/assign_role</td><td>Assign user role</td></tr>
 <tr><td>POST</td><td>/api/v1/requests/multi-city</td><td>Allow user to make multi city request</td></tr>
-<tr><td>PATCH</td><td>/api/v1/request/:id</td><td>Updates trip requests</td></tr>
-<tr><td>GET</td><td>/api/v1/request/my-requests</td><td>Retrieve user requests</td></tr>
+<tr><td>PATCH</td><td>/api/v1/requests/:id</td><td>Updates trip requests</td></tr>
+<tr><td>GET</td><td>/api/v1/requests</td><td>Retrieve user requests</td></tr>
 </table>

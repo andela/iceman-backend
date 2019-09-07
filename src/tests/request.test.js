@@ -242,7 +242,7 @@ describe('/api/v1/requests', () => {
   describe('GET /', () => {
     it('should retrieve all requests made by the users', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/my-requests`)
+        .get(`${URL_PREFIX}`)
         .set('token', loginUser.body.data.token);
 
       res.should.have.status(200);
@@ -256,7 +256,7 @@ describe('/api/v1/requests', () => {
     });
     it('should return 404 if the user has no requests', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}/my-requests`)
+        .get(`${URL_PREFIX}`)
         .set('token', loginUser3.body.data.token);
 
       res.should.have.status(404);

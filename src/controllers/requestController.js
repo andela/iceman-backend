@@ -2,7 +2,7 @@ import RequestService from '../services/requestService';
 import Response from '../utils/response';
 
 const { success, badRequest } = Response;
-const { updateRequest, multiCityRequest, myRequests } = RequestService;
+const { updateRequest, multiCityRequest, getRequests } = RequestService;
 
 /**
  * Class for Requests
@@ -59,9 +59,9 @@ export default class RequestController {
    * @param {res} res - res object object
    * @returns {object} - return object
    */
-  static async myRequests(req, res) {
+  static async getRequests(req, res) {
     try {
-      const data = await myRequests(req);
+      const data = await getRequests(req);
 
       success(res, data);
     } catch ({ message: err }) {

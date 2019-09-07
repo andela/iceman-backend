@@ -10,12 +10,12 @@ const {
   update,
   oneWay,
   multiCityRequest,
-  myRequests
+  getRequests
 } = RequestController;
 
 router.post('/multi-city', [auth, validator(requestSchema)], multiCityRequest);
 router.post('/one-way', [auth, validator(requestSchema)], oneWay);
 router.patch('/:requestId', [auth, validator(requestSchema)], update);
-router.get('/my-requests', auth, myRequests);
+router.get('/', auth, getRequests);
 
 export default router;

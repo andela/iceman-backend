@@ -73,7 +73,7 @@ export default class RequestService {
    * @param {object} body - arrays of request object
    * @returns {object} obej - return object
    */
-  static async myRequests({ user: { id } }) {
+  static async getRequests({ user: { id } }) {
     const result = await Request.findAll({ where: { userId: id } });
 
     if (result.length === 0) error('You\'ve not make any requests');
