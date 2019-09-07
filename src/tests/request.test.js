@@ -29,15 +29,15 @@ describe('/api/v1/requests', () => {
   describe('POST /multi-city', () => {
     before(async () => {
       await TestHelper.createUser({
-        ...user, isVerified: true
+        ...user, roleId: 5
       });
 
       await TestHelper.createUser({
-        ...user, email: 'user2@gmail.com', isVerified: true
+        ...user, email: 'user2@gmail.com', roleId: 5
       });
 
       await TestHelper.createUser({
-        ...user, email: 'user3@gmail.com', isVerified: true
+        ...user, email: 'user3@gmail.com', roleId: 5
       });
 
       loginUser = await chai.request(app)

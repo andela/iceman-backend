@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 import Helper from '../utils/helpers';
-import { User } from '../models';
+import { User, Role } from '../models';
 import sendmail from './emailService';
 import Response from '../utils/response';
 
@@ -21,17 +21,20 @@ export default class AuthService {
  * @return {string} - token
  */
   static async login(email, password) {
-    const result = await User.findOne({ where: { email, isVerified: true } });
+    const result = await User.findOne({ where: { email } });
 
+    if (!result) throw new Error('The account does not exist');
 
-    if (!result) error('The account does not exists or not yet verified');
+    const userRole = await Role.findOne({ where: { id: result.dataValues.roleId } });
+
+    if (userRole.dataValues.type === 'guest') throw new Error('Please Verify Your Email Address');
 
     const { dataValues: user } = result;
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) error('Please provide valid login credentials');
 
-    const payload = { id: user.id, isAdmin: user.isAdmin };
+    const payload = { id: user.id, roleId: user.roleId };
     const token = await jwt.sign(payload, jwtSecret, { expiresIn: '1hr' });
 
     return { token, ...Helper.omitFields(user, ['password']) };
@@ -108,7 +111,8 @@ export default class AuthService {
 
     const result = await User.create(userDetails);
     const { dataValues: user } = result;
-    const payload = Helper.pickFields(user, ['id', 'isAdmin']);
+
+    const payload = Helper.pickFields(user, ['id', 'roleId']);
     const token = await Helper.genToken(payload);
 
     return { token, ...Helper.omitFields(user, ['password']) };
@@ -139,13 +143,22 @@ export default class AuthService {
       error('Expired Verification Link, resend verification Link');
     }
 
-    const isUser = await User.findOne({ where: { id: isExpire.id } });
+    const isUser = await User.findOne({
+      where:
+      {
+        id: isExpire.id
+      },
+      include: [{
+        model: Role,
+        attributes: ['type']
+      }]
+    });
 
     if (!isUser) error('User not find');
 
-    if (isUser.dataValues.isVerified) error('User Email is Already Verified');
+    if (isUser.dataValues.Role.dataValues.type !== 'guest') throw new Error('User Email is Already Verified');
 
-    await User.update({ isVerified: true }, { where: { id: isExpire.id } });
+    await User.update({ roleId: 5 }, { where: { id: isExpire.id } });
 
     return 'Email Verification Successful';
   }
@@ -156,11 +169,19 @@ export default class AuthService {
    */
   static async verificationLink(body) {
     const { email } = body;
-    const isUser = await User.findOne({ where: { email } });
+    const isUser = await User.findOne({
+      where: {
+        email
+      },
+      include: [{
+        model: Role,
+        attributes: ['type']
+      }]
+    });
 
     if (!isUser) error('User not found');
 
-    if (isUser.dataValues.isVerified) error('User Email is Already Verified');
+    if (isUser.dataValues.Role.dataValues.type !== 'guest') throw new Error('User Email is Already Verified');
 
     const token = Helper.genToken({ id: isUser.dataValues.id });
     const url = `${process.env.APP_URL}/verify?token=${token}`;
@@ -175,5 +196,35 @@ export default class AuthService {
     await sendmail(userDetails);
 
     return 'Verification Link Sent';
+  }
+
+  /**
+   * @param {object} body user details
+   * @return {string} - success message;
+   */
+  static async assignUser(body) {
+    const { email, roleId } = body;
+    const checkRole = await Role.findOne({ where: { id: Number(roleId) } });
+    const getUser = await User.findOne({
+      where: {
+        email
+      },
+      include: [{
+        model: Role,
+        attributes: ['type']
+      }]
+    });
+
+    if (!getUser) throw new Error('User not found');
+
+    if (!checkRole) throw new Error('Role does not exit');
+
+    if (getUser.dataValues.Role.dataValues.type === 'guest') throw new Error('User email is not verified');
+
+    if (getUser.dataValues.roleId === Number(roleId)) throw new Error('User is already assigned this role');
+
+    await User.update({ roleId: Number(roleId) }, { where: { email } });
+
+    return 'User Role Assigned Successfully';
   }
 }

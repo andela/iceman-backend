@@ -5,6 +5,8 @@ import sinon from 'sinon';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
+import db from '../models';
+import insertRoles from '../utils/insertTestRoles';
 
 chai.use(chaiHttp);
 chai.should();
@@ -31,14 +33,17 @@ const user2 = {
 describe('/api/v1/auth', () => {
   let notVerifiedUser;
 
-  before(async () => {
-    await TestHelper.destroyModel('User');
+  before(async (done) => {
+    TestHelper.destroyModel('User');
+    TestHelper.destroyModel('Role');
+    db.Role.bulkCreate(insertRoles);
+    done();
   });
 
   describe('POST /login', () => {
     before(async () => {
       await TestHelper.createUser({
-        ...user, isVerified: true
+        ...user, roleId: 5
       });
 
       notVerifiedUser = await TestHelper.createUser({
@@ -51,7 +56,7 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/login`)
         .set('Content-Type', 'application/json')
-        .send({ email: 'email@email.com', password: 'password' });
+        .send({ email: 'email@email.com', password: 'password12344' });
 
       res.should.have.status(400);
     });
@@ -84,8 +89,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
 
     it('should return 400 if the user account is verified but password not valid', async () => {
@@ -106,8 +110,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
 
     it('Should return 200 if user is authenticated with Facebook', async () => {
@@ -117,8 +120,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
   });
 
@@ -152,8 +154,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('isAdmin');
-      res.body.data.should.have.property('isVerified');
+      res.body.data.should.have.property('roleId');
     });
   });
 
