@@ -5,6 +5,8 @@ import sgMail from '@sendgrid/mail';
 import sinon from 'sinon';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
+import db from '../models';
+import insertRoles from '../utils/insertTestRoles';
 
 dotenv.config();
 chai.use(chaiHttp);
@@ -26,14 +28,10 @@ const superAdmin = {
 describe('Assign User Role', () => {
   before((done) => {
     TestHelper.destroyModel('User');
-    done();
-  });
-
-  after((done) => {
     TestHelper.destroyModel('Role');
+    db.Role.bulkCreate(insertRoles);
     done();
   });
-
 
   beforeEach(async () => {
     send = sinon.stub(sgMail, 'send').resolves({});

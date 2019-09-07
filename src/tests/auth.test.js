@@ -33,12 +33,11 @@ const user2 = {
 describe('/api/v1/auth', () => {
   let notVerifiedUser;
 
-  before(async () => {
-    await TestHelper.destroyModel('User');
-  });
-
-  before(async () => {
-    await db.Role.bulkCreate(insertRoles);
+  before(async (done) => {
+    TestHelper.destroyModel('User');
+    TestHelper.destroyModel('Role');
+    db.Role.bulkCreate(insertRoles);
+    done();
   });
 
   describe('POST /login', () => {
@@ -57,7 +56,7 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/login`)
         .set('Content-Type', 'application/json')
-        .send({ email: 'email@email.com', password: 'password' });
+        .send({ email: 'email@email.com', password: 'password12344' });
 
       res.should.have.status(400);
     });

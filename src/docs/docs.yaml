@@ -238,6 +238,29 @@ paths:
           description: Email Not Found
         200:
           description: Success
+  
+  /requests:
+    get:
+      tags:
+        - Requests
+      summary: Retrieve my requests
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: token
+          description: Authenticate User
+          required: true
+      responses:
+        404:
+          description: You've not make any requests
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/MyRequest'
+
   /requests/multi-city:
     post:
       tags:
@@ -503,6 +526,40 @@ definitions:
             type: string
           userId:
             type: integer
+  MyRequest:
+    properties:
+      status:
+        type: string
+      data:
+        type: array
+        items:
+          properties:
+            id:
+              type: integer
+            source:
+              type: string
+              required: true
+            destination:
+              type: array
+              items:
+                type: string
+              required: true
+            type:
+              type: string
+            travelDate:
+              type: string
+              format: date
+              required: true
+            returnDate:
+              type: string
+              format: date
+              required: true
+            reason:
+              type: string
+            accommodation:
+              type: string
+            userId:
+              type: integer
 
 securityDefinitions:
   api_key:
