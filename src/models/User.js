@@ -64,6 +64,12 @@ module.exports = (sequelize, DataTypes) => {
     User.belongsTo(models.Role, {
       foreignKey: 'roleId'
     });
+    User.hasOne(models.Department, {
+      foreignKey: 'manager'
+    });
+    User.hasOne(models.UserDepartment, {
+      foreignKey: 'userId'
+    });
   };
   return User;
 };

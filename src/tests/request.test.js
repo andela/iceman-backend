@@ -3,7 +3,12 @@ import chaiHttp from 'chai-http';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
-import { multiRequest, missingRequiredField } from './testData/sampleData';
+import {
+  multiRequest,
+  missingRequiredField,
+  oneWayTrip,
+  user
+} from './testData/sampleData';
 
 chai.use(chaiHttp);
 chai.should();
@@ -13,23 +18,6 @@ let loginUser;
 let loginUser2;
 let loginUser3;
 let request;
-
-const user = {
-  firstName: 'Samuel',
-  lastName: 'koroh',
-  email: 'user1@gmail.com',
-  password: 'Ice5m5am0a843r03'
-};
-
-const oneWayTrip = {
-  source: 'Lagos',
-  tripType: 'one-way',
-  destination: 'Abuja',
-  travelDate: '2038-01-19 03:14:07',
-  returnDate: '2038-01-19 03:14:07',
-  reason: 'reason',
-  accommodation: 'accommodation'
-};
 
 describe('/api/v1/requests', () => {
   before(async () => {
@@ -91,6 +79,16 @@ describe('/api/v1/requests', () => {
 
       expect(status).to.equal(400);
       expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
+    });
+
+    it('should return 400 if the reuest is less than 2', async () => {
+      const { text, status } = await chai.request(app)
+        .post(`${URL_PREFIX}/multi-city`)
+        .set('token', loginUser.body.data.token)
+        .send(oneWayTrip);
+
+      expect(status).to.equal(400);
+      expect(JSON.parse(text).error).to.equal('Request must be more than one');
     });
 
     it('should return 400 if pass empty requests', async () => {
@@ -238,6 +236,30 @@ describe('/api/v1/requests', () => {
 
       res.should.have.status(400);
       res.body.should.be.an('object');
+    });
+  });
+  describe('GET /', () => {
+    it('should retrieve all requests made by the users', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.data[0].should.have.property('destination');
+      res.body.data[0].should.have.property('source');
+      res.body.data[0].should.have.property('tripType');
+      res.body.data[0].should.have.property('returnDate');
+      res.body.data[0].should.have.property('travelDate');
+      res.body.data[0].should.have.property('userId');
+      res.body.data[0].should.have.property('status');
+    });
+    it('should return 404 if the user has no requests', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}`)
+        .set('token', loginUser3.body.data.token);
+
+      res.should.have.status(404);
+      expect(JSON.parse(res.text).error).to.equal('You\'ve not made any requests');
     });
   });
 });

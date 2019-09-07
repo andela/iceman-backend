@@ -2,6 +2,7 @@ import express from 'express';
 import AuthController from '../controllers/authController';
 import middlewares from '../middlewares';
 import PassportController from '../controllers/passportController';
+import validate, { validator } from '../validation/validator';
 import {
   signUpSchema,
   passwordResetSchema,
@@ -10,7 +11,6 @@ import {
   profileSchema,
   roleSchema,
 } from '../validation/schemas';
-import validate from '../validation/validator';
 
 const router = express.Router();
 const {
@@ -27,11 +27,6 @@ const {
 const { authenticate, callback } = PassportController;
 const { auth, permitUser } = middlewares;
 
-router.post('/login', validate(LogInSchema, 'body'), loginUser);
-router.get('/facebook', authenticate('facebook', ['email', 'public_profile']));
-router.get('/facebook/callback', callback('facebook'));
-router.get('/google', authenticate('google', ['email', 'profile']));
-router.get('/google/callback', callback('google'));
 router.post('/forgot_password', forgotPassword);
 router.patch('/reset_password/:token', validate(passwordResetSchema, 'body'), resetPassword);
 router.post('/signup', validate(signUpSchema, 'body'), signupUser);
@@ -40,5 +35,10 @@ router.post('/resend_verification_link', validate(verifyEmail, 'body'), resendVe
 router.get('/profile', auth, getProfile);
 router.patch('/profile', auth, validate(profileSchema, 'body'), updateProfile);
 router.patch('/assign_role', auth, permitUser(['super_admin']), validate(roleSchema, 'body'), assignRole);
+router.post('/login', validator(LogInSchema), loginUser);
+router.get('/facebook', authenticate('facebook', ['email', 'public_profile']));
+router.get('/facebook/callback', callback('facebook'));
+router.get('/google', authenticate('google', ['email', 'profile']));
+router.get('/google/callback', callback('google'));
 
 export default router;
