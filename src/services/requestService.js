@@ -1,4 +1,5 @@
-import { Request, User, UserDepartmants, Departments } from '../models';
+import Sequelize from 'sequelize';
+import db from '../models';
 import Response from '../utils/response';
 
 const { error } = Response;
@@ -86,20 +87,22 @@ export default class RequestService {
    * @param {number} id - line manager id
    * @return {obeject} - open requests
    */
-  static async getOpenRequest(id) {
-    const openRequests = await Request.findAll({
-      where: { status: 'open' },
-      include: [{
-        model: User,
-        attributes: [],
-        where: {
-          id
-        },
-      }],
-      raw: true
-    });
+  static async getOpenRequest() {
+    // const openRequests = await Request.findAll({
+    //   where: { status: 'open' },
+    //   include: [{
+    //     model: User,
+    //     attributes: [],
+    //     where: {
+    //       manager: id
+    //     },
+    //   }],
+    //   raw: true
+    // });
 
-    if (openRequests.length < 1) error('There are no pending requests');
-    return openRequests;
+    // if (openRequests.length < 1) error('There are no pending requests');
+    // return openRequests;
+    const { dataValues: res } = await db.UserDepartment.findAll({include: [{ model: db.User, where: {id: Sequelize.col('UserDepartment.userId')} }]});
+    console.log(res);
   }
 }

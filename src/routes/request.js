@@ -17,7 +17,7 @@ const {
 router.post('/multi-city', [auth, validator(requestSchema)], multiCityRequest);
 router.post('/one-way', [auth, validator(requestSchema)], oneWay);
 router.patch('/:requestId', [auth, validator(requestSchema)], update);
-router.get('/pending', auth, openRequests);
+router.get('/pending', openRequests);
 router.get('/', auth, getRequests);
 
 

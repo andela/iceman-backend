@@ -2,13 +2,7 @@ import RequestService from '../services/requestService';
 import Response from '../utils/response';
 
 const { success, badRequest } = Response;
-<<<<<<< HEAD
-const { updateRequest, multiCityRequest, getRequests } = RequestService;
-=======
-const {
-  updateRequest, multiCityRequest, myRequests, getOpenRequest
-} = RequestService;
->>>>>>> implement availing request logic
+const { updateRequest, multiCityRequest, getRequests, getOpenRequest } = RequestService;
 
 /**
  * Class for Requests
@@ -81,9 +75,8 @@ export default class RequestController {
    * @return {json} - open requests
    */
   static async openRequests(req, res) {
-    const { id } = req.user;
     try {
-      const result = await getOpenRequest(id);
+      const result = await getOpenRequest(req);
 
       success(res, result);
     } catch ({ message: err }) {
