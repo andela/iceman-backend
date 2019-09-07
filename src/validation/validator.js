@@ -7,7 +7,7 @@ import Response from '../utils/response';
   * @param {string} property - property to be validated
   * @return {json} - validation error
   */
-const validate = (schema, property = 'body') => (req, res, next) => {
+const validate = (schema, property) => (req, res, next) => {
   const { error } = Joi.validate(req[property], schema);
   const valid = error == null;
 
