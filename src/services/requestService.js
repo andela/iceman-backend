@@ -1,4 +1,4 @@
-import { Request, User } from '../models';
+import { Request, User, UserDepartmants, Departments } from '../models';
 import Response from '../utils/response';
 
 const { error } = Response;
@@ -93,7 +93,7 @@ export default class RequestService {
         model: User,
         attributes: [],
         where: {
-          manager: id
+          id
         },
       }],
       raw: true

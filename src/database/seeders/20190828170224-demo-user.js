@@ -6,6 +6,7 @@ module.exports = {
     email: 'cleave@mail.com',
     password: '$2b$10$Ei9AIY7iUCU3jN3EAH7a8ez9lBmfazkBOHCI8SPbwWkD7iT4LWkYm',
 <<<<<<< HEAD
+<<<<<<< HEAD
     roleId: 5,
 =======
 <<<<<<< HEAD:src/database/seeders/20190828170224-demo-user.js
@@ -15,17 +16,21 @@ module.exports = {
     is_verified: true,
 >>>>>>> implement availing request logic:src/seeders/20190828170224-demo-user.js
 >>>>>>> implement availing request logic
+=======
+    isAdmin: true,
+    isVerified: true,
+>>>>>>> update migrations and seeders
     createdAt: new Date(),
     updatedAt: new Date()
   },
   {
     id: 2,
-    first_name: 'cleave',
-    last_name: 'owhiroro',
+    firstName: 'cleave',
+    lastName: 'owhiroro',
     email: 'cleave2@mail.com',
     password: '$2b$10$Ei9AIY7iUCU3jN3EAH7a8ez9lBmfazkBOHCI8SPbwWkD7iT4LWkYm',
-    line_manager: 14,
-    is_verified: true,
+    isAdmin: true,
+    isVerified: true,
     createdAt: new Date(),
     updatedAt: new Date()
   }
