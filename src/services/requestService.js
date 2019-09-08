@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { Request } from '../models';
 import Response from '../utils/response';
 
@@ -101,5 +102,40 @@ export default class RequestService {
     const { dataValues } = await Request.create({ ...body, userId: id });
 
     return dataValues;
+  }
+
+  /**
+   *
+   * @param {object} query - search object
+   * @returns {object} data
+   */
+  static async search(query) {
+    const { destination } = query;
+
+    if (destination) {
+      const data = await Request.findAll({
+        where: {
+          destination: {
+            [Op.contains]: [`${Object.values(query)[0]}`]
+          },
+        },
+      });
+
+      if (data.length === 0) error('Destination not found');
+
+      return data;
+    }
+
+    const data = await Request.findAll({
+      where: {
+        [Object.keys(query)[0]]: {
+          [Op.iLike]: `%${Object.values(query)[0]}%`,
+        },
+      },
+    });
+
+    if (data.length === 0) error(`${Object.keys(query)[0]} not found`);
+
+    return data;
   }
 }

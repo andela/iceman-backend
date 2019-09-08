@@ -3,7 +3,7 @@ import Response from '../utils/response';
 
 const { success, badRequest } = Response;
 const {
-  updateRequest, multiCityRequest, getRequests, returnRequest
+  updateRequest, multiCityRequest, getRequests, returnRequest, search
 } = RequestService;
 
 /**
@@ -79,6 +79,22 @@ export default class RequestController {
   static async returnRequest(req, res) {
     try {
       const data = await returnRequest(req);
+
+      success(res, data);
+    } catch ({ message: err }) {
+      badRequest(res, err);
+    }
+  }
+
+  /**
+ * User search request and approval
+ * @param {*} query - search query
+ * @param {object} res - response
+ * @returns {object} - data
+ */
+  static async search({ query }, res) {
+    try {
+      const data = await search(query);
 
       success(res, data);
     } catch ({ message: err }) {

@@ -343,4 +343,54 @@ describe('/api/v1/requests', () => {
       res.body.error[5].should.equal('Accommodation is required');
     });
   });
+
+  describe('GET /Search', () => {
+    it('should return 200 if source search was successful', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?source=Lagos`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data[0].should.have.property('id');
+      res.body.data[0].should.have.property('source').eql('Lagos');
+      res.body.data[0].should.have.property('destination').eql(['Abuja']);
+      res.body.data[0].should.have.property('travelDate');
+    });
+
+    it('should return 200 if destination search was successful', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?destination=Abuja`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data[0].should.have.property('id');
+      res.body.data[0].should.have.property('source').eql('Lagos');
+      res.body.data[0].should.have.property('destination').eql(['Abuja']);
+      res.body.data[0].should.have.property('travelDate');
+    });
+
+    it('should return 400 error data not found', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?source=0`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('source not found');
+    });
+
+    it('should return 400 error data not found', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?destination=0`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('Destination not found');
+    });
+  });
 });
