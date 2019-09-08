@@ -493,7 +493,49 @@ paths:
         401:
           description: Authorization failure
         201:
-          description: Success   
+          description: Success  
+  /requests/search?:
+    get:
+      tags:
+        - Requests
+      summary: Search Functionality
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: source
+          schema:
+            type: String
+          description: Search source and value
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Request'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
+        - in: header
+          name: token
+          description: an authorization header
+          required: true
+          type: string        
+      security:
+        - Basic: []
+      responses:
+        400:
+          description: Invalid Credentials
+        401:
+          description: Authorization failure
+        200:
+          description: Success    
   /auth/assign_role:
     patch:
       tags:

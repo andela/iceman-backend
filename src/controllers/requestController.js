@@ -98,7 +98,7 @@ export default class RequestController {
 
       success(res, data);
     } catch ({ message: err }) {
-      badRequest(res, err);
+      badRequest(res, err, 404);
     }
   }
 }

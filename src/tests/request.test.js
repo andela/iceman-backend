@@ -378,7 +378,7 @@ describe('/api/v1/requests', () => {
         .get(`${URL_PREFIX}/search?source=0`)
         .set('token', loginUser.body.data.token);
 
-      res.should.have.status(400);
+      res.should.have.status(404);
       res.body.should.have.property('status').eql('error');
       res.body.error.should.equal('source not found');
     });
@@ -388,7 +388,7 @@ describe('/api/v1/requests', () => {
         .get(`${URL_PREFIX}/search?destination=0`)
         .set('token', loginUser.body.data.token);
 
-      res.should.have.status(400);
+      res.should.have.status(404);
       res.body.should.have.property('status').eql('error');
       res.body.error.should.equal('Destination not found');
     });
