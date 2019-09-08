@@ -1,5 +1,4 @@
-import Sequelize from 'sequelize';
-import db from '../models';
+import { sequelize, Request } from '../models';
 import Response from '../utils/response';
 
 const { error } = Response;
@@ -29,7 +28,10 @@ export default class RequestService {
 
     body.destination = body.destination.split(',');
 
-    const updatedRequest = await Request.update(body, { where: { id }, returning: true });
+    const updatedRequest = await Request.update(body, {
+      where: { id: params.requestId },
+      returning: true
+    });
 
     return updatedRequest[1][0].dataValues;
   }
@@ -84,25 +86,22 @@ export default class RequestService {
 
   /**
    *
-   * @param {number} id - line manager id
+   * @param {number} id - manager's id
    * @return {obeject} - open requests
    */
-  static async getOpenRequest() {
-    // const openRequests = await Request.findAll({
-    //   where: { status: 'open' },
-    //   include: [{
-    //     model: User,
-    //     attributes: [],
-    //     where: {
-    //       manager: id
-    //     },
-    //   }],
-    //   raw: true
-    // });
+  static async getOpenRequest({ user: { id } }) {
+    const strQuery = 'SELECT A.source, A.destination, A.travelDate, A.returnDate, '
+      + ' A.status, A.tripType, A.reason, A.accommodation, B.firstName, B.lastName FROM Requests A '
+      + ' INNER JOIN Users B ON B.id = A.userId INNER JOIN UserDepartments C ON C.userId = B.Id '
+      + " INNER JOIN Departments D ON D.id = C.departmentId WHERE A.status='open' AND D.manager=:id";
 
-    // if (openRequests.length < 1) error('There are no pending requests');
-    // return openRequests;
-    const { dataValues: res } = await db.UserDepartment.findAll({include: [{ model: db.User, where: {id: Sequelize.col('UserDepartment.userId')} }]});
-    console.log(res);
+    const openRequests = sequelize.query(strQuery, {
+      replacements: { id },
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    if (openRequests.length < 1) error('There are no pending requests');
+
+    return openRequests;
   }
 }
