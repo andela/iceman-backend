@@ -1,31 +1,25 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Request = sequelize.define('Request', {
-    id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
-    },
     source: {
       type: DataTypes.STRING,
       allowNull: false
     },
     destination: {
-      type: DataTypes.STRING,
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false
+    },
+    tripType: {
+      type: DataTypes.ENUM,
+      allowNull: false,
+      values: ['one-way', 'return', 'multi-city'],
     },
     travelDate: {
       type: DataTypes.DATE,
       allowNull: false
     },
     returnDate: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    tripType: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.DATE
     },
     reason: {
       type: DataTypes.STRING
@@ -35,15 +29,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     status: {
       type: DataTypes.STRING,
-      defaultValue: 'open'
-    },
+      defaultValue: 'open',
+    }
   }, {});
   Request.associate = (models) => {
     Request.belongsTo(models.User, {
-      references: {
-        foreignKey: 'userId',
-        onDelete: 'CASCADE'
-      }
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
     });
   };
   return Request;

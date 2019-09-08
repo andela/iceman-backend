@@ -1,9 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 /**
  * Helper class
@@ -61,9 +58,7 @@ export default class Helper {
    */
   static genToken(payloader) {
     const secret = process.env.JWTSECRET;
-    const token = jwt.sign(payloader, secret, { expiresIn: '1hr' });
-
-    return token;
+    return jwt.sign(payloader, secret, { expiresIn: '1hr' });
   }
 
   /**
@@ -78,16 +73,18 @@ export default class Helper {
     if (provider === 'google') {
       user.email = data.email;
       user.image = data.picture;
-      user.social_id = data.sub;
-      user.first_name = data.given_name;
-      user.last_name = data.family_name;
+      user.socialId = data.sub;
+      user.firstName = data.given_name;
+      user.lastName = data.family_name;
+      user.roleId = 5;
     } else {
-      user.social_id = data.id;
+      user.socialId = data.id;
       user.email = data.email;
-      user.first_name = data.first_name;
-      user.last_name = data.last_name;
-      user.middle_name = data.middle_name;
+      user.firstName = data.first_name;
+      user.lastName = data.last_name;
+      user.middleName = data.middle_name;
       user.image = data.picture.data.url;
+      user.roleId = 5;
     }
     return user;
   }

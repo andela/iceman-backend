@@ -5,21 +5,38 @@ import sgMail from '@sendgrid/mail';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import db from '../models';
+import Helper from '../utils/helpers';
+import insertRoles from '../utils/insertTestRoles';
 
 chai.use(chaiHttp);
 
 let stub;
+let fakeToken;
 const urlPrefix = '/api/v1';
 
 describe('/api/v1/auth', () => {
   let passwordResetToken;
 
-  before(async () => {
+  after(async () => {
+    await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+  });
+
+  before(async () => {
+    await db.Role.bulkCreate(insertRoles);
+    fakeToken = await Helper.genToken({ email: 'fake@chubi.com' });
     await db.User.create({
-      first_name: 'irellevant',
-      last_name: 'Tester',
+      firstName: 'irellevant',
+      lastName: 'Tester',
       email: 'testa@test.com',
+      password: 'PasswordTest123'
+    });
+
+    await db.User.create({
+      firstName: 'irellevantwww',
+      lastName: 'Testerww',
+      email: 'fake@chubi.com',
       password: 'PasswordTest123'
     });
   });
@@ -77,6 +94,17 @@ describe('/api/v1/auth', () => {
         });
 
       expect(JSON.parse(text).error).to.equal('jwt malformed');
+      expect(status).to.equal(400);
+    });
+
+    it('should return an error for an invalid token', async () => {
+      const { status, text } = await chai.request(app)
+        .patch(`${urlPrefix}/auth/reset_password/${fakeToken}`)
+        .send({
+          password: 'testa567890testcom'
+        });
+
+      expect(JSON.parse(text).error).to.equal('Invalid token');
       expect(status).to.equal(400);
     });
 

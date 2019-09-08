@@ -2,7 +2,7 @@
 const demoRequest = (id, status) => ({
   id,
   source: 'lagos',
-  destination: 'newyork',
+  destination: ['newyork'],
   travelDate: new Date(),
   returnDate: new Date(),
   tripType: 'one-way',

@@ -1,19 +1,24 @@
 import { Router } from 'express';
-import requestController from '../controllers/requestController';
-import { requestSchema, oneWaySchema, requestIdSchema } from '../validation/schemas';
-import validate from '../validation/validator';
-import verifyUser from '../middlewares/auth';
+import { requestSchema, requestIdSchema } from '../validation/schemas';
+import RequestController from '../controllers/requestController';
+import { validator } from '../validation/validator';
+import middlewares from '../middlewares';
 
 const router = Router();
-
+const { auth, permitUser } = middlewares;
 const {
-  update, oneWay, getRequest, reject,
-} = requestController;
+  update,
+  oneWay,
+  multiCityRequest,
+  getRequests,
+  reject,
+} = RequestController;
 
-router.post('/oneway', validate(oneWaySchema, 'body'), verifyUser, oneWay);
-router.patch('/:requestId', validate(requestIdSchema, 'params'), validate(requestSchema, 'body'), verifyUser, update);
-router.get('/:requestId', validate(requestIdSchema, 'params'), verifyUser, getRequest);
-router.patch('/:requestId/reject', validate(requestIdSchema, 'params'), verifyUser, reject);
 
+router.patch('/:requestId/reject', [auth, validator(requestIdSchema, 'params'), permitUser(['manager'])], reject);
+router.post('/multi-city', [auth, validator(requestSchema)], multiCityRequest);
+router.post('/one-way', [auth, validator(requestSchema)], oneWay);
+router.patch('/:requestId', [auth, validator(requestIdSchema, 'params'), validator(requestSchema)], update);
+router.get('/', auth, getRequests);
 
 export default router;

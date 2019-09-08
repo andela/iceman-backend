@@ -38,8 +38,16 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>POST</td><td>/api/v1/auth/login</td><td>Logs user in</td></tr>
 <tr><td>GET</td><td>/api/v1/users/profile</td><td>Gets user profile information</td></tr>
 <tr><td>PATCH</td><td>/api/v1/users/profile</td><td>Updates user profile information</td></tr>
-<tr><td>GET</td><td>/api/v1/auth/verify?activate&&id</td><td>Creates user account</td></tr>
-<tr><td>PATCH</td><td>/api/v1/request/:id</td><td>Updates trip requests</td></tr>
+<tr><td>GET</td><td>/api/v1/auth/verify</td><td>Verify user email</td></tr>
+<tr><td>GET</td><td>/api/v1/auth/resend_verification_link</td><td>Resend verification link</td></tr>
+<tr><td>POST</td><td>/api/v1/auth/forgot_password</td><td>Send password reset token</td></tr>
+<tr><td>PATCH</td><td>/api/v1/auth/reset_password/:token</td><td>Reset user password</td></tr>
+<tr><td>GET</td><td>/api/v1/auth/facebook</td><td>Authenticate user using Facebook</td></tr>
+<tr><td>GET</td><td>/api/v1/auth/google</td><td>Authenticate user using Google</td></tr>
+<tr><td>PATCH</td><td>/api/v1/auth/assign_role</td><td>Assign user role</td></tr>
+<tr><td>POST</td><td>/api/v1/requests/multi-city</td><td>Allow user to make multi city request</td></tr>
+<tr><td>POST</td><td>/api/v1/requests/one-way</td><td>Allow user to make one way request</td></tr>
+<tr><td>PATCH</td><td>/api/v1/requests/:id</td><td>Updates trip requests</td></tr>
 </table>
 
 ## API Documentation

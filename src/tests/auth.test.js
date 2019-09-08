@@ -5,6 +5,8 @@ import sinon from 'sinon';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
+import db from '../models';
+import insertRoles from '../utils/insertTestRoles';
 
 chai.use(chaiHttp);
 chai.should();
@@ -15,36 +17,52 @@ let userToken;
 const URL_PREFIX = '/api/v1/auth';
 
 const user = {
-  first_name: 'Samuel',
-  last_name: 'koroh',
+  firstName: 'Samuel',
+  lastName: 'koroh',
   email: 'user1@gmail.com',
   password: 'Ice5m5am0a843r03'
 };
 
 const user2 = {
-  first_name: 'Test',
-  last_name: 'Tester',
+  firstName: 'Test',
+  lastName: 'Tester',
   email: 'test@test.com',
   password: 'PasswordTest123'
 };
 
-describe('/api/v1/auth', () => {
-  let verifiedUser, notVerifiedUser, unverifiedUser;
+const user3 = {
+  firstName: 'Elijah',
+  lastName: 'Enuem-Udogu',
+  email: 'koppter.kom@gmail.com',
+  password: 'elijah1994'
+};
 
-  beforeEach(async () => {
+describe('/api/v1/auth', () => {
+  let verifiedUser, notVerifiedUser;
+
+  after(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+  });
+
+  before(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    await db.Role.bulkCreate(insertRoles);
     verifiedUser = await TestHelper.createUser({
-      ...user, is_verified: true
+      ...user, roleId: 5
     });
 
     notVerifiedUser = await TestHelper.createUser({
       ...user,
       email: 'user2@gmail.com',
     });
-  });
 
-  afterEach((done) => {
-    TestHelper.destroyModel('User');
-    done();
+    verifiedUser = await TestHelper.createUser({
+      ...user3, roleId: 5,
+    });
   });
 
   describe('POST /login', () => {
@@ -52,7 +70,16 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/login`)
         .set('Content-Type', 'application/json')
-        .send({ email: 'email@email.com', password: 'password' });
+        .send({ email: 'email@email.com', password: 'password12344' });
+
+      res.should.have.status(400);
+    });
+
+    it('should return 400 if passed an empty object', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/login`)
+        .set('Content-Type', 'application/json')
+        .send({ });
 
       res.should.have.status(400);
     });
@@ -62,15 +89,6 @@ describe('/api/v1/auth', () => {
         .post(`${URL_PREFIX}/login`)
         .set('Content-Type', 'application/json')
         .send({ email: notVerifiedUser.email, password: user.password });
-
-      res.should.have.status(400);
-    });
-
-    it('should return 400 if the user account is verified but password not valid', async () => {
-      const res = await chai.request(app)
-        .post(`${URL_PREFIX}/login`)
-        .set('Content-Type', 'application/json')
-        .send({ email: verifiedUser.email, password: 'password' });
 
       res.should.have.status(400);
     });
@@ -85,8 +103,16 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('roleId');
+    });
+
+    it('should return 400 if the user account is verified but password not valid', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/login`)
+        .set('Content-Type', 'application/json')
+        .send({ email: user.email, password: '3545trfgvcvv' });
+
+      res.should.have.status(400);
     });
   });
 
@@ -98,8 +124,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('roleId');
     });
 
     it('Should return 200 if user is authenticated with Facebook', async () => {
@@ -109,8 +134,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('roleId');
     });
   });
 
@@ -144,8 +168,7 @@ describe('/api/v1/auth', () => {
       res.body.data.should.have.property('token');
       res.body.data.should.have.property('id');
       res.body.data.should.have.property('email');
-      res.body.data.should.have.property('is_admin');
-      res.body.data.should.have.property('is_verified');
+      res.body.data.should.have.property('roleId');
     });
   });
 
@@ -154,8 +177,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: '',
-          last_name: '',
+          firstName: '',
+          lastName: '',
           email: '',
           password: '',
         });
@@ -169,8 +192,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: '',
+          firstName: 'john',
+          lastName: '',
           email: 'doe@mail.com',
           password: 'john12345',
         });
@@ -184,8 +207,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: 'doe',
+          firstName: 'john',
+          lastName: 'doe',
           email: '',
           password: '',
         });
@@ -199,8 +222,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: 'doe',
+          firstName: 'john',
+          lastName: 'doe',
           email: 'doe@mail.com',
           password: '',
         });
@@ -214,8 +237,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: 'doe',
+          firstName: 'john',
+          lastName: 'doe',
           email: 'doemail.com',
           password: '123345678',
         });
@@ -229,8 +252,8 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'john',
-          last_name: 'doe',
+          firstName: 'john',
+          lastName: 'doe',
           email: 'doe@mail.com',
           password: '123345678',
         });
@@ -243,31 +266,25 @@ describe('/api/v1/auth', () => {
 
   describe('Verify User email', () => {
     beforeEach(async () => {
-      send = sinon.stub(sgMail, 'send').resolves({});
-      unverifiedUser = await TestHelper.createUser({
-        first_name: 'qqqq',
-        last_name: 'qqqq',
-        email: 'tees@trtr.com',
-        password: '11111111ghghjh'
-      });
-
-      const { token } = unverifiedUser;
-      userToken = token;
+      send = await sinon.stub(sgMail, 'send').resolves({});
     });
 
     afterEach(async () => {
-      send.restore();
+      await send.restore();
     });
 
     it('should sign up a new user', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'qqqq',
-          last_name: 'qqqq',
-          email: 'tees@trtrt.com',
+          firstName: 'qqqq',
+          lastName: 'qqqq',
+          email: 'tees@trtr.com',
           password: '11111111ghghjh'
         });
+
+      const { token } = res.body.data;
+      userToken = token;
 
       res.should.have.status(201);
       res.body.should.have.property('data');
@@ -293,23 +310,23 @@ describe('/api/v1/auth', () => {
     });
 
     it('should not verify user email that has been verified', async () => {
-      const alreadyVerifiedUser = await TestHelper.createUser({
-        first_name: 'qqqq',
-        last_name: 'qqqq',
-        email: 'teeser@trtr.com',
-        password: '11111111ghghjh',
-        is_verified: true,
-      });
-
-      const { token } = alreadyVerifiedUser;
-      userToken = token;
-
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/verify?token=${userToken}`);
 
       res.should.have.status(400);
       res.body.should.have.property('error');
       res.body.error.should.equal('User Email is Already Verified');
+    });
+
+    it('should not verify a user that does not exist', async () => {
+      const nonExistentUserToken = Helper.genToken({ id: 400, isAdmin: false });
+
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/verify?token=${nonExistentUserToken}`);
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('User not found');
     });
 
     it('should notify user for to resend verification link on expired token', async () => {
@@ -325,15 +342,6 @@ describe('/api/v1/auth', () => {
   describe('Resend Verification Link', () => {
     beforeEach(async () => {
       send = sinon.stub(sgMail, 'send').resolves({});
-      unverifiedUser = await TestHelper.createUser({
-        first_name: 'qqqq',
-        last_name: 'qqqq',
-        email: 'tees@trtr.com',
-        password: '11111111ghghjh'
-      });
-
-      const { token } = unverifiedUser;
-      userToken = token;
     });
 
     afterEach(async () => {
@@ -344,11 +352,13 @@ describe('/api/v1/auth', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)
         .send({
-          first_name: 'qqqq',
-          last_name: 'qqqq',
-          email: 'teeser@trtrt.com',
+          firstName: 'qqqq',
+          lastName: 'qqqq',
+          email: 'teeser@trtr.com',
           password: '11111111ghghjh'
         });
+      const { token } = res.body.data;
+      userToken = token;
 
       res.should.have.status(201);
       res.body.should.have.property('data');
@@ -367,7 +377,7 @@ describe('/api/v1/auth', () => {
     it('should resend verification link to user email', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/resend_verification_link`)
-        .send({ email: 'tees@trtr.com' });
+        .send({ email: 'teeser@trtr.com' });
 
       res.should.have.status(200);
       res.body.should.have.property('message');
@@ -375,17 +385,9 @@ describe('/api/v1/auth', () => {
     });
 
     it('should not resend verification link to email that has been verified', async () => {
-      await TestHelper.createUser({
-        first_name: 'qqqq',
-        last_name: 'qqqq',
-        email: 'teeser@trtr.com',
-        password: '11111111ghghjh',
-        is_verified: true,
-      });
-
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/resend_verification_link`)
-        .send({ email: 'teeser@trtr.com' });
+        .send({ email: 'tees@trtr.com' });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
@@ -400,6 +402,138 @@ describe('/api/v1/auth', () => {
       res.should.have.status(400);
       res.body.should.have.property('error');
       res.body.error.should.equal('User not found');
+    });
+  });
+
+  describe('GET /profile', () => {
+    it('should return 401 if there is no token in the header', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json');
+
+      res.should.have.status(401);
+      res.body.should.have.property('status').eql('error');
+      res.body.should.have.property('error').eql('Access Denied, No token provided');
+    });
+
+    it('should return 400 if the token in the header is invalid', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', 'lsdjlfsjdlkfjsd');
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.should.have.property('error').eql('Access Denied, Invalid token');
+    });
+
+    it('should return 400 if the user does not exist', async () => {
+      const token = await Helper.genToken({ id: 400, roleId: 5 });
+
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', token);
+
+      res.should.have.status(400);
+      res.body.should.have.property('error').eql('User not found');
+    });
+
+    it('should get the user\'s details successfully if all conditions are met', async () => {
+      const payload = Helper.pickFields(verifiedUser, ['id', 'roleId']);
+      const token = await Helper.genToken(payload);
+
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.should.have.property('data');
+      res.body.data.should.be.a('object');
+      res.body.data.should.have.property('firstName').eql('Elijah');
+      res.body.data.should.have.property('lastName').eql('Enuem-Udogu');
+      res.body.data.should.have.property('email').eql('koppter.kom@gmail.com');
+      res.body.data.should.have.property('roleId');
+      res.body.data.should.have.property('gender');
+      res.body.data.should.have.property('dateOfBirth');
+      res.body.data.should.have.property('preferredLanguage');
+      res.body.data.should.have.property('preferredCurrency');
+      res.body.data.should.have.property('residentialAddress');
+    });
+  });
+
+  describe('PATCH /profile', () => {
+    const profileDetails = {
+      firstName: 'Elijah',
+      lastName: 'Enuem-Udogu',
+      gender: 'Male',
+      dateOfBirth: '1994-05-20',
+      preferredLanguage: 'English',
+      residentialAddress: 'Benin City, Nigeria',
+      preferredCurrency: 'Nigerian Naira (NGN)',
+    };
+
+    it('should return 401 if there is no token in the header', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .send(profileDetails);
+
+      res.should.have.status(401);
+      res.body.should.have.property('status').eql('error');
+      res.body.should.have.property('error').eql('Access Denied, No token provided');
+    });
+
+    it('should return 400 if the token in the header is invalid', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', 'lsdjlfsjdlkfjsd')
+        .send(profileDetails);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.should.have.property('error').eql('Access Denied, Invalid token');
+    });
+
+    it('should return 400 if the user does not exist', async () => {
+      const token = await Helper.genToken({ id: 400, roleId: 5 });
+
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', token)
+        .send(profileDetails);
+
+      res.should.have.status(400);
+      res.body.should.have.property('error').eql('User not found');
+    });
+
+    it('should update the user\'s profile successfully if all conditions are met', async () => {
+      const payload = Helper.pickFields(verifiedUser, ['id', 'roleId']);
+      const token = await Helper.genToken(payload);
+
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', token)
+        .send(profileDetails);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.should.have.property('data');
+      res.body.data.should.be.a('object');
+      res.body.data.should.have.property('firstName').eql('Elijah');
+      res.body.data.should.have.property('lastName').eql('Enuem-Udogu');
+      res.body.data.should.have.property('email').eql('koppter.kom@gmail.com');
+      res.body.data.should.have.property('roleId');
+      res.body.data.should.have.property('gender').eql('Male');
+      res.body.data.should.have.property('dateOfBirth');
+      res.body.data.should.have.property('preferredLanguage').eql('English');
+      res.body.data.should.have.property('preferredCurrency').eql('Nigerian Naira (NGN)');
+      res.body.data.should.have.property('residentialAddress').eql('Benin City, Nigeria');
     });
   });
 });

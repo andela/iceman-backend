@@ -2,18 +2,16 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
-      first_name: {
+      firstName: {
         type: DataTypes.STRING,
         allowNull: false,
-
       },
-      middle_name: {
+      middleName: {
         type: DataTypes.STRING
       },
-      last_name: {
+      lastName: {
         type: DataTypes.STRING,
         allowNull: false,
-
       },
       email: {
         type: DataTypes.STRING,
@@ -27,42 +25,33 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
-      social_id: {
+      socialId: {
         type: DataTypes.STRING,
       },
-      is_admin: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      is_verified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      role: {
-        type: DataTypes.STRING,
-        defaultValue: 'requester'
+      roleId: {
+        type: DataTypes.INTEGER,
       },
       gender: {
         type: DataTypes.STRING,
         allowNull: true
       },
-      date_of_birth: {
+      dateOfBirth: {
         type: DataTypes.DATE,
         allowNull: true
       },
-      preferred_language: {
+      preferredLanguage: {
         type: DataTypes.STRING,
         allowNull: true
       },
-      residential_address: {
+      residentialAddress: {
         type: DataTypes.STRING,
         allowNull: true
       },
-      preferred_currency: {
+      preferredCurrency: {
         type: DataTypes.STRING,
         allowNull: true
       },
-      reset_token: {
+      resetToken: {
         type: DataTypes.STRING
       },
     },
@@ -70,6 +59,15 @@ module.exports = (sequelize, DataTypes) => {
   );
   User.associate = (models) => {
     User.hasMany(models.Request, {
+      foreignKey: 'userId'
+    });
+    User.belongsTo(models.Role, {
+      foreignKey: 'roleId'
+    });
+    User.hasOne(models.Department, {
+      foreignKey: 'manager'
+    });
+    User.hasOne(models.UserDepartment, {
       foreignKey: 'userId'
     });
   };

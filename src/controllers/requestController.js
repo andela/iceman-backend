@@ -3,33 +3,22 @@ import Response from '../utils/response';
 
 const { success, badRequest } = Response;
 const {
-  updateRequest, getRequest, rejectRequest, oneway,
+  updateRequest, multiCityRequest, oneway, getRequests, rejectRequest
 } = RequestService;
 
 /**
  * Class for Requests
  */
 export default class RequestController {
-/**
+  /**
  * Update a pending trip request
  * @param {object} req - request object
  * @param {object} res - response object
  * @return {json} - json
  */
   static async update(req, res) {
-    const data = req.body;
-    const { requestId } = req.params;
-    const { id } = req.decoded;
-
     try {
-      const userRequest = await getRequest(requestId);
-      const { userId } = userRequest;
-
-      if (userId !== id) return badRequest(res, 'You are not allowed to edit this request', 403);
-
-      if (data.tripType !== 'return') data.returnDate = null;
-
-      const result = await updateRequest(Number(requestId), data);
+      const result = await updateRequest(req);
 
       success(res, result);
     } catch ({ message: err }) {
@@ -38,15 +27,13 @@ export default class RequestController {
   }
 
   /**
- * @param {object} body request body
- * @param {object} res response body
+ * @param {object} req request object
+ * @param {object} res response object
  * @returns {object} res
  */
-  static async oneWay({ body, decoded }, res) {
-    const { id: userId } = decoded;
-
+  static async oneWay(req, res) {
     try {
-      const data = await oneway(body, userId);
+      const data = await oneway(req);
 
       success(res, data, 201);
     } catch ({ message: err }) {
@@ -55,22 +42,15 @@ export default class RequestController {
   }
 
   /**
- * View a trip request
- * @param {object} req - request object
- * @param {object} res - response object
- * @return {json} - json
- */
-  static async getRequest({ params, decoded }, res) {
-    const { requestId } = params;
-    const { id } = decoded;
-
+   * @param {req} req - request obiect
+   * @param {res} res - res object object
+   * @returns {object} - return object
+   */
+  static async multiCityRequest(req, res) {
     try {
-      const userRequest = await getRequest(parseInt(requestId, 10));
-      const { userId } = userRequest;
+      const data = await multiCityRequest(req);
 
-      if (userId !== id) return badRequest(res, 'You are not allowed to view this request', 403);
-
-      success(res, userRequest);
+      success(res, data);
     } catch ({ message: err }) {
       badRequest(res, err);
     }
@@ -82,21 +62,28 @@ export default class RequestController {
  * @param {object} res - response object
  * @return {json} - json
  */
-  static async reject({ params, decoded }, res) {
-    const { requestId } = params;
-    const { id } = decoded;
-
+  static async reject(req, res) {
     try {
-      const userRequest = await getRequest(parseInt(requestId, 10));
-      const { userId } = userRequest;
-
-      if (userId !== id) return badRequest(res, 'You are not allowed to reject this request', 403);
-
-      const result = await rejectRequest(parseInt(requestId, 10));
+      const result = await rejectRequest(req);
 
       success(res, result);
     } catch ({ message: err }) {
       badRequest(res, err);
+    }
+  }
+
+  /**
+   * @param {req} req - request obiect
+   * @param {res} res - res object object
+   * @returns {object} - return object
+   */
+  static async getRequests(req, res) {
+    try {
+      const data = await getRequests(req);
+
+      success(res, data);
+    } catch ({ message: err }) {
+      badRequest(res, err, 404);
     }
   }
 }
