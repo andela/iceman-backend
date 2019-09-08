@@ -38,4 +38,31 @@ export default class TestHelper {
   static destroyModel(modelName) {
     db[modelName].destroy({ truncate: true, cascade: true, restartIdentity: true });
   }
+
+  /**
+ * Method for creating department
+ * @param {object} data - department data
+ * @return {void}
+ */
+  static async createDepartment(data) {
+    await db.Department.create(data);
+  }
+
+  /**
+ * Method for creating user department
+ * @param {object} data - department data
+ * @return {void}
+ */
+  static async createUserDepartment(data) {
+    await db.UserDepartment.create(data);
+  }
+
+  /**
+ * Method for creating Request
+ * @param {object} data - department data
+ * @return {void}
+ */
+  static async createRequest(data) {
+    await db.Request.create(data);
+  }
 }

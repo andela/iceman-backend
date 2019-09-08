@@ -2,7 +2,9 @@ import RequestService from '../services/requestService';
 import Response from '../utils/response';
 
 const { success, badRequest } = Response;
-const { updateRequest, multiCityRequest, getRequests, getOpenRequest } = RequestService;
+const {
+  updateRequest, multiCityRequest, getRequests, availOpenRequests
+} = RequestService;
 
 /**
  * Class for Requests
@@ -74,9 +76,9 @@ export default class RequestController {
    * @param {object} res - response object
    * @return {json} - open requests
    */
-  static async openRequests(req, res) {
+  static async availOpenRequests(req, res) {
     try {
-      const result = await getOpenRequest(req);
+      const result = await availOpenRequests(req);
 
       success(res, result);
     } catch ({ message: err }) {

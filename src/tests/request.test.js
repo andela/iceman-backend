@@ -65,15 +65,15 @@ describe('/api/v1/requests', () => {
         .set('Content-Type', 'application/json')
         .send({ email: 'user3@gmail.com', password: user.password });
 
-      // manager = await chai.request(app)
-      //   .post('/api/v1/auth/login')
-      //   .set('Content-Type', 'application/json')
-      //   .send({ email: 'manager@gmail.com', password: user.password });
+      manager = await chai.request(app)
+        .post('/api/v1/auth/login')
+        .set('Content-Type', 'application/json')
+        .send({ email: 'manager@gmail.com', password: user.password });
 
-      // manager2 = await chai.request(app)
-      //   .post('/api/v1/auth/login')
-      //   .set('Content-Type', 'application/json')
-      //   .send({ email: 'manager2@gmail.com', password: user.password });
+      manager2 = await chai.request(app)
+        .post('/api/v1/auth/login')
+        .set('Content-Type', 'application/json')
+        .send({ email: 'manager2@gmail.com', password: user.password });
 
       request = await chai.request(app)
         .post(`${URL_PREFIX}/multi-city`)
@@ -199,7 +199,7 @@ describe('/api/v1/requests', () => {
         .patch(`${URL_PREFIX}/${request.body.data.id}`)
         .set('token', loginUser.body.data.token)
         .send(multiRequest);
-        // console.log(res.body.error);
+
       res.should.have.status(200);
       res.body.should.be.an('object');
       res.body.should.have.property('status').eql('success');
@@ -213,7 +213,7 @@ describe('/api/v1/requests', () => {
         .patch(`${URL_PREFIX}/${request.body.data.id}`)
         .set('token', loginUser.body.data.token)
         .send(oneWayTrip);
-        // console.log(res.body.error);
+
       res.should.have.status(200);
       res.body.should.be.an('object');
       res.body.should.have.property('status').eql('success');
@@ -300,14 +300,14 @@ describe('/api/v1/requests', () => {
     //   res.body.data[0].should.have.property('lastName');
     // });
 
-    // it('should return 404 if manager\'s direct reports has no pending orders', async () => {
-    //   const res = await chai.request(app)
-    //     .get(`${URL_PREFIX}/pending`)
-    //     .set('token', manager2.body.data.token);
+    it('should return 404 if manager\'s direct reports has no pending orders', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/pending`)
+        .set('token', manager2.body.data.token);
 
-    //   res.should.have.status(404);
-    //   expect(JSON.parse(res.text).error).to.equal('There are no pending requests');
-    // });
+      res.should.have.status(404);
+      expect(JSON.parse(res.text).error).to.equal('There are no pending requests');
+    });
 
     it('should not get open request when logged in user is not a manager', async () => {
       const res = await chai.request(app)

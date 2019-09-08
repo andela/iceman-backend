@@ -12,13 +12,13 @@ const {
   oneWay,
   multiCityRequest,
   getRequests,
-  openRequests
+  availOpenRequests
 } = RequestController;
 
 router.post('/multi-city', [auth, validator(requestSchema)], multiCityRequest);
 router.post('/one-way', [auth, validator(requestSchema)], oneWay);
 router.patch('/:requestId', [auth, validator(requestSchema)], update);
-router.get('/pending', auth, permitUser(['manager']), openRequests);
+router.get('/pending', auth, permitUser(['manager']), availOpenRequests);
 router.get('/', auth, getRequests);
 
 

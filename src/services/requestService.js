@@ -1,4 +1,6 @@
-import { sequelize, Request } from '../models';
+import {
+  Request, User, UserDepartment, Department
+} from '../models';
 import Response from '../utils/response';
 
 const { error } = Response;
@@ -89,15 +91,29 @@ export default class RequestService {
    * @param {number} id - manager's id
    * @return {obeject} - open requests
    */
-  static async getOpenRequest({ user: { id } }) {
-    const strQuery = 'SELECT A.source, A.destination, A.travelDate, A.returnDate, '
-      + ' A.status, A.tripType, A.reason, A.accommodation, B.firstName, B.lastName FROM Requests A '
-      + ' INNER JOIN Users B ON B.id = A.userId INNER JOIN UserDepartments C ON C.userId = B.Id '
-      + " INNER JOIN Departments D ON D.id = C.departmentId WHERE A.status='open' AND D.manager=:id";
-
-    const openRequests = sequelize.query(strQuery, {
-      replacements: { id },
-      type: sequelize.QueryTypes.SELECT
+  static async availOpenRequests({ user: { id } }) {
+    const openRequests = await Request.findAll({
+      where: { status: 'open' },
+      include: [{
+        model: User,
+        required: true,
+        attributes: ['firstName', 'lastName'],
+        include: [
+          {
+            model: UserDepartment,
+            required: true,
+            attributes: ['departmentId'],
+            include: [
+              {
+                model: Department,
+                where: { manager: id },
+                required: true,
+                attributes: ['department', 'manager']
+              }
+            ]
+          },
+        ]
+      }]
     });
 
     if (openRequests.length < 1) error('There are no pending requests');
