@@ -9,13 +9,15 @@ import {
   passwordResetSchema,
   verifyEmail,
   LogInSchema,
-  roleSchema
+  roleSchema,
+  rememberSchema
 } from '../validation/schemas';
 
 const router = express.Router();
 const { authenticate, callback } = PassportController;
 const {
-  loginUser, forgotPassword, resetPassword, signupUser, resendVerification, verifyUser, assignRole
+  loginUser, forgotPassword, resetPassword, signupUser, resendVerification, verifyUser, assignRole,
+  rememberProfile
 } = AuthController;
 
 router.post('/forgot_password', forgotPassword);
@@ -29,5 +31,6 @@ router.get('/facebook', authenticate('facebook', ['email', 'public_profile']));
 router.get('/facebook/callback', callback('facebook'));
 router.get('/google', authenticate('google', ['email', 'profile']));
 router.get('/google/callback', callback('google'));
+router.patch('/remember_profile', authMiddleware, validate(rememberSchema, 'body'), rememberProfile);
 
 export default router;

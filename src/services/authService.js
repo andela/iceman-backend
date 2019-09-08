@@ -227,4 +227,21 @@ export default class AuthService {
 
     return 'User Role Assigned Successfully';
   }
+
+  /**
+   * @param {object} body user details
+   * @param {object} req reqest object
+   * @return {string} - success message;
+   */
+  static async rememberUserProfile(body, req) {
+    const { rememberProfile } = body;
+    const { id } = req.decoded;
+    const getUser = await User.findOne({ where: { id } });
+
+    if (!getUser) throw new Error('User not found');
+
+    await User.update({ rememberProfile }, { where: { id } });
+
+    return 'Remember Profile Successfully Updated';
+  }
 }

@@ -110,4 +110,18 @@ export default class AuthController {
       badRequest(res, error);
     }
   }
+
+  /**
+   * @param {object} res response object
+   * @return {object} message
+   */
+  static async rememberProfile({ body }, res) {
+    try {
+      const isRemember = await AuthService.rememberUserProfile(body);
+
+      successMessage(res, isRemember);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
 }
