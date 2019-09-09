@@ -30,28 +30,32 @@ const user2 = {
   password: 'PasswordTest123'
 };
 
-describe('/api/v1/auth', () => {
-  let notVerifiedUser;
+const user3 = {
+  firstName: 'Elijah',
+  lastName: 'Enuem-Udogu',
+  email: 'koppter.kom@gmail.com',
+  password: 'elijah1994'
+};
 
-  before(async (done) => {
+describe('/api/v1/auth', () => {
+  let verifiedUser, notVerifiedUser;
+
+  before(async () => {
+    TestHelper.destroyModel('Request');
     TestHelper.destroyModel('User');
     TestHelper.destroyModel('Role');
     db.Role.bulkCreate(insertRoles);
-    done();
+    await TestHelper.createUser({
+      ...user, roleId: 5
+    });
+
+    notVerifiedUser = await TestHelper.createUser({
+      ...user,
+      email: 'user2@gmail.com',
+    });
   });
 
   describe('POST /login', () => {
-    before(async () => {
-      await TestHelper.createUser({
-        ...user, roleId: 5
-      });
-
-      notVerifiedUser = await TestHelper.createUser({
-        ...user,
-        email: 'user2@gmail.com',
-      });
-    });
-
     it('should return 400 if the user is not found', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/login`)
@@ -304,6 +308,17 @@ describe('/api/v1/auth', () => {
       res.body.error.should.equal('User Email is Already Verified');
     });
 
+    it('should not verify a user that does not exist', async () => {
+      const nonExistentUserToken = Helper.genToken({ id: 400, isAdmin: false });
+
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/verify?token=${nonExistentUserToken}`);
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('User not found');
+    });
+
     it('should notify user for to resend verification link on expired token', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/verify?token=kkkklkj`);
@@ -377,6 +392,158 @@ describe('/api/v1/auth', () => {
       res.should.have.status(400);
       res.body.should.have.property('error');
       res.body.error.should.equal('User not found');
+    });
+  });
+
+  describe('GET /profile', () => {
+    beforeEach(async () => {
+      verifiedUser = await TestHelper.createUser({
+        ...user3, roleId: 5,
+      });
+    });
+
+    afterEach(async () => {
+      await TestHelper.destroyModel('User');
+    });
+
+    it('should return 401 if there is no token in the header', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json');
+
+      res.should.have.status(401);
+      res.body.should.have.property('status').eql('error');
+      res.body.should.have.property('error').eql('Access Denied, No token provided');
+    });
+
+    it('should return 400 if the token in the header is invalid', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', 'lsdjlfsjdlkfjsd');
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.should.have.property('error').eql('Access Denied, Invalid token');
+    });
+
+    it('should return 400 if the user does not exist', async () => {
+      const token = await Helper.genToken({ id: 400, roleId: 5 });
+
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', token);
+
+      res.should.have.status(400);
+      res.body.should.have.property('error').eql('User not found');
+    });
+
+    it('should get the user\'s details successfully if all conditions are met', async () => {
+      const payload = Helper.pickFields(verifiedUser, ['id', 'roleId']);
+      const token = await Helper.genToken(payload);
+
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.should.have.property('data');
+      res.body.data.should.be.a('object');
+      res.body.data.should.have.property('firstName').eql('Elijah');
+      res.body.data.should.have.property('lastName').eql('Enuem-Udogu');
+      res.body.data.should.have.property('email').eql('koppter.kom@gmail.com');
+      res.body.data.should.have.property('roleId');
+      res.body.data.should.have.property('gender');
+      res.body.data.should.have.property('dateOfBirth');
+      res.body.data.should.have.property('preferredLanguage');
+      res.body.data.should.have.property('preferredCurrency');
+      res.body.data.should.have.property('residentialAddress');
+    });
+  });
+
+  describe('PATCH /profile', () => {
+    beforeEach(async () => {
+      verifiedUser = await TestHelper.createUser({
+        ...user3, roleId: 5,
+      });
+    });
+
+    afterEach(async () => {
+      await TestHelper.destroyModel('User');
+    });
+
+    const profileDetails = {
+      firstName: 'Elijah',
+      lastName: 'Enuem-Udogu',
+      gender: 'Male',
+      dateOfBirth: '1994-05-20',
+      preferredLanguage: 'English',
+      residentialAddress: 'Benin City, Nigeria',
+      preferredCurrency: 'Nigerian Naira (NGN)',
+    };
+
+    it('should return 401 if there is no token in the header', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .send(profileDetails);
+
+      res.should.have.status(401);
+      res.body.should.have.property('status').eql('error');
+      res.body.should.have.property('error').eql('Access Denied, No token provided');
+    });
+
+    it('should return 400 if the token in the header is invalid', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', 'lsdjlfsjdlkfjsd')
+        .send(profileDetails);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.should.have.property('error').eql('Access Denied, Invalid token');
+    });
+
+    it('should return 400 if the user does not exist', async () => {
+      const token = await Helper.genToken({ id: 400, roleId: 5 });
+
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', token)
+        .send(profileDetails);
+
+      res.should.have.status(400);
+      res.body.should.have.property('error').eql('User not found');
+    });
+
+    it('should update the user\'s profile successfully if all conditions are met', async () => {
+      const payload = Helper.pickFields(verifiedUser, ['id', 'roleId']);
+      const token = await Helper.genToken(payload);
+
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/profile`)
+        .set('Content-Type', 'application/json')
+        .set('token', token)
+        .send(profileDetails);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.should.have.property('data');
+      res.body.data.should.be.a('object');
+      res.body.data.should.have.property('firstName').eql('Elijah');
+      res.body.data.should.have.property('lastName').eql('Enuem-Udogu');
+      res.body.data.should.have.property('email').eql('koppter.kom@gmail.com');
+      res.body.data.should.have.property('roleId');
+      res.body.data.should.have.property('gender').eql('Male');
+      res.body.data.should.have.property('dateOfBirth');
+      res.body.data.should.have.property('preferredLanguage').eql('English');
+      res.body.data.should.have.property('preferredCurrency').eql('Nigerian Naira (NGN)');
+      res.body.data.should.have.property('residentialAddress').eql('Benin City, Nigeria');
     });
   });
 });
