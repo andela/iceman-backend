@@ -20,10 +20,9 @@ let loginUser3;
 let request;
 
 describe('/api/v1/requests', () => {
-  before((done) => {
-    TestHelper.destroyModel('User');
-    TestHelper.destroyModel('Request');
-    done();
+  before(async () => {
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Request');
   });
 
   describe('POST /multi-city', () => {
@@ -110,7 +109,7 @@ describe('/api/v1/requests', () => {
         .send({ ...multiRequest, tripType: 'one-way' });
 
       res.should.have.status(400);
-      expect(JSON.parse(res.text).error).to.equal('Trip type must be mulit city');
+      expect(JSON.parse(res.text).error).to.equal('Trip type must be multi city');
     });
 
     it('should return 400 if required fields where not passed', async () => {
@@ -260,7 +259,7 @@ describe('/api/v1/requests', () => {
         .set('token', loginUser3.body.data.token);
 
       res.should.have.status(404);
-      expect(JSON.parse(res.text).error).to.equal('You\'ve not make any requests');
+      expect(JSON.parse(res.text).error).to.equal('You\'ve not made any requests');
     });
   });
 });

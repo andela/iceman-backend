@@ -1,5 +1,7 @@
 import Joi from '@hapi/joi';
 
+Joi.extend(require('@hapi/joi-date'));
+
 /**
  * user schema to be used for validating user input
  */
@@ -21,6 +23,19 @@ export const signUpSchema = Joi.object().keys({
     .error(() => ({
       message: 'Password must contain at least one letter, at least one number, and be atleast 8 digits long',
     })),
+});
+
+/**
+ * profile schema to be used for validating user profile
+ */
+export const profileSchema = Joi.object().keys({
+  firstName: Joi.string().trim().optional(),
+  lastName: Joi.string().trim().optional(),
+  gender: Joi.string().trim().optional(),
+  preferredLanguage: Joi.string().trim().optional(),
+  residentialAddress: Joi.string().trim().optional(),
+  preferredCurrency: Joi.string().trim().optional(),
+  dateOfBirth: Joi.date().optional(),
 });
 
 /**

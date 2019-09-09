@@ -6,6 +6,7 @@ import app from '../index';
 import TestHelper from '../utils/testHelper';
 import db from '../models';
 import Helper from '../utils/helpers';
+import insertRoles from '../utils/insertTestRoles';
 
 chai.use(chaiHttp);
 
@@ -17,7 +18,10 @@ describe('/api/v1/auth', () => {
   let passwordResetToken;
 
   before(async () => {
+    await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    db.Role.bulkCreate(insertRoles);
     fakeToken = await Helper.genToken({ email: 'fake@chubi.com' });
     await db.User.create({
       firstName: 'irellevant',

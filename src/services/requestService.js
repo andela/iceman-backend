@@ -62,7 +62,7 @@ export default class RequestService {
 
     if (existingRequest) error('You\'ve already booked this trip');
 
-    if (body.tripType !== 'multi-city') error('Trip type must be mulit city');
+    if (body.tripType !== 'multi-city') error('Trip type must be multi city');
 
     const { dataValues } = await Request.create({ ...body, destination, userId: id });
 
@@ -76,7 +76,7 @@ export default class RequestService {
   static async getRequests({ user: { id } }) {
     const result = await Request.findAll({ where: { userId: id } });
 
-    if (result.length === 0) error('You\'ve not make any requests');
+    if (result.length === 0) error('You\'ve not made any requests');
 
     return result;
   }

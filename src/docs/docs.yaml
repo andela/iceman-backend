@@ -4,18 +4,102 @@ info:
     Barefoot nomad is an application that will enable its “Company Nomads” book their international travel and accommodation globally; easily and conveniently across all the locations/centers where the Company has its operations.
   version: 1.0.0
   title: Barefoot Nomad
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
 
 tags:
   - name: Auth
-    description: Authentication routes
+    description: Manage User Authentication and Profile
+  - name: Requests
+    description: Manage Travel Requests
 host: localhost:3000
 basePath: /api/v1
 paths:
+  /auth/profile:
+    get:
+      tags:
+        - Users
+      summary: View user's profile information
+      description: View user's profile information
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: token
+          description: User authentication token
+          required: true
+          type: string
+      responses:
+        401:
+          description: No token provided
+          schema:
+            $ref: '#definitions/ErrorResponse'
+        400:
+          description: Invalid token
+          schema:
+            $ref: '#definitions/ErrorResponse'
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/UsersResponse'
+    patch:
+      tags:
+        - Users
+      summary: Update user's profile information
+      description: Update user's profile information
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: token
+          description: User authentication token
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Details to be updated
+          required: true
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              gender:
+                type: string
+              date_of_birth:
+                type: string
+                format: date
+              preferred_language:
+                type: string
+              residential_address:
+                type: string
+              preferred_currency:
+                type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/UsersResponse'
+        400:
+          description: Bad request
+          schema:
+            $ref: '#definitions/ErrorResponse'
+        401:
+          description: No token provided
+          schema:
+            $ref: '#definitions/ErrorResponse'
+
   /auth/login:
     post:
       tags:
         - Auth
       summary: Logs in a user
+      description: Logs in a user
       consumes:
         - application/json
       produces:
@@ -30,22 +114,26 @@ paths:
             properties:
               email:
                 type: string
+                format: email
               password:
                 type: string
       responses:
         400:
           description: Invalid Credentials
+          schema:
+            $ref: '#definitions/ErrorResponse'
         500:
           description: Unexpected Error
         200:
           description: Success
           schema:
-            $ref: '#definitions/AuthReponse'
+            $ref: '#definitions/AuthResponse'
   /auth/signup:
     post:
       tags:
         - Auth
       summary: Create User Account
+      description: Creates a new user account
       consumes:
         - application/json
       produces:
@@ -64,15 +152,18 @@ paths:
                 type: string
               email:
                 type: string
+                format: email
               password:
                 type: string
       responses:
         409:
           description: Email already exists
+          schema:
+            $ref: '#definitions/ErrorResponse'
         201:
           description: Success
           schema:
-            $ref: '#definitions/AuthReponse'
+            $ref: '#definitions/AuthResponse'
   /auth/facebook:
     get:
       tags:
@@ -88,7 +179,7 @@ paths:
         200:
           description: Success
           schema:
-            $ref: '#definitions/AuthReponse'
+            $ref: '#definitions/AuthResponse'
   /auth/google:
     get:
       tags:
@@ -104,39 +195,7 @@ paths:
         200:
           description: Success
           schema:
-            $ref: '#definitions/AuthReponse'
-  /auth/signup:
-    post:
-      tags:
-        - Auth
-      summary: Create User Account
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: User details
-          required: true
-          schema:
-            type: object
-            properties:
-              firstName:
-                type: string
-              lastName:
-                type: string
-              email:
-                type: string
-              password:
-                type: string
-      responses:
-        409:
-          description: Email already exists
-        201:
-          description: Success
-          schema:
-            $ref: '#definitions/AuthReponse'
+            $ref: '#definitions/AuthResponse'
 
   /auth/verify?token:
     get:
@@ -157,6 +216,7 @@ paths:
             properties:
               email:
                 type: string
+                format: email
       responses:
         400:
           description: Error
@@ -181,6 +241,7 @@ paths:
             properties:
               email:
                 type: string
+                format: email
       responses:
         400:
           description: error
@@ -205,6 +266,7 @@ paths:
             properties:
               email:
                 type: string
+                format: email
       responses:
         404:
           description: Email Not Found
@@ -366,7 +428,17 @@ paths:
           description: Access Denied
         403:
           description: Authentication failed
-
+      security:
+        - api_key: []
+      responses:
+        400:
+          description: Invalid Credentials
+        409:
+          description: Conflict
+        401:
+          description: Authorization failure
+        201:
+          description: Success
   /requests/{requestId}:
     patch:
       tags:
@@ -434,7 +506,7 @@ paths:
   /auth/assign_role:
     patch:
       tags:
-        - Assign Role
+        - Auth
       summary: Assign user role
       description: Assign user role with Super Administrator Access
       consumes:
@@ -444,7 +516,7 @@ paths:
       parameters:
         - name: roleId
           in: body
-          description: Role ID 
+          description: Role ID
           required: true
           type: integer
         - in: body
@@ -467,10 +539,10 @@ paths:
         403:
           description: Authentication failed
       security:
-        - api_key: []  
+        - api_key: []
 
 definitions:
-  AuthReponse:
+  AuthResponse:
     properties:
       status:
         type: string
@@ -483,6 +555,7 @@ definitions:
             type: integer
           email:
             type: string
+            format: email
           firstName:
             type: string
           lastName:
@@ -493,6 +566,82 @@ definitions:
           isVerified:
             type: boolean
             default: false
+          roleId:
+            type: integer
+          gender:
+            type: string
+            nullable: true
+          dateOfBirth:
+            type: string
+            format: date
+            nullable: true
+          preferredLanguage:
+            type: string
+            nullable: true
+          residentialAddress:
+            type: string
+            nullable: true
+          preferredCurrency:
+            type: string
+            nullable: true
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+  UsersResponse:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          email:
+            type: string
+            format: email
+          firstName:
+            type: string
+          lastName:
+            type: string
+          isAdmin:
+            type: boolean
+            default: false
+          isVerified:
+            type: boolean
+            default: false
+          roleId:
+            type: integer
+          gender:
+            type: string
+            nullable: true
+          dateOfBirth:
+            type: string
+            format: date
+            nullable: true
+          preferredLanguage:
+            type: string
+            nullable: true
+          residentialAddress:
+            type: string
+            nullable: true
+          preferredCurrency:
+            type: string
+            nullable: true
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+  ErrorResponse:
+    properties:
+      status:
+        type: string
+      error:
+        type: string
   Request:
     properties:
       status:
@@ -572,4 +721,3 @@ definitions:
 schemes:
   - https
   - http
-  

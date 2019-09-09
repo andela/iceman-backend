@@ -31,6 +31,26 @@ module.exports = (sequelize, DataTypes) => {
       roleId: {
         type: DataTypes.INTEGER,
       },
+      gender: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      dateOfBirth: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      preferredLanguage: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      residentialAddress: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      preferredCurrency: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
       resetToken: {
         type: DataTypes.STRING
       },

@@ -2,7 +2,7 @@ import RequestService from '../services/requestService';
 import Response from '../utils/response';
 
 const { success, badRequest } = Response;
-const { updateRequest, multiCityRequest, getRequests } = RequestService;
+const { updateRequest, multiCityRequest, oneway, getRequests } = RequestService;
 
 /**
  * Class for Requests
@@ -10,7 +10,7 @@ const { updateRequest, multiCityRequest, getRequests } = RequestService;
 export default class RequestController {
   /**
  * Update a pending trip request
- * @param {object} req - requset object
+ * @param {object} req - request object
  * @param {object} res - response object
  * @return {json} - json
  */
@@ -31,7 +31,7 @@ export default class RequestController {
  */
   static async oneWay(req, res) {
     try {
-      const data = await RequestService.oneway(req);
+      const data = await oneway(req);
 
       success(res, data, 201);
     } catch ({ message: err }) {

@@ -26,15 +26,11 @@ const superAdmin = {
 
 
 describe('Assign User Role', () => {
-  before(async (done) => {
-    TestHelper.destroyModel('User');
-    TestHelper.destroyModel('Role');
-    done();
-  });
-
-  before((done) => {
-    db.Role.bulkCreate(insertRoles);
-    done();
+  before(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    await db.Role.bulkCreate(insertRoles);
   });
 
   beforeEach(async () => {

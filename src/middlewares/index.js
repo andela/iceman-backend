@@ -1,3 +1,4 @@
 import auth from './auth';
+import permitUser from './permission';
 
-export default { auth };
+export default { auth, permitUser };
