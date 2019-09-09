@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, DataTypes) => {
   const Request = sequelize.define('Request', {
     source: {
@@ -32,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'open',
     }
   }, {});
+
   Request.associate = (models) => {
     Request.belongsTo(models.User, {
       foreignKey: 'userId',

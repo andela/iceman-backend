@@ -2,7 +2,9 @@ import RequestService from '../services/requestService';
 import Response from '../utils/response';
 
 const { success, badRequest } = Response;
-const { updateRequest, multiCityRequest, oneway, getRequests } = RequestService;
+const {
+  updateRequest, multiCityRequest, getRequests, returnRequest, oneway
+} = RequestService;
 
 /**
  * Class for Requests
@@ -66,6 +68,21 @@ export default class RequestController {
       success(res, data);
     } catch ({ message: err }) {
       badRequest(res, err, 404);
+    }
+  }
+
+  /**
+    @param {object} req - request object
+   * @param {object} res - reponse object
+   * @returns {object} data - trip details
+   */
+  static async returnRequest(req, res) {
+    try {
+      const data = await returnRequest(req);
+
+      success(res, data);
+    } catch ({ message: err }) {
+      badRequest(res, err);
     }
   }
 }
