@@ -56,7 +56,7 @@ export const verifyEmail = Joi.object().keys({
     .required()
     .error(() => ({
       message: 'Email must be a valid email'
-    })),
+    }))
 });
 
 /**
@@ -99,7 +99,7 @@ export const requestSchema = Joi.object().keys({
   destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
   travelDate: Joi.date().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
   returnDate: Joi.date(),
-  reason: Joi.string(),
+  reason: Joi.string().required().error(() => ({ message: 'Reason is required' })),
   status: Joi.string(),
-  accommodation: Joi.string()
+  accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' }))
 });

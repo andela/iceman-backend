@@ -1,4 +1,3 @@
-
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Requests', {
     id: {
@@ -55,5 +54,6 @@ module.exports = {
       type: Sequelize.DATE
     },
   }, { freezeTableName: true }),
+
   down: queryInterface => queryInterface.dropTable('Requests')
 };
