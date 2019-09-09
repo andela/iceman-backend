@@ -17,7 +17,7 @@ const router = express.Router();
 const { authenticate, callback } = PassportController;
 const {
   loginUser, forgotPassword, resetPassword, signupUser, resendVerification, verifyUser, assignRole,
-  rememberProfile
+  rememberProfile, getUserInformation
 } = AuthController;
 
 router.post('/forgot_password', forgotPassword);
@@ -32,5 +32,6 @@ router.get('/facebook/callback', callback('facebook'));
 router.get('/google', authenticate('google', ['email', 'profile']));
 router.get('/google/callback', callback('google'));
 router.patch('/remember_profile', authMiddleware, validate(rememberSchema, 'body'), rememberProfile);
+router.get('/user_information', authMiddleware, getUserInformation);
 
 export default router;

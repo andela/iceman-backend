@@ -88,3 +88,10 @@ export const requestSchema = Joi.object().keys({
   status: Joi.string(),
   accommodation: Joi.string()
 });
+
+export const rememberSchema = Joi.object().keys({
+  rememberProfile: Joi.boolean().required()
+    .error(() => ({
+      message: 'Input should either be true or false',
+    })),
+});

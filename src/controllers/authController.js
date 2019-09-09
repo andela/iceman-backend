@@ -112,14 +112,30 @@ export default class AuthController {
   }
 
   /**
+   * @param {object} req request object
    * @param {object} res response object
    * @return {object} message
    */
-  static async rememberProfile({ body }, res) {
+  static async rememberProfile(req, res) {
     try {
-      const isRemember = await AuthService.rememberUserProfile(body);
+      const isRemember = await AuthService.rememberUserProfile(req);
 
       successMessage(res, isRemember);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+   * @param {object} req request object
+   * @param {object} res response object
+   * @return {object} message
+   */
+  static async getUserInformation(req, res) {
+    try {
+      const data = await AuthService.getRememberProfile(req);
+
+      success(res, data, 200);
     } catch ({ message: error }) {
       badRequest(res, error);
     }

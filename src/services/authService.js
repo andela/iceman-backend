@@ -229,19 +229,35 @@ export default class AuthService {
   }
 
   /**
-   * @param {object} body user details
    * @param {object} req reqest object
    * @return {string} - success message;
    */
-  static async rememberUserProfile(body, req) {
-    const { rememberProfile } = body;
-    const { id } = req.decoded;
+  static async rememberUserProfile(req) {
+    const { rememberProfile } = req.body;
+    const { id } = req.user;
     const getUser = await User.findOne({ where: { id } });
 
-    if (!getUser) throw new Error('User not found');
+    if (!getUser) error('User not found');
 
     await User.update({ rememberProfile }, { where: { id } });
 
-    return 'Remember Profile Successfully Updated';
+    return 'Remember Profile Information Successfully Updated';
+  }
+
+  /**
+   * @param {object} req reqest object
+   * @return {string} - success message;
+   */
+  static async getRememberProfile(req) {
+    const { id } = req.user;
+    const getUser = await User.findOne({ where: { id } });
+
+    if (!getUser) error('User not found');
+
+    const { dataValues: user } = getUser;
+
+    if (!user.rememberProfile) error('This feature is not enabled');
+
+    return { ...Helper.omitFields(user, ['password', 'firstName', 'lastName', 'resetToken']) };
   }
 }
