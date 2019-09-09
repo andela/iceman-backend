@@ -3,7 +3,7 @@ import Response from '../utils/response';
 
 const { success, badRequest } = Response;
 const {
-  updateRequest, multiCityRequest, getRequests, returnRequest
+  updateRequest, multiCityRequest, getRequests, returnRequest, oneway
 } = RequestService;
 
 /**
