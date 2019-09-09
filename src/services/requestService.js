@@ -98,6 +98,8 @@ export default class RequestService {
 
     body.destination = body.destination.split(',');
 
+    if (body.destination.length > 1) error('Return trip allow only one destination');
+
     const { dataValues } = await Request.create({ ...body, userId: id });
 
     return dataValues;

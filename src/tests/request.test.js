@@ -283,6 +283,17 @@ describe('/api/v1/requests', () => {
       res.body.data.should.have.property('returnDate');
     });
 
+    it('should not allow more than one destination', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send({ ...Helper.omitFields(multiRequest, ['tryType', 'travelDate']), tripType: 'return', travelDate: Date() });
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('Return trip allow only one destination');
+    });
+
     it('should return 400 error if trip is already booked', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/return`)
