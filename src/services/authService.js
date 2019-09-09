@@ -154,7 +154,7 @@ export default class AuthService {
       }]
     });
 
-    if (!isUser) error('User not find');
+    if (!isUser) error('User not found');
 
     if (isUser.dataValues.Role.dataValues.type !== 'guest') throw new Error('User Email is Already Verified');
 

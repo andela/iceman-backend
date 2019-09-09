@@ -18,15 +18,18 @@ const URL_PREFIX = '/api/v1/requests';
 let loginUser;
 let loginUser2;
 let loginUser3;
+let department;
+let userDepartment;
 let request;
 let manager;
 let manager2;
 
 describe('/api/v1/requests', () => {
-  before((done) => {
-    TestHelper.destroyModel('User');
-    TestHelper.destroyModel('Request');
-    done();
+  before(async () => {
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
   });
 
   describe('POST /multi-city', () => {
@@ -81,6 +84,13 @@ describe('/api/v1/requests', () => {
         .set('Content-Type', 'application/json')
         .set('token', loginUser.body.data.token)
         .send(multiRequest);
+
+      department = await TestHelper.createDepartment({ department: 'dev', manager: manager.body.data.id });
+
+      userDepartment = await TestHelper.createUserDepartment({
+        userId: loginUser2.body.data.id,
+        departmentId: department.id
+      });
     });
 
     it('should return 200 if the request finished successfully', async () => {
@@ -284,20 +294,20 @@ describe('/api/v1/requests', () => {
       expect(JSON.parse(res.text).error).to.equal('You\'ve not make any requests');
     });
 
-    // it('should retrieve all open requests made by manager\'s direct report', async () => {
-    //   const res = await chai.request(app)
-    //     .get(`${URL_PREFIX}/pending`)
-    //     .set('token', manager.body.data.token);
+    it('should retrieve all open requests made by manager\'s direct report', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/pending`)
+        .set('token', manager.body.data.token);
 
-    //   res.should.have.status(200);
-    //   res.body.data[0].should.have.property('destination');
-    //   res.body.data[0].should.have.property('source');
-    //   res.body.data[0].should.have.property('tripType');
-    //   res.body.data[0].should.have.property('returnDate');
-    //   res.body.data[0].should.have.property('travelDate');
-    //   res.body.data[0].should.have.property('userId');
-    //   res.body.data[0].should.have.property('status');
-    // });
+      res.should.have.status(200);
+      res.body.data[0].should.have.property('destination');
+      res.body.data[0].should.have.property('source');
+      res.body.data[0].should.have.property('tripType');
+      res.body.data[0].should.have.property('returnDate');
+      res.body.data[0].should.have.property('travelDate');
+      res.body.data[0].should.have.property('userId');
+      res.body.data[0].should.have.property('status');
+    });
 
     it('should return 404 if manager\'s direct reports has no pending orders', async () => {
       const res = await chai.request(app)

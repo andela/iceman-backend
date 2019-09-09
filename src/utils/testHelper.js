@@ -45,7 +45,9 @@ export default class TestHelper {
  * @return {void}
  */
   static async createDepartment(data) {
-    await db.Department.create(data);
+    const { dataValues } = await db.Department.create(data);
+
+    return dataValues;
   }
 
   /**
@@ -54,15 +56,8 @@ export default class TestHelper {
  * @return {void}
  */
   static async createUserDepartment(data) {
-    await db.UserDepartment.create(data);
-  }
+    const { dataValues } = await db.UserDepartment.create(data);
 
-  /**
- * Method for creating Request
- * @param {object} data - department data
- * @return {void}
- */
-  static async createRequest(data) {
-    await db.Request.create(data);
+    return dataValues;
   }
 }
