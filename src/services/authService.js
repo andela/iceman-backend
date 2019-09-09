@@ -23,7 +23,7 @@ export default class AuthService {
   static async login(email, password) {
     const result = await User.findOne({ where: { email } });
 
-    if (!result) throw new Error('The account does not exist');
+    if (!result) error('The account does not exist');
 
     const userRole = await Role.findOne({ where: { id: result.dataValues.roleId } });
 
@@ -139,9 +139,7 @@ export default class AuthService {
   static async verify(token) {
     const isExpire = await Helper.verifyToken(token);
 
-    if (!isExpire) {
-      error('Expired Verification Link, resend verification Link');
-    }
+    if (!isExpire) error('Expired Verification Link, resend verification Link');
 
     const isUser = await User.findOne({
       where:
@@ -154,9 +152,9 @@ export default class AuthService {
       }]
     });
 
-    if (!isUser) error('User not find');
+    if (!isUser) error('User not found');
 
-    if (isUser.dataValues.Role.dataValues.type !== 'guest') throw new Error('User Email is Already Verified');
+    if (isUser.dataValues.Role.dataValues.type !== 'guest') error('User Email is Already Verified');
 
     await User.update({ roleId: 5 }, { where: { id: isExpire.id } });
 
@@ -199,6 +197,36 @@ export default class AuthService {
   }
 
   /**
+ * @param {number} userId - ID of logged in user
+ * @return {object} - object containing user profile information
+ */
+  static async getProfile(userId) {
+    const result = await User.findOne({ where: { id: userId } });
+
+    if (!result) error('User not found');
+
+    const { dataValues: user } = result;
+
+    return Helper.omitFields(user, ['password']);
+  }
+
+  /**
+* @param {number} userId - ID of logged in user
+* @param {object} profileDetails - object containing details to be changed
+* @return {object} - object containing updated user profile information
+*/
+  static async updateProfile(userId, profileDetails) {
+    const isUser = await User.findOne({ where: { id: userId } });
+
+    if (!isUser) error('User not found');
+
+    const result = await User.update(profileDetails, { returning: true, where: { id: userId } });
+    const [, [{ dataValues: updatedData }]] = result;
+
+    return Helper.omitFields(updatedData, ['password']);
+  }
+
+  /**
    * @param {object} body user details
    * @return {string} - success message;
    */
@@ -215,13 +243,13 @@ export default class AuthService {
       }]
     });
 
-    if (!getUser) throw new Error('User not found');
+    if (!getUser) error('User not found');
 
-    if (!checkRole) throw new Error('Role does not exit');
+    if (!checkRole) error('Role does not exist');
 
-    if (getUser.dataValues.Role.dataValues.type === 'guest') throw new Error('User email is not verified');
+    if (getUser.dataValues.Role.dataValues.type === 'guest') error('User email is not verified');
 
-    if (getUser.dataValues.roleId === Number(roleId)) throw new Error('User is already assigned this role');
+    if (getUser.dataValues.roleId === Number(roleId)) error('User is already assigned this role');
 
     await User.update({ roleId: Number(roleId) }, { where: { email } });
 
