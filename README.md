@@ -47,4 +47,5 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>PATCH</td><td>/api/v1/requests/:id</td><td>Updates trip requests</td></tr>
 <tr><td>GET</td><td>/api/v1/requests</td><td>Retrieve user requests</td></tr>
 <tr><td>GET</td><td>/api/v1/requests/return</td><td>Create a return trip</td></tr>
+<tr><td>GET</td><td>/api/v1/requests/pending</td><td>Avail open requests for approval</td></tr>
 </table>
