@@ -541,6 +541,65 @@ paths:
       security:
         - api_key: []
 
+  /auth/remember_profile:
+    patch:
+      tags:
+        - Users
+      summary: Remember Profile
+      description: Checkbox to remember and use user profile for travel request
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: rememberProfile
+          in: body
+          description: remember profile option
+          required: true
+          schema:
+            type: object
+            properties:
+              rememberProfile:
+                type: boolean
+                default: false
+
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Error
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
+
+  /auth/user_information:
+    get:
+      tags:
+        - Users
+      summary: Get User Profile for Travel Request
+      description: Get all user profile to make a travel request
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        400:
+          description: Error
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
+
 definitions:
   AuthResponse:
     properties:

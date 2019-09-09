@@ -57,6 +57,9 @@ module.exports = (sequelize, DataTypes) => {
       rememberProfile: {
         type: DataTypes.BOOLEAN
       },
+      passportName: {
+        type: DataTypes.STRING
+      },
     },
     { },
   );

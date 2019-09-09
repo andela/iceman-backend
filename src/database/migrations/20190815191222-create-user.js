@@ -63,6 +63,9 @@ module.exports = {
       type: Sequelize.BOOLEAN,
       defaultValue: false
     },
+    passportName: {
+      type: Sequelize.STRING
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE

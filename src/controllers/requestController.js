@@ -2,7 +2,9 @@ import RequestService from '../services/requestService';
 import Response from '../utils/response';
 
 const { success, badRequest } = Response;
-const { updateRequest, multiCityRequest, oneway, getRequests } = RequestService;
+const {
+  updateRequest, multiCityRequest, oneway, getRequests
+} = RequestService;
 
 /**
  * Class for Requests
