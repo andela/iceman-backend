@@ -66,3 +66,13 @@ export const userDepartment = {
   createdAt: new Date(),
   updatedAt: new Date()
 };
+
+export const returnRequest = {
+  source: 'Lagos',
+  destination: 'Abuja',
+  tripType: 'return',
+  travelDate: '10/02/2019',
+  returnDate: '01/01/2018',
+  reason: 'Work',
+  accommodation: 'Radison Blu'
+};

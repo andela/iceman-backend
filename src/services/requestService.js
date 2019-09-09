@@ -120,4 +120,28 @@ export default class RequestService {
 
     return openRequests;
   }
+
+  /**
+   * @param {object} details - user trip details
+   * @returns {object} trip - details
+   */
+  static async returnRequest({ body, user: { id } }) {
+    const { travelDate } = body;
+
+    const existingRequest = await Request.count({ where: { travelDate, userId: id } });
+
+    if (body.tripType !== 'return') error('Trip type must be return trip');
+
+    if (!body.returnDate) error('Return date is required');
+
+    if (existingRequest) error('You\'ve already booked this trip');
+
+    body.destination = body.destination.split(',');
+
+    if (body.destination.length > 1) error('Return trip allow only one destination');
+
+    const { dataValues } = await Request.create({ ...body, userId: id });
+
+    return dataValues;
+  }
 }
