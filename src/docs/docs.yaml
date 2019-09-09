@@ -502,7 +502,70 @@ paths:
           description: Authentication failed
       security:
         - api_key: []
-
+  /requests/return:
+    post:
+      tags:
+        - Requests
+      summary: Return Trip
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Return trip details
+          required: true
+          schema:
+            type: object
+            properties:
+              source:
+                type: string
+              destination:
+                type: string
+              tripType:
+                type: string
+              travelDate:
+                type: string
+                format: date-time
+              returnDate:
+                type: string
+                format: date-time
+              travelDate:
+                type: string
+              reason:
+                type: string
+              accommodation:
+                type: string
+      responses:
+        201:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Request'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
+        - in: header
+          name: token
+          description: an authorization header
+          required: true
+          type: string        
+      security:
+        - Basic: []
+      responses:
+        400:
+          description: Invalid Credentials
+        409:
+          description: Conflict
+        401:
+          description: Authorization failure
+        201:
+          description: Success   
   /auth/assign_role:
     patch:
       tags:
