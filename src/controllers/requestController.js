@@ -3,7 +3,7 @@ import Response from '../utils/response';
 
 const { success, badRequest } = Response;
 const {
-  updateRequest, multiCityRequest, oneway, getRequests, rejectRequest
+  updateRequest, multiCityRequest, getRequests, returnRequest, oneway, rejectRequest
 } = RequestService;
 
 /**
@@ -84,6 +84,21 @@ export default class RequestController {
       success(res, data);
     } catch ({ message: err }) {
       badRequest(res, err, 404);
+    }
+  }
+
+  /**
+    @param {object} req - request object
+   * @param {object} res - reponse object
+   * @returns {object} data - trip details
+   */
+  static async returnRequest(req, res) {
+    try {
+      const data = await returnRequest(req);
+
+      success(res, data);
+    } catch ({ message: err }) {
+      badRequest(res, err);
     }
   }
 }

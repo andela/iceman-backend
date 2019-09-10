@@ -115,7 +115,7 @@ export default class AuthService {
     const payload = Helper.pickFields(user, ['id', 'roleId']);
     const token = await Helper.genToken(payload);
 
-    return { token, ...Helper.omitFields(user, ['password']) };
+    return { token, ...Helper.omitFields(user, ['password', 'createdat', 'updatedat']) };
   }
 
   /**

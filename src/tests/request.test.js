@@ -11,6 +11,7 @@ import {
   oneWayTrip,
   user,
   managerUser,
+  returnRequest
 } from './testData/sampleData';
 
 chai.use(chaiHttp);
@@ -352,6 +353,96 @@ describe('/api/v1/requests', () => {
       res.should.have.status(400);
       res.body.should.be.an('object');
       res.body.error.should.equal('Access Denied, Invalid token');
+    });
+  });
+
+  describe('POST / ReturnTrip', () => {
+    it('should return 200 if return trip was created', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send(returnRequest);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data.should.have.property('id');
+      res.body.data.should.have.property('source').eql('Lagos');
+      res.body.data.should.have.property('destination').eql(['Abuja']);
+      res.body.data.should.have.property('tripType').eql('return');
+      res.body.data.should.have.property('status').eql('open');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('returnDate');
+    });
+
+    it('should not allow more than one destination', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send({ ...Helper.omitFields(multiRequest, ['tryType', 'travelDate']), tripType: 'return', travelDate: Date() });
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('Return trip allow only one destination');
+    });
+
+    it('should return 400 error if trip is already booked', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send(returnRequest);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('You\'ve already booked this trip');
+    });
+
+    it('should return 400 error if trip type is not return trip', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send({ ...returnRequest, tripType: 'oneway' });
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('Trip type must be return trip');
+    });
+
+    it('should return 400 error if return date is not provided', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send({ ...Helper.omitFields(returnRequest, ['returnDate']) });
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('Return date is required');
+    });
+
+    it('should return 401 error if vaild token is not provided', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', 'token')
+        .send(returnRequest);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('Access Denied, Invalid token');
+    });
+
+    it('should return 400 error if source is not provided', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/return`)
+        .set('token', loginUser.body.data.token)
+        .send({ ...Helper.pickFields(returnRequest, []) });
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error[0].should.equal('Source is required');
+      res.body.error[1].should.equal('Please select your trip type. Should be oneway, return or multicity');
+      res.body.error[2].should.equal('Please select your destination(s)');
+      res.body.error[3].should.equal('Travel date is required e.g YYYY-MM-DD');
+      res.body.error[4].should.equal('Reason is required');
+      res.body.error[5].should.equal('Accommodation is required');
     });
   });
 });
