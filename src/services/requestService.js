@@ -112,31 +112,23 @@ export default class RequestService {
    * @returns {object} data
    */
   static async search(query) {
-    const { destination } = query;
-
-    if (destination) {
-      const data = await Request.findAll({
-        where: {
-          destination: {
-            [Op.contains]: [`${Object.values(query)[0]}`]
-          },
-        },
-      });
-
-      if (data.length === 0) error('Destination not found');
-
-      return data;
-    }
+    const {
+      id, userId, destination, source, status
+    } = query;
 
     const data = await Request.findAll({
       where: {
-        [Object.keys(query)[0]]: {
-          [Op.iLike]: `%${Object.values(query)[0]}%`,
-        },
+        [Op.or]: [
+          id ? { id: { [Op.eq]: `${id}` } } : null,
+          userId ? { userId: { [Op.eq]: `${userId}` } } : null,
+          destination ? { destination: { [Op.contains]: [`${Object.values(query)[0]}`] } } : null,
+          source ? { source: { [Op.iLike]: `%${Object.values(query)[0]}%`, } } : null,
+          status ? { status: { [Op.iLike]: `%${Object.values(query)[0]}%`, } } : null
+        ]
       },
     });
 
-    if (data.length === 0) error(`${Object.keys(query)[0]} not found`);
+    if (data.length === 0) error('No result found');
 
     return data;
   }

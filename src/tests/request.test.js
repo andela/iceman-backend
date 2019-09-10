@@ -239,10 +239,10 @@ describe('/api/v1/requests', () => {
       res.body.should.be.an('object');
     });
   });
-  describe('GET /', () => {
+  describe('GET /userRequests', () => {
     it('should retrieve all requests made by the users', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}`)
+        .get(`${URL_PREFIX}/userRequests`)
         .set('token', loginUser.body.data.token);
 
       res.should.have.status(200);
@@ -256,7 +256,7 @@ describe('/api/v1/requests', () => {
     });
     it('should return 404 if the user has no requests', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}`)
+        .get(`${URL_PREFIX}/userRequests`)
         .set('token', loginUser3.body.data.token);
 
       res.should.have.status(404);
@@ -383,14 +383,27 @@ describe('/api/v1/requests', () => {
       res.body.data[0].should.have.property('travelDate');
     });
 
-    it('should return 400 error data not found', async () => {
+    it('should return 200 if status search was successful', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?status=open`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data[0].should.have.property('id');
+      res.body.data[0].should.have.property('source').eql('Lagos');
+      res.body.data[0].should.have.property('destination').eql(['Abuja']);
+      res.body.data[0].should.have.property('travelDate');
+    });
+
+    it('should return 400 error source data not found', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/search?source=0`)
         .set('token', loginUser.body.data.token);
 
       res.should.have.status(400);
       res.body.should.have.property('status').eql('error');
-      res.body.error.should.equal('source not found');
+      res.body.error.should.equal('No result found');
     });
 
     it('should return 400 error data not found', async () => {
@@ -400,7 +413,7 @@ describe('/api/v1/requests', () => {
 
       res.should.have.status(400);
       res.body.should.have.property('status').eql('error');
-      res.body.error.should.equal('Destination not found');
+      res.body.error.should.equal('No result found');
     });
   });
 });
