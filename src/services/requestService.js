@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 import { Op } from 'sequelize';
 import {
   Request, User, UserDepartment, Department
 } from '../models';
+=======
+import { Request } from '../models';
+>>>>>>> feature(requests): setup travel request response
 import Response from '../utils/response';
+import Helper from '../utils/helpers';
 
 const { error } = Response;
 
@@ -61,6 +66,38 @@ export default class RequestService {
   }
 
   /**
+<<<<<<< HEAD
+=======
+  * update trip request
+  * @param {number} id - request id
+  * @param {object} data - request object
+  * @return {object} - updated request
+  */
+  static async respondToRequest({ body: { status }, params: { requestId }, user: { id } }) {
+    const userRequest = await Request.findOne({ where: { id: requestId } });
+
+    if (!userRequest) error('Trip request not found');
+
+    if (status !== 'approved' && status !== 'rejected') error('Response status must be approved or rejected');
+
+    if (userRequest.userId === id) error('You cannot respond to your own request');
+
+    const isDownlinesRequest = await Request.findOne({
+      where: { id: requestId },
+      include: Helper.mapToDepartment(id)
+    });
+
+    if (!isDownlinesRequest) error('This request is not from your direct report');
+
+    const [, [{ dataValues }]] = await Request.update({ status }, {
+      where: { id: requestId }, returning: true
+    });
+
+    return dataValues;
+  }
+
+  /**
+>>>>>>> feature(requests): setup travel request response
    * @param {object} details trip details
    * @param {number} userId ID of the user creating the request
    * @returns{void}
@@ -130,6 +167,7 @@ export default class RequestService {
   static async availOpenRequests({ user: { id } }) {
     const openRequests = await Request.findAll({
       where: { status: 'open' },
+<<<<<<< HEAD
       include: [{
         model: User,
         required: true,
@@ -154,6 +192,9 @@ export default class RequestService {
     const data = await Request.create({
       ...details, tripType: 'one-way', status: 'open', userId,
 >>>>>>> feature(requests): setup travel request rejection
+=======
+      include: Helper.mapToDepartment(id)
+>>>>>>> feature(requests): setup travel request response
     });
 
     if (openRequests.length < 1) error('There are no pending requests');

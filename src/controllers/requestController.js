@@ -3,7 +3,14 @@ import Response from '../utils/response';
 
 const { success, badRequest } = Response;
 const {
-  updateRequest, multiCityRequest, getRequests, availOpenRequests, returnRequest, oneway, search
+  updateRequest,
+  multiCityRequest,
+  getRequests,
+  availOpenRequests,
+  returnRequest,
+  oneway,
+  search,
+  respondToRequest,
 } = RequestService;
 
 /**

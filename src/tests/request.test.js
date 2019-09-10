@@ -23,6 +23,7 @@ let loginUser2;
 let loginUser3;
 let department;
 let request;
+let managerRequest;
 let manager;
 let manager2;
 
@@ -74,6 +75,12 @@ describe('/api/v1/requests', () => {
       .set('token', loginUser.body.data.token)
       .send(multiRequest);
 
+    managerRequest = await chai.request(app)
+      .post(`${URL_PREFIX}/multi-city`)
+      .set('Content-Type', 'application/json')
+      .set('token', loginManager.body.data.token)
+      .send(multiRequest);
+
     manager = await chai.request(app)
       .post('/api/v1/auth/login')
       .set('Content-Type', 'application/json')
@@ -88,6 +95,11 @@ describe('/api/v1/requests', () => {
 
     await TestHelper.createUserDepartment({
       userId: loginUser2.body.data.id,
+      departmentId: department.id
+    });
+
+    await TestHelper.createUserDepartment({
+      userId: loginManager.body.data.id,
       departmentId: department.id
     });
   });
@@ -297,6 +309,7 @@ describe('/api/v1/requests', () => {
       res.body.data[0].should.have.property('userId');
       res.body.data[0].should.have.property('status');
     });
+
     it('should return 404 if the user has no requests', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}`)
@@ -305,7 +318,9 @@ describe('/api/v1/requests', () => {
       res.should.have.status(404);
       expect(JSON.parse(res.text).error).to.equal('You\'ve not made any requests');
     });
+  });
 
+  describe('GET /pending', () => {
     it('should retrieve all open requests made by manager\'s direct report', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/pending`)
@@ -342,6 +357,146 @@ describe('/api/v1/requests', () => {
     });
   });
 
+<<<<<<< HEAD
+=======
+  describe('PATCH /respond', () => {
+    it('should reject a trip request successfully when user is logged in', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', manager.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(200);
+      res.body.should.be.an('object');
+      res.body.should.have.property('status').eql('success');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('tripType');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('returnDate');
+      res.body.data.should.have.property('reason');
+      res.body.data.should.have.property('accommodation');
+      res.body.data.should.have.property('status').eql('rejected');
+    });
+
+    it('should approve a trip request successfully when user is logged in', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', manager.body.data.token)
+        .send({ status: 'approved' });
+
+      res.should.have.status(200);
+      res.body.should.be.an('object');
+      res.body.should.have.property('status').eql('success');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('tripType');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('returnDate');
+      res.body.data.should.have.property('reason');
+      res.body.data.should.have.property('accommodation');
+      res.body.data.should.have.property('status').eql('approved');
+    });
+
+    it('should fail if request ID entered is not a valid integer', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/a/respond`)
+        .set('token', manager.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error[0].should.equal('Request ID must be an integer greater than or equal to 1');
+    });
+
+    it('should fail if no response status is passed in the request body', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', manager.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error[0].should.equal('Please enter your response status. Should be accepted or rejected');
+    });
+
+    it('should throw not found error when request does not exist', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/144/respond`)
+        .set('token', manager.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Trip request not found');
+    });
+
+    it('should fail if response status passed in the body is neither approved nor rejected', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', manager.body.data.token)
+        .send({ status: 'unknown' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Response status must be approved or rejected');
+    });
+
+    it('should fail if the manager tries to respond to his own request', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', loginManager.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You cannot respond to your own request');
+    });
+
+    it('should fail if the requester is not from the manager\'s direct report', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', manager2.body.data.token)
+        .send({ status: 'approved' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('This request is not from your direct report');
+    });
+
+    it('should fail if the user is not a manager', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', loginUser.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(403);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You are not allowed to perform this operation');
+    });
+
+    it('should deny user access when not logged in', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/1/respond`)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(401);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, No token provided');
+    });
+
+    it('should deny access when token is invalid', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/1/respond`)
+        .set('token', 'invalid token')
+        .send({ status: 'rejected' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, Invalid token');
+    });
+  });
+
+>>>>>>> feature(requests): setup travel request response
   describe('POST / ReturnTrip', () => {
     it('should return 200 if return trip was created', async () => {
       const res = await chai.request(app)

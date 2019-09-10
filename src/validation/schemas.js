@@ -30,6 +30,7 @@ export const signUpSchema = Joi.object().keys({
  */
 export const profileSchema = Joi.object().keys({
   firstName: Joi.string().trim().optional(),
+  middleName: Joi.string().trim().optional(),
   lastName: Joi.string().trim().optional(),
   gender: Joi.string().trim().optional(),
   preferredLanguage: Joi.string().trim().optional(),
@@ -92,6 +93,26 @@ export const roleSchema = Joi.object().keys({
 
 /**
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+ * Schema for request ID
+ */
+export const requestIdSchema = Joi.object().keys({
+  requestId: Joi.number().integer().min(1).required()
+    .error(() => ({
+      message: 'Request ID must be an integer greater than or equal to 1',
+    })),
+});
+
+/**
+ * Schema for travel request response
+ */
+export const responseSchema = Joi.object().keys({
+  status: Joi.string().required().error(() => ({ message: 'Please enter your response status. Should be accepted or rejected' }))
+});
+
+/**
+>>>>>>> feature(requests): setup travel request response
  * Schema for validating multi city request
  */
 export const requestSchema = Joi.object().keys({

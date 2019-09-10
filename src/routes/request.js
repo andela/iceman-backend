@@ -1,5 +1,9 @@
 import { Router } from 'express';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+import { requestSchema, requestIdSchema, responseSchema } from '../validation/schemas';
+>>>>>>> feature(requests): setup travel request response
 import RequestController from '../controllers/requestController';
 import { requestSchema } from '../validation/schemas';
 import { validator } from '../validation/validator';
@@ -19,12 +23,21 @@ const {
   oneWay,
   multiCityRequest,
   getRequests,
+<<<<<<< HEAD
+=======
+  respond,
+>>>>>>> feature(requests): setup travel request response
   availOpenRequests,
   returnRequest,
   search
 } = RequestController;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+router.patch('/:requestId/respond', [auth, validator(requestIdSchema, 'params'), validator(responseSchema, 'body'), permitUser(['manager'])], respond);
+>>>>>>> feature(requests): setup travel request response
 router.post('/multi-city', [auth, validator(requestSchema)], multiCityRequest);
 router.post('/one-way', [auth, validator(requestSchema)], oneWay);
 router.patch('/:requestId', [auth, validator(requestSchema)], update);
