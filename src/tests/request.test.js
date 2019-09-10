@@ -383,6 +383,18 @@ describe('/api/v1/requests', () => {
       res.body.data[0].should.have.property('travelDate');
     });
 
+    it('should return 200 if userId search was successful', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?userId=${loginUser.body.data.id}`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data[0].should.have.property('id');
+      res.body.data[0].should.have.property('source').eql('Nigeria');
+      res.body.data[0].should.have.property('travelDate');
+    });
+
     it('should return 200 if status search was successful', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/search?status=open`)
