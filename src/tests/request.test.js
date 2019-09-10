@@ -22,20 +22,35 @@ let loginUser;
 let loginUser2;
 let loginUser3;
 let loginManager;
+let department;
 let request;
+let manager;
+let manager2;
 
 describe('/api/v1/requests', () => {
   after(async () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
   });
 
   before(async () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
     await db.Role.bulkCreate(insertRoles);
+
+    await TestHelper.createUser({
+      ...user, email: 'manager@gmail.com', roleId: 4
+    });
+
+    await TestHelper.createUser({
+      ...user, email: 'manager2@gmail.com', roleId: 4
+    });
 
     await TestHelper.createUser({
       ...user, roleId: 5
@@ -78,13 +93,26 @@ describe('/api/v1/requests', () => {
       .set('Content-Type', 'application/json')
       .set('token', loginUser.body.data.token)
       .send(multiRequest);
+
+    manager = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'manager@gmail.com', password: user.password });
+
+    manager2 = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'manager2@gmail.com', password: user.password });
+
+    department = await TestHelper.createDepartment({ department: 'dev', manager: manager.body.data.id });
+
+    await TestHelper.createUserDepartment({
+      userId: loginUser2.body.data.id,
+      departmentId: department.id
+    });
   });
 
-  describe('POST /multi-city', () => {
-    before(async () => {
-
-    });
-
+  describe('POST /multi-city', async () => {
     it('should return 200 if the request finished successfully', async () => {
       request.should.have.status(200);
       request.body.data.should.have.property('destination');
@@ -284,6 +312,40 @@ describe('/api/v1/requests', () => {
 
       res.should.have.status(404);
       expect(JSON.parse(res.text).error).to.equal('You\'ve not made any requests');
+    });
+
+    it('should retrieve all open requests made by manager\'s direct report', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/pending`)
+        .set('token', manager.body.data.token);
+
+      res.should.have.status(200);
+      res.body.data[0].should.have.property('destination');
+      res.body.data[0].should.have.property('source');
+      res.body.data[0].should.have.property('tripType');
+      res.body.data[0].should.have.property('returnDate');
+      res.body.data[0].should.have.property('travelDate');
+      res.body.data[0].should.have.property('userId');
+      res.body.data[0].should.have.property('status');
+    });
+
+    it('should return 404 if manager\'s direct reports has no pending orders', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/pending`)
+        .set('token', manager2.body.data.token);
+
+      res.should.have.status(404);
+      expect(JSON.parse(res.text).error).to.equal('There are no pending requests');
+    });
+
+    it('should not get open request when logged in user is not a manager', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/pending`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(403);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You are not allowed to perform this operation');
     });
   });
 

@@ -3,7 +3,13 @@ import Response from '../utils/response';
 
 const { success, badRequest } = Response;
 const {
-  updateRequest, multiCityRequest, getRequests, returnRequest, oneway, rejectRequest
+  updateRequest,
+  multiCityRequest,
+  getRequests,
+  availOpenRequests,
+  returnRequest,
+  oneway,
+  rejectRequest,
 } = RequestService;
 
 /**
@@ -88,7 +94,22 @@ export default class RequestController {
   }
 
   /**
-    @param {object} req - request object
+   * @param {object} req - request object
+   * @param {object} res - response object
+   * @return {json} - open requests
+   */
+  static async availOpenRequests(req, res) {
+    try {
+      const result = await availOpenRequests(req);
+
+      success(res, result);
+    } catch ({ message: err }) {
+      badRequest(res, err, 404);
+    }
+  }
+
+  /**
+   * @param {object} req - request object
    * @param {object} res - reponse object
    * @returns {object} data - trip details
    */

@@ -12,6 +12,7 @@ const {
   multiCityRequest,
   getRequests,
   reject,
+  availOpenRequests,
   returnRequest
 } = RequestController;
 
@@ -20,7 +21,9 @@ router.patch('/:requestId/reject', [auth, validator(requestIdSchema, 'params'), 
 router.post('/multi-city', [auth, validator(requestSchema)], multiCityRequest);
 router.post('/one-way', [auth, validator(requestSchema)], oneWay);
 router.patch('/:requestId', [auth, validator(requestIdSchema, 'params'), validator(requestSchema)], update);
+router.get('/pending', auth, permitUser(['manager']), availOpenRequests);
 router.get('/', auth, getRequests);
 router.post('/return', [auth, validator(requestSchema)], returnRequest);
+
 
 export default router;

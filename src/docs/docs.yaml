@@ -307,11 +307,6 @@ paths:
       summary: Retrieve my requests
       produces:
         - application/json
-      parameters:
-        - in: header
-          name: token
-          description: Authenticate User
-          required: true
       responses:
         404:
           description: You've not make any requests
@@ -321,6 +316,25 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/MyRequest'
+      security:
+        - api_key: []
+
+  /requests/pending:
+    get:
+      tags:
+        - Requests
+      summary: Manager retrieves requests of downlines
+      produces:
+        - application/json
+      responses:
+        404:
+          description: No pending requests
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/DownlineRequests'
       security:
         - api_key: []
 
@@ -334,10 +348,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - in: header
-          name: token
-          description: Authenticate User
-          required: true
         - in: body
           name: body
           description: Multiple Request Destination
@@ -386,10 +396,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - in: header
-          name: token
-          description: Authenticate User
-          required: truet
         - in: body
           name: body
           description: Trip request details
@@ -426,15 +432,8 @@ paths:
           description: Access Denied
         403:
           description: Authentication failed
-      security:
-        - api_key: []
-      responses:
-        400:
-          description: Invalid Credentials
         409:
           description: Conflict
-        401:
-          description: Authorization failure
         201:
           description: Success
 
@@ -479,11 +478,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - in: header
-          name: token
-          description: Authenticate User
-          required: true
-        - name: requestId
+        - name: id
           in: path
           description: ID of request to update
           required: true
@@ -504,9 +499,9 @@ paths:
                 type: string
                 description: Trip type
                 enum:
-                  - one-way
+                  - oneway
                   - return
-                  - multi-city
+                  - multicity
               travelDate:
                 type: string
                 format: date-time
@@ -619,7 +614,6 @@ paths:
             properties:
               email:
                 type: string
-
       responses:
         200:
           description: successful operation
@@ -766,6 +760,49 @@ definitions:
             type: string
           userId:
             type: integer
+
+  DownlineRequests:
+    properties:
+      status:
+        type: string
+      data:
+        type: array
+        items:
+          properties:
+            id:
+              type: integer
+            source:
+              type: string
+              required: true
+            destination:
+              type: array
+              items:
+                type: string
+              required: true
+            type:
+              type: string
+            travelDate:
+              type: string
+              format: date
+              required: true
+            returnDate:
+              type: string
+              format: date
+              required: true
+            reason:
+              type: string
+            accommodation:
+              type: string
+            userId:
+              type: integer
+            user:
+              type: object
+              items:
+                properties:
+                  firstName:
+                    type: string
+                  lastName:
+                    type: string
   MyRequest:
     properties:
       status:

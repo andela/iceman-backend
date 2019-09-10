@@ -1,4 +1,6 @@
-import { Request } from '../models';
+import {
+  Request, User, UserDepartment, Department
+} from '../models';
 import Response from '../utils/response';
 
 const { error } = Response;
@@ -28,7 +30,10 @@ export default class RequestService {
 
     body.destination = body.destination.split(',');
 
-    const updatedRequest = await Request.update(body, { where: { id }, returning: true });
+    const updatedRequest = await Request.update(body, {
+      where: { id: params.requestId },
+      returning: true
+    });
 
     return updatedRequest[1][0].dataValues;
   }
@@ -99,9 +104,44 @@ export default class RequestService {
   }
 
   /**
-     * @param {object} details - user trip details
-     * @returns {object} trip - details
-     */
+   *
+   * @param {number} id - manager's id
+   * @return {obeject} - open requests
+   */
+  static async availOpenRequests({ user: { id } }) {
+    const openRequests = await Request.findAll({
+      where: { status: 'open' },
+      include: [{
+        model: User,
+        required: true,
+        attributes: ['firstName', 'lastName'],
+        include: [
+          {
+            model: UserDepartment,
+            required: true,
+            attributes: ['departmentId'],
+            include: [
+              {
+                model: Department,
+                where: { manager: id },
+                required: true,
+                attributes: ['department', 'manager']
+              }
+            ]
+          },
+        ]
+      }]
+    });
+
+    if (openRequests.length < 1) error('There are no pending requests');
+
+    return openRequests;
+  }
+
+  /**
+   * @param {object} details - user trip details
+   * @returns {object} trip - details
+   */
   static async returnRequest({ body, user: { id } }) {
     const { travelDate } = body;
 
