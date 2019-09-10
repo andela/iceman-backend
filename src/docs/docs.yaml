@@ -93,6 +93,7 @@ paths:
             $ref: '#definitions/ErrorResponse'
       security:
         - api_key: []
+
   /auth/login:
     post:
       tags:
@@ -127,6 +128,7 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthResponse'
+
   /auth/signup:
     post:
       tags:
@@ -163,6 +165,7 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthResponse'
+
   /auth/facebook:
     get:
       tags:
@@ -179,6 +182,7 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthResponse'
+
   /auth/google:
     get:
       tags:
@@ -221,6 +225,7 @@ paths:
           description: Error
         200:
           description: Success
+
   /auth/resend_verification_link:
     post:
       tags:
@@ -246,6 +251,7 @@ paths:
           description: error
         200:
           description: Success
+
   /auth/forgot_password:
     post:
       tags:
@@ -271,6 +277,7 @@ paths:
           description: Email Not Found
         200:
           description: Success
+
   /auth/reset_password/{token}:
     patch:
       tags:
@@ -299,6 +306,43 @@ paths:
           description: Email Not Found
         200:
           description: Success
+
+  /auth/assign_role:
+    patch:
+      tags:
+        - Auth
+      summary: Assign user role
+      description: Assign user role with Super Administrator Access
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: roleId
+          in: body
+          description: Role ID
+          required: true
+          type: integer
+        - in: body
+          name: email
+          description: User email to be assigned a role
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Error
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
 
   /requests:
     get:
@@ -362,6 +406,10 @@ paths:
               tripType:
                 type: string
                 required: true
+                enum:
+                  - one-way
+                  - return
+                  - multi-city
               travelDate:
                 type: string
                 format: date
@@ -436,13 +484,15 @@ paths:
           description: Conflict
         201:
           description: Success
+      security:
+        - api_key: []
 
-  /requests/{requestId}/reject:
+  /requests/{requestId}/respond:
     patch:
       tags:
         - Requests
-      summary: Reject Travel Request
-      description: Rejects a travel request
+      summary: Approve or Reject Travel Request
+      description: Approves or Rejects a travel request
       produces:
         - application/json
       parameters:
@@ -452,6 +502,15 @@ paths:
           required: true
           type: integer
           format: int64
+        - name: body
+          in: body
+          description: Status of response, approved or rejected
+          required: true
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
       responses:
         200:
           description: successful operation
@@ -499,9 +558,9 @@ paths:
                 type: string
                 description: Trip type
                 enum:
-                  - oneway
+                  - one-way
                   - return
-                  - multicity
+                  - multi-city
               travelDate:
                 type: string
                 format: date-time
@@ -525,6 +584,7 @@ paths:
           description: Authentication failed
       security:
         - api_key: []
+
   /requests/return:
     post:
       tags:
@@ -589,42 +649,6 @@ paths:
           description: Authorization failure
         201:
           description: Success
-  /auth/assign_role:
-    patch:
-      tags:
-        - Auth
-      summary: Assign user role
-      description: Assign user role with Super Administrator Access
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: roleId
-          in: body
-          description: Role ID
-          required: true
-          type: integer
-        - in: body
-          name: email
-          description: User email to be assigned a role
-          required: true
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Error
-        401:
-          description: Access Denied
-        403:
-          description: Authentication failed
-      security:
-        - api_key: []
 
 definitions:
   AuthResponse:

@@ -30,6 +30,7 @@ export const signUpSchema = Joi.object().keys({
  */
 export const profileSchema = Joi.object().keys({
   firstName: Joi.string().trim().optional(),
+  middleName: Joi.string().trim().optional(),
   lastName: Joi.string().trim().optional(),
   gender: Joi.string().trim().optional(),
   preferredLanguage: Joi.string().trim().optional(),
@@ -91,7 +92,6 @@ export const roleSchema = Joi.object().keys({
 });
 
 /**
-<<<<<<< HEAD
  * Schema for request ID
  */
 export const requestIdSchema = Joi.object().keys({
@@ -99,6 +99,13 @@ export const requestIdSchema = Joi.object().keys({
     .error(() => ({
       message: 'Request ID must be an integer greater than or equal to 1',
     })),
+});
+
+/**
+ * Schema for travel request response
+ */
+export const responseSchema = Joi.object().keys({
+  status: Joi.string().required().error(() => ({ message: 'Please enter your response status. Should be accepted or rejected' }))
 });
 
 /**

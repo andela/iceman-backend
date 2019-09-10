@@ -9,7 +9,7 @@ const {
   availOpenRequests,
   returnRequest,
   oneway,
-  rejectRequest,
+  respondToRequest,
 } = RequestService;
 
 /**
@@ -68,9 +68,9 @@ export default class RequestController {
  * @param {object} res - response object
  * @return {json} - json
  */
-  static async reject(req, res) {
+  static async respond(req, res) {
     try {
-      const result = await rejectRequest(req);
+      const result = await respondToRequest(req);
 
       success(res, result);
     } catch ({ message: err }) {

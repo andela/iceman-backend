@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requestSchema, requestIdSchema } from '../validation/schemas';
+import { requestSchema, requestIdSchema, responseSchema } from '../validation/schemas';
 import RequestController from '../controllers/requestController';
 import { validator } from '../validation/validator';
 import middlewares from '../middlewares';
@@ -11,13 +11,13 @@ const {
   oneWay,
   multiCityRequest,
   getRequests,
-  reject,
+  respond,
   availOpenRequests,
   returnRequest
 } = RequestController;
 
 
-router.patch('/:requestId/reject', [auth, validator(requestIdSchema, 'params'), permitUser(['manager'])], reject);
+router.patch('/:requestId/respond', [auth, validator(requestIdSchema, 'params'), validator(responseSchema, 'body'), permitUser(['manager'])], respond);
 router.post('/multi-city', [auth, validator(requestSchema)], multiCityRequest);
 router.post('/one-way', [auth, validator(requestSchema)], oneWay);
 router.patch('/:requestId', [auth, validator(requestIdSchema, 'params'), validator(requestSchema)], update);

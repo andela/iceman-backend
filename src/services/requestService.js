@@ -1,7 +1,6 @@
-import {
-  Request, User, UserDepartment, Department
-} from '../models';
+import { Request } from '../models';
 import Response from '../utils/response';
+import Helper from '../utils/helpers';
 
 const { error } = Response;
 
@@ -44,12 +43,25 @@ export default class RequestService {
   * @param {object} data - request object
   * @return {object} - updated request
   */
-  static async rejectRequest({ params: { requestId }, user: { id } }) {
+  static async respondToRequest({ body: { status }, params: { requestId }, user: { id } }) {
     const userRequest = await Request.findOne({ where: { id: requestId } });
 
     if (!userRequest) error('Trip request not found');
 
-    const [, [{ dataValues }]] = await Request.update({ status: 'rejected' }, { where: { id: requestId }, returning: true });
+    if (status !== 'approved' && status !== 'rejected') error('Response status must be approved or rejected');
+
+    if (userRequest.userId === id) error('You cannot respond to your own request');
+
+    const isDownlinesRequest = await Request.findOne({
+      where: { id: requestId },
+      include: Helper.mapToDepartment(id)
+    });
+
+    if (!isDownlinesRequest) error('This request is not from your direct report');
+
+    const [, [{ dataValues }]] = await Request.update({ status }, {
+      where: { id: requestId }, returning: true
+    });
 
     return dataValues;
   }
@@ -106,31 +118,12 @@ export default class RequestService {
   /**
    *
    * @param {number} id - manager's id
-   * @return {obeject} - open requests
+   * @return {object} - open requests
    */
   static async availOpenRequests({ user: { id } }) {
     const openRequests = await Request.findAll({
       where: { status: 'open' },
-      include: [{
-        model: User,
-        required: true,
-        attributes: ['firstName', 'lastName'],
-        include: [
-          {
-            model: UserDepartment,
-            required: true,
-            attributes: ['departmentId'],
-            include: [
-              {
-                model: Department,
-                where: { manager: id },
-                required: true,
-                attributes: ['department', 'manager']
-              }
-            ]
-          },
-        ]
-      }]
+      include: Helper.mapToDepartment(id)
     });
 
     if (openRequests.length < 1) error('There are no pending requests');
