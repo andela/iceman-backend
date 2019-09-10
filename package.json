@@ -6,6 +6,8 @@
   "scripts": {
     "db:migration": "cross-env NODE_ENV=test sequelize db:migrate",
     "undo:migration": "cross-env NODE_ENV=test sequelize db:migrate:undo:all",
+    "seed": "sequelize db:seed:all",
+    "undo:seed": "sequelize db:seed:undo:all",
     "server": "nodemon --watch src --exec babel-node src/server.js",
     "start": "babel-node src/server.js",
     "lint": "eslint ./src --fix",

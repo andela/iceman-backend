@@ -232,7 +232,6 @@ export default class AuthService {
    */
   static async assignUser(body) {
     const { email, roleId } = body;
-    const checkRole = await Role.findOne({ where: { id: Number(roleId) } });
     const getUser = await User.findOne({
       where: {
         email
@@ -244,8 +243,6 @@ export default class AuthService {
     });
 
     if (!getUser) error('User not found');
-
-    if (!checkRole) error('Role does not exist');
 
     if (getUser.dataValues.Role.dataValues.type === 'guest') error('User email is not verified');
 
