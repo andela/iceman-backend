@@ -17,15 +17,15 @@ export default class BookingService {
  * @return {object} - send back newly created centre
  */
   static async addCentre({ body, file, user }) {
+    if (!file) error('Please upload a valid image');
+
     const result = await Centre.findOne({ where: { name: body.name, userId: user.id } });
 
     if (result) error('This centre already exists');
 
-    if (file) {
-      const res = await cloudinary.v2.uploader.upload(file.path);
+    const res = await cloudinary.v2.uploader.upload(file.path);
 
-      body.image = res.secure_url;
-    }
+    body.image = res.secure_url;
 
     return Centre.create({ ...body, userId: user.id });
   }
@@ -37,19 +37,22 @@ export default class BookingService {
  * @return {object} - send back newly added room
  */
   static async addRoom({ body, files, params }) {
+    if (files.length < 1) error('Please upload a valid image(s)');
+
     const { centreId } = params;
     const result = await Room.findOne({ where: { name: body.name, centreId } });
 
     if (result) error('This room already exists');
 
+    const res = await uploadImages(files);
+
     body.facilities = body.facilities.split(',');
+    body.images = res;
 
-    if (files.length > 0) {
-      const res = await uploadImages(files);
+    const { dataValues } = await Room.create({ ...body, centreId });
 
-      body.images = res.images;
-    }
+    await Centre.increment(['roomsCount'], { where: { id: centreId } });
 
-    return Room.create({ ...body, centreId });
+    return dataValues;
   }
 }

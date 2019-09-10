@@ -26,11 +26,13 @@ const superAdmin = {
 
 
 describe('Assign User Role', () => {
-  before((done) => {
-    TestHelper.destroyModel('User');
-    TestHelper.destroyModel('Role');
-    db.Role.bulkCreate(insertRoles);
-    done();
+  before(async () => {
+    await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('User');
+    await db.Role.bulkCreate(insertRoles);
+    await TestHelper.createUser({
+      ...superAdmin, roleId: 1
+    });
   });
 
   beforeEach((done) => {
@@ -44,12 +46,6 @@ describe('Assign User Role', () => {
   });
 
   describe('PATCH /assign_role', () => {
-    before(async () => {
-      await TestHelper.createUser({
-        ...superAdmin, roleId: 1
-      });
-    });
-
     it('should sign up a new user', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)

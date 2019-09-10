@@ -3,6 +3,8 @@ import chaiHttp from 'chai-http';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
+import db from '../models';
+import insertRoles from '../utils/insertTestRoles';
 import {
   multiRequest,
   missingRequiredField,
@@ -24,6 +26,8 @@ describe('/api/v1/requests', () => {
   before((done) => {
     TestHelper.destroyModel('User');
     TestHelper.destroyModel('Request');
+    TestHelper.destroyModel('Role');
+    db.Role.bulkCreate(insertRoles);
     done();
   });
 

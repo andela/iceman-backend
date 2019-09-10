@@ -33,25 +33,21 @@ const user2 = {
 describe('/api/v1/auth', () => {
   let notVerifiedUser;
 
-  before(async (done) => {
-    TestHelper.destroyModel('User');
-    TestHelper.destroyModel('Role');
-    db.Role.bulkCreate(insertRoles);
-    done();
+  before(async () => {
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    await db.Role.bulkCreate(insertRoles);
+    await TestHelper.createUser({
+      ...user, roleId: 5
+    });
+
+    notVerifiedUser = await TestHelper.createUser({
+      ...user,
+      email: 'user2@gmail.com',
+    });
   });
 
   describe('POST /login', () => {
-    before(async () => {
-      await TestHelper.createUser({
-        ...user, roleId: 5
-      });
-
-      notVerifiedUser = await TestHelper.createUser({
-        ...user,
-        email: 'user2@gmail.com',
-      });
-    });
-
     it('should return 400 if the user is not found', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/login`)
