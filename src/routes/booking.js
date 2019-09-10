@@ -8,6 +8,6 @@ const { auth } = middlewares;
 const { addCentre, addRoom } = BookingController;
 
 router.post('/centre', [auth, multer.single('image')], addCentre);
-router.post('/room', [auth, multer.array('images')], addRoom);
+router.post('/:centreId/room', [auth, multer.array('images')], addRoom);
 
 export default router;

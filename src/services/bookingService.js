@@ -1,6 +1,7 @@
 import cloudinary from 'cloudinary';
 import Response from '../utils/response';
-import { Centre } from '../models';
+import uploadImages from '../utils/uploadFiles';
+import { Centre, Room } from '../models';
 
 
 const { error } = Response;
@@ -17,10 +18,12 @@ export default class BookingService {
  */
   static async addCentre({ body, file, user }) {
     const result = await Centre.findOne({ where: { name: body.name, userId: user.id } });
+
     if (result) error('This centre already exists');
 
     if (file) {
       const res = await cloudinary.v2.uploader.upload(file.path);
+
       body.image = res.secure_url;
     }
 
@@ -33,9 +36,20 @@ export default class BookingService {
  * @param {string} user - login user with privelleges to create centre
  * @return {object} - send back newly added room
  */
-  static async addRoom({ body, files, user }) {
-    console.log(body);
-    console.log(user);
-    console.log(files);
+  static async addRoom({ body, files, params }) {
+    const { centreId } = params;
+    const result = await Room.findOne({ where: { name: body.name, centreId } });
+
+    if (result) error('This room already exists');
+
+    body.facilities = body.facilities.split(',');
+
+    if (files.length > 0) {
+      const res = await uploadImages(files);
+
+      body.images = res.images;
+    }
+
+    return Room.create({ ...body, centreId });
   }
 }
