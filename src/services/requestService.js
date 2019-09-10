@@ -76,7 +76,7 @@ export default class RequestService {
 
   /**
    * @param {object} body - arrays of request object
-   * @returns {object} obej - return object
+   * @returns {object} obj - return object
    */
   static async getRequests({ user: { id } }) {
     const result = await Request.findAll({ where: { userId: id } });
@@ -89,7 +89,7 @@ export default class RequestService {
   /**
    *
    * @param {number} id - manager's id
-   * @return {obeject} - open requests
+   * @return {object} - open requests
    */
   static async availOpenRequests({ user: { id } }) {
     const openRequests = await Request.findAll({

@@ -300,6 +300,7 @@ describe('/api/v1/requests', () => {
         .set('token', manager.body.data.token);
 
       res.should.have.status(200);
+      res.body.data.length.should.equal(1);
       res.body.data[0].should.have.property('destination');
       res.body.data[0].should.have.property('source');
       res.body.data[0].should.have.property('tripType');
