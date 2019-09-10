@@ -50,6 +50,9 @@ module.exports = (sequelize, DataTypes) => {
     User.hasOne(models.UserDepartment, {
       foreignKey: 'userId'
     });
+    User.hasMany(models.Centre, {
+      foreignKey: 'userId'
+    });
   };
   return User;
 };

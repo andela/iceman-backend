@@ -33,12 +33,14 @@ describe('Assign User Role', () => {
     done();
   });
 
-  beforeEach(async () => {
+  beforeEach((done) => {
     send = sinon.stub(sgMail, 'send').resolves({});
+    done();
   });
 
-  afterEach(async () => {
+  afterEach((done) => {
     send.restore();
+    done();
   });
 
   describe('PATCH /assign_role', () => {
