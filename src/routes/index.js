@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import authRoute from './auth';
 import requestRoute from './request';
-import bookingRoute from './booking';
+import accommodationRoute from './accommodation';
 
 const router = Router();
 
 router.use('/auth', authRoute);
 router.use('/requests', requestRoute);
-router.use('/bookings', bookingRoute);
+router.use('/accommodation', accommodationRoute);
 
 export default router;

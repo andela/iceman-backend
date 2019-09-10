@@ -29,8 +29,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {});
   Room.associate = models => {
-    Room.belongsTo(models.Centre, {
-      foreignKey: 'centreId',
+    Room.belongsTo(models.Accommodation, {
+      foreignKey: 'accommodationId',
       onDelete: 'CASCADE'
     });
   };

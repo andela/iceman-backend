@@ -531,7 +531,109 @@ paths:
           description: Authentication failed
       security:
         - api_key: []  
+  /accommodation:
+    post:
+      tags: 
+        - Book Accommodation 
+      summary: Add new centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: token
+          description: Authenticate User
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: country
+          in: formData
+          type: string
+          required: true
+        - name: state
+          in: formData
+          type: string
+          required: true
+        - name: city
+          in: formData
+          type: string
+          required: true
+        - name: address
+          in: formData
+          type: string
+          required: true
+        - name: image
+          in: formData
+          type: file
+          required: true
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: This centre already exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions'
+  /accommodation/{accommodationId}/room:
+    post:
+      tags: 
+        - Book Accommodation 
+      summary: Add new room to centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: token
+          description: Authenticate User
+          required: true
+        - in: path
+          name: accommodationId
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: roomType
+          in: formData
+          type: string
+          required: true
+        - name: facilities
+          in: formData
+          type: string
+          required: true
+        - name: price
+          in: formData
+          type: string
+        - name: status
+          in: formData
+          type: string
+        - name: images
+          in: formData
+          type: file
+          required: true
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: This room already exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Room'
 
+            
 definitions:
   AuthReponse:
     properties:
@@ -622,6 +724,61 @@ definitions:
             accommodation:
               type: string
             userId:
+              type: integer
+  Room:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          roomType:
+            type: string
+          facilities:
+            type: array
+            items:
+              type: string
+          price:
+            type: number
+          status:
+            type: string
+          images:
+            type: array
+            items:
+              type: string
+          description:
+            type: string
+          accommodationId:
+            type: integer
+  Room:
+    properties:
+      status:
+        type: string
+      data:
+        type: array
+        items:
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            country:
+              type: string
+            state:
+              type: string
+            city:
+              type: string
+            address:
+              type: string
+            image:
+              type: string
+            description:
+              type: string
+            roomsCount:
               type: integer
 
 securityDefinitions:

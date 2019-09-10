@@ -30,16 +30,18 @@ module.exports = {
       type: Sequelize.STRING
     },
     status: {
-      type: Sequelize.STRING,
+      type: Sequelize.ENUM,
+      allowNull: false,
+      values: ['available', 'booked'],
       defaultValue: 'available'
     },
-    centreId: {
+    accommodationId: {
       type: Sequelize.INTEGER,
       onDelete: 'CASCADE',
       references: {
-        model: 'Centres',
+        model: 'Accommodation',
         key: 'id',
-        as: 'centreId'
+        as: 'accommodationId'
       }
     },
     createdAt: {

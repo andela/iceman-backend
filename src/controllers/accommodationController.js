@@ -1,5 +1,5 @@
 import Response from '../utils/response';
-import BookingService from '../services/bookingService';
+import BookingService from '../services/accommodationService';
 
 const { success, badRequest } = Response;
 const { addCentre, addRoom } = BookingService;
@@ -7,7 +7,7 @@ const { addCentre, addRoom } = BookingService;
 /**
  * Booking Controller Class
  */
-export default class BookingController {
+export default class AccommodationController {
 /**
  * @param {object} req - request object
  * @param {object} res - response object

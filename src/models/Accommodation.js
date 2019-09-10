@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Centre = sequelize.define('Centre', {
+  const Accommodation = sequelize.define('Accommodation', {
     name: {
       type: DataTypes.STRING,
       allowNull: false
@@ -31,13 +31,13 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 0
     },
   }, {});
-  Centre.associate = models => {
-    Centre.belongsTo(models.User, {
+  Accommodation.associate = models => {
+    Accommodation.belongsTo(models.User, {
       foreignKey: 'userId'
     });
-    Centre.hasMany(models.Room, {
-      foreignKey: 'centreId'
+    Accommodation.hasMany(models.Room, {
+      foreignKey: 'accommodationId'
     });
   };
-  return Centre;
+  return Accommodation;
 };

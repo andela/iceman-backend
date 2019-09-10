@@ -23,50 +23,46 @@ let loginUser3;
 let request;
 
 describe('/api/v1/requests', () => {
-  before((done) => {
-    TestHelper.destroyModel('User');
-    TestHelper.destroyModel('Request');
-    TestHelper.destroyModel('Role');
-    db.Role.bulkCreate(insertRoles);
-    done();
+  before(async () => {
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Request');
+    await db.Role.bulkCreate(insertRoles);
+    await TestHelper.createUser({
+      ...user, roleId: 5
+    });
+
+    await TestHelper.createUser({
+      ...user, email: 'user2@gmail.com', roleId: 5
+    });
+
+    await TestHelper.createUser({
+      ...user, email: 'user3@gmail.com', roleId: 5
+    });
+
+    loginUser = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send(Helper.pickFields(user, ['email', 'password']));
+
+    loginUser2 = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'user2@gmail.com', password: user.password });
+
+    loginUser3 = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'user3@gmail.com', password: user.password });
+
+    request = await chai.request(app)
+      .post(`${URL_PREFIX}/multi-city`)
+      .set('Content-Type', 'application/json')
+      .set('token', loginUser.body.data.token)
+      .send(multiRequest);
   });
 
   describe('POST /multi-city', () => {
-    before(async () => {
-      await TestHelper.createUser({
-        ...user, roleId: 5
-      });
-
-      await TestHelper.createUser({
-        ...user, email: 'user2@gmail.com', roleId: 5
-      });
-
-      await TestHelper.createUser({
-        ...user, email: 'user3@gmail.com', roleId: 5
-      });
-
-      loginUser = await chai.request(app)
-        .post('/api/v1/auth/login')
-        .set('Content-Type', 'application/json')
-        .send(Helper.pickFields(user, ['email', 'password']));
-
-      loginUser2 = await chai.request(app)
-        .post('/api/v1/auth/login')
-        .set('Content-Type', 'application/json')
-        .send({ email: 'user2@gmail.com', password: user.password });
-
-      loginUser3 = await chai.request(app)
-        .post('/api/v1/auth/login')
-        .set('Content-Type', 'application/json')
-        .send({ email: 'user3@gmail.com', password: user.password });
-
-      request = await chai.request(app)
-        .post(`${URL_PREFIX}/multi-city`)
-        .set('Content-Type', 'application/json')
-        .set('token', loginUser.body.data.token)
-        .send(multiRequest);
-    });
-
     it('should return 200 if the request finished successfully', async () => {
       request.should.have.status(200);
       request.body.data.should.have.property('destination');

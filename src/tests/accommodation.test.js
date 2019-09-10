@@ -10,19 +10,20 @@ import insertRoles from '../utils/insertTestRoles';
 chai.use(chaiHttp);
 chai.should();
 
-const URL_PREFIX = '/api/v1/bookings';
+const URL_PREFIX = '/api/v1/accommodation';
 let loginUser;
 let centre;
 
-describe('/api/v1/bookings', () => {
+describe('/api/v1/accommodation', () => {
   const filePath = `${__dirname}/testData/house.png`;
   const filePath2 = `${__dirname}/testData/badimage.txt`;
 
   before(async () => {
-    await TestHelper.destroyModel('User');
-    await TestHelper.destroyModel('Centre');
-    await TestHelper.destroyModel('Room');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Room');
+    await TestHelper.destroyModel('Accommodation');
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
     db.Role.bulkCreate(insertRoles);
     await TestHelper.createUser({
       ...user, roleId: 2
@@ -37,7 +38,7 @@ describe('/api/v1/bookings', () => {
       .send(Helper.pickFields(user, ['email', 'password']));
 
     centre = await chai.request(app)
-      .post(`${URL_PREFIX}/centre`)
+      .post(`${URL_PREFIX}`)
       .set('token', loginUser.body.data.token)
       .field('name', 'Royal Guest House')
       .field('country', 'Nigeria')
@@ -48,7 +49,7 @@ describe('/api/v1/bookings', () => {
       .attach('image', filePath);
   });
 
-  describe('POST /centre', () => {
+  describe('POST ', () => {
     it('should return 200 if the centre was added successfully', async () => {
       centre.should.have.status(200);
       centre.body.data.should.have.property('name', 'Royal Guest House');
@@ -61,7 +62,7 @@ describe('/api/v1/bookings', () => {
 
     it('should return 400 if the centre already exists', async () => {
       const res = await chai.request(app)
-        .post(`${URL_PREFIX}/centre`)
+        .post(`${URL_PREFIX}`)
         .set('token', loginUser.body.data.token)
         .field('name', 'Royal Guest House')
         .field('country', 'Nigeria')
@@ -77,7 +78,7 @@ describe('/api/v1/bookings', () => {
 
     it('should return 400 if no image was uploaded for the centre', async () => {
       const res = await chai.request(app)
-        .post(`${URL_PREFIX}/centre`)
+        .post(`${URL_PREFIX}`)
         .set('token', loginUser.body.data.token)
         .field('name', 'Royal Guest House')
         .field('country', 'Nigeria')
@@ -92,7 +93,7 @@ describe('/api/v1/bookings', () => {
     });
     it('should return 400 if relevant details is not provieded', async () => {
       const res = await chai.request(app)
-        .post(`${URL_PREFIX}/centre`)
+        .post(`${URL_PREFIX}`)
         .set('token', loginUser.body.data.token)
         .field('name', '')
         .field('country', '')

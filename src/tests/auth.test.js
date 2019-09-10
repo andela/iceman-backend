@@ -34,8 +34,9 @@ describe('/api/v1/auth', () => {
   let notVerifiedUser;
 
   before(async () => {
-    await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
     await db.Role.bulkCreate(insertRoles);
     await TestHelper.createUser({
       ...user, roleId: 5

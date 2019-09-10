@@ -1,7 +1,7 @@
 import cloudinary from 'cloudinary';
 import Response from '../utils/response';
 import uploadImages from '../utils/uploadFiles';
-import { Centre, Room } from '../models';
+import { Accommodation, Room } from '../models';
 
 
 const { error } = Response;
@@ -9,7 +9,7 @@ const { error } = Response;
 /**
  * Class for booking accommodation
  */
-export default class BookingService {
+export default class AccommodationService {
 /**
  * @param {string} body - valid data object of a centre
  * @param {string} file - valid image of the centre
@@ -19,7 +19,7 @@ export default class BookingService {
   static async addCentre({ body, file, user }) {
     if (!file) error('Please upload a valid image');
 
-    const result = await Centre.findOne({ where: { name: body.name, userId: user.id } });
+    const result = await Accommodation.findOne({ where: { name: body.name, userId: user.id } });
 
     if (result) error('This centre already exists');
 
@@ -27,7 +27,7 @@ export default class BookingService {
 
     body.image = res.secure_url;
 
-    return Centre.create({ ...body, userId: user.id });
+    return Accommodation.create({ ...body, userId: user.id });
   }
 
   /**
@@ -39,8 +39,8 @@ export default class BookingService {
   static async addRoom({ body, files, params }) {
     if (files.length < 1) error('Please upload a valid image(s)');
 
-    const { centreId } = params;
-    const result = await Room.findOne({ where: { name: body.name, centreId } });
+    const { accommodationId } = params;
+    const result = await Room.findOne({ where: { name: body.name, accommodationId } });
 
     if (result) error('This room already exists');
 
@@ -49,9 +49,9 @@ export default class BookingService {
     body.facilities = body.facilities.split(',');
     body.images = res;
 
-    const { dataValues } = await Room.create({ ...body, centreId });
+    const { dataValues } = await Room.create({ ...body, accommodationId });
 
-    await Centre.increment(['roomsCount'], { where: { id: centreId } });
+    await Accommodation.increment(['roomsCount'], { where: { id: accommodationId } });
 
     return dataValues;
   }
