@@ -39,3 +39,13 @@ export const oneWayTrip = {
   reason: 'reason',
   accommodation: 'accommodation'
 };
+
+export const returnRequest = {
+  source: 'Lagos',
+  destination: 'Abuja',
+  tripType: 'return',
+  travelDate: '10/02/2019',
+  returnDate: '01/01/2018',
+  reason: 'Work',
+  accommodation: 'Radison Blu'
+};
