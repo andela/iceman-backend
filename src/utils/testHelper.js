@@ -42,7 +42,7 @@ export default class TestHelper {
   /**
  * Method for creating department
  * @param {object} data - department data
- * @return {void}
+ * @return {object} - created department object
  */
   static async createDepartment(data) {
     const { dataValues } = await db.Department.create(data);
@@ -53,7 +53,7 @@ export default class TestHelper {
   /**
  * Method for creating user department
  * @param {object} data - department data
- * @return {void}
+ * @return {object} - created user department object
  */
   static async createUserDepartment(data) {
     const { dataValues } = await db.UserDepartment.create(data);
