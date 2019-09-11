@@ -353,7 +353,7 @@ paths:
         - application/json
       responses:
         404:
-          description: You've not make any requests
+          description: You've not made any requests
         401:
           description: Access Denied, No token provided
         200:
