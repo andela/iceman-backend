@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { Request } from '../models';
 import Response from '../utils/response';
 import Helper from '../utils/helpers';
@@ -9,7 +10,7 @@ const { error } = Response;
  */
 export default class RequestService {
   /**
-  * update trip rquest
+  * update trip request
   * @param {number} id - request id
   * @param {object} data - request object
   * @return {object} - updated request
@@ -47,8 +48,6 @@ export default class RequestService {
     const userRequest = await Request.findOne({ where: { id: requestId } });
 
     if (!userRequest) error('Trip request not found');
-
-    if (status !== 'approved' && status !== 'rejected') error('Response status must be approved or rejected');
 
     if (userRequest.userId === id) error('You cannot respond to your own request');
 
@@ -153,5 +152,32 @@ export default class RequestService {
     const { dataValues } = await Request.create({ ...body, userId: id });
 
     return dataValues;
+  }
+
+  /**
+   *
+   * @param {object} query - search object
+   * @returns {object} data
+   */
+  static async search(query) {
+    const {
+      id, userId, destination, source, status
+    } = query;
+
+    const data = await Request.findAll({
+      where: {
+        [Op.or]: [
+          id ? { id: { [Op.eq]: `${id}` } } : null,
+          userId ? { userId: { [Op.eq]: `${userId}` } } : null,
+          destination ? { destination: { [Op.contains]: [`${Object.values(query)[0]}`] } } : null,
+          source ? { source: { [Op.iLike]: `%${Object.values(query)[0]}%`, } } : null,
+          status ? { status: { [Op.iLike]: `%${Object.values(query)[0]}%`, } } : null
+        ]
+      },
+    });
+
+    if (data.length === 0) error('No result found');
+
+    return data;
   }
 }
