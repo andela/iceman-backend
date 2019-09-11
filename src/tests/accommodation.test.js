@@ -19,13 +19,22 @@ describe('/api/v1/accommodation', () => {
   const filePath = `${__dirname}/testData/house.png`;
   const filePath2 = `${__dirname}/testData/badimage.txt`;
 
+  after(async () => {
+    await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Room');
+    await TestHelper.destroyModel('Accommodation');
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+  });
+
   before(async () => {
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Room');
     await TestHelper.destroyModel('Accommodation');
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
-    db.Role.bulkCreate(insertRoles);
+    await db.Role.bulkCreate(insertRoles);
+
     await TestHelper.createUser({
       ...user, roleId: 2
     });
@@ -33,6 +42,7 @@ describe('/api/v1/accommodation', () => {
     await TestHelper.createUser({
       ...user, email: 'user2@gmail.com', roleId: 5
     });
+
     loginUser = await chai.request(app)
       .post('/api/v1/auth/login')
       .set('Content-Type', 'application/json')
@@ -55,7 +65,7 @@ describe('/api/v1/accommodation', () => {
       .attach('image', filePath);
   });
 
-  describe('POST ', () => {
+  describe('POST /', () => {
     it('should return 200 if the centre was added successfully', async () => {
       centre.should.have.status(200);
       centre.body.data.should.have.property('name', 'Royal Guest House');

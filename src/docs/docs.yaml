@@ -344,7 +344,7 @@ paths:
       security:
         - api_key: []
 
-  /requests:
+  /requests/userRequests:
     get:
       tags:
         - Requests

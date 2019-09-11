@@ -105,7 +105,9 @@ export const requestIdSchema = Joi.object().keys({
  * Schema for travel request response
  */
 export const responseSchema = Joi.object().keys({
-  status: Joi.string().required().error(() => ({ message: 'Please enter your response status. Should be accepted or rejected' }))
+  status: Joi.string().trim().valid('approved', 'rejected').lowercase()
+    .required()
+    .error(() => ({ message: 'Please enter your response status. Should be accepted or rejected' }))
 });
 
 /**

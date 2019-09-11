@@ -436,17 +436,6 @@ describe('/api/v1/requests', () => {
       res.body.error.should.equal('Trip request not found');
     });
 
-    it('should fail if response status passed in the body is neither approved nor rejected', async () => {
-      const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
-        .set('token', manager.body.data.token)
-        .send({ status: 'unknown' });
-
-      res.should.have.status(400);
-      res.body.should.be.an('object');
-      res.body.error.should.equal('Response status must be approved or rejected');
-    });
-
     it('should fail if the manager tries to respond to his own request', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
