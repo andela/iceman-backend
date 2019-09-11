@@ -42,19 +42,17 @@ describe('Assign User Role', () => {
     });
   });
 
-  beforeEach(async () => {
+  beforeEach((done) => {
     send = sinon.stub(sgMail, 'send').resolves({});
+    done();
   });
 
-  afterEach(async () => {
+  afterEach((done) => {
     send.restore();
+    done();
   });
 
   describe('PATCH /assign_role', () => {
-    before(async () => {
-
-    });
-
     it('should sign up a new user', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)

@@ -648,8 +648,8 @@ paths:
         401:
           description: Authorization failure
         201:
-          description: Success 
-          
+          description: Success
+
   /requests/search:
     get:
       tags:
@@ -702,7 +702,7 @@ paths:
           name: token
           description: an authorization header
           required: true
-          type: string        
+          type: string
       security:
         - Basic: []
       responses:
@@ -711,7 +711,7 @@ paths:
         401:
           description: Authorization failure
         200:
-          description: Success    
+          description: Success
   /auth/assign_role:
     patch:
       tags:
@@ -723,20 +723,17 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: roleId
-          in: body
-          description: Role ID
-          required: true
-          type: integer
         - in: body
-          name: email
-          description: User email to be assigned a role
+          name: Role schema
+          description: Role assignment details
           required: true
           schema:
             type: object
             properties:
               email:
                 type: string
+              roleId:
+                type: integer
       responses:
         200:
           description: successful operation
@@ -746,6 +743,122 @@ paths:
           description: Access Denied
         403:
           description: Authentication failed
+      security:
+        - api_key: []
+
+  /accommodation:
+    post:
+      tags:
+        - Book Accommodation
+      summary: Add new centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: country
+          in: formData
+          type: string
+          required: true
+        - name: state
+          in: formData
+          type: string
+          required: true
+        - name: city
+          in: formData
+          type: string
+          required: true
+        - name: address
+          in: formData
+          type: string
+          required: true
+        - name: image
+          in: formData
+          type: file
+          required: true
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: This centre already exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Accommodation'
+      security:
+        - api_key: []
+    get:
+      tags:
+        - Book Accommodation
+      summary: Get all accommodation
+      produces:
+        - application/json
+      responses:
+        404:
+          description: No accommodation yet
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/GetAccommodation'
+      security:
+        - api_key: []
+
+  /accommodation/{accommodationId}/room:
+    post:
+      tags:
+        - Book Accommodation
+      summary: Add new room to centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: accommodationId
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: roomType
+          in: formData
+          type: string
+          required: true
+        - name: facilities
+          in: formData
+          type: string
+          required: true
+        - name: price
+          in: formData
+          type: string
+        - name: status
+          in: formData
+          type: string
+        - name: images
+          in: formData
+          type: file
+          required: true
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: This room already exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Room'
       security:
         - api_key: []
 
@@ -960,6 +1073,111 @@ definitions:
               type: string
             userId:
               type: integer
+  Room:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          roomType:
+            type: string
+          facilities:
+            type: array
+            items:
+              type: string
+          price:
+            type: number
+          status:
+            type: string
+          images:
+            type: array
+            items:
+              type: string
+          description:
+            type: string
+          accommodationId:
+            type: integer
+  Accommodation:
+    properties:
+      status:
+        type: string
+      data:
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          country:
+            type: string
+          state:
+            type: string
+          city:
+            type: string
+          address:
+            type: string
+          image:
+            type: string
+          description:
+            type: string
+          roomsCount:
+            type: integer
+  GetAccommodation:
+    properties:
+      status:
+        type: string
+      data:
+        type: array
+        items:
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            country:
+              type: string
+            state:
+              type: string
+            city:
+              type: string
+            address:
+              type: string
+            image:
+              type: string
+            description:
+              type: string
+            roomsCount:
+              type: integer
+            Rooms:
+              type: array
+              items:
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  roomType:
+                    type: string
+                  facilities:
+                    type: array
+                    items:
+                      type: string
+                  price:
+                    type: number
+                  status:
+                    type: string
+                  images:
+                    type: array
+                    items:
+                      type: string
+                  description:
+                    type: string
+                  accommodationId:
+                    type: integer
 
 securityDefinitions:
   api_key:
