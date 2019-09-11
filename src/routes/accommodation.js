@@ -8,11 +8,12 @@ import { centreSchema, roomSchema } from '../validation/schemas';
 
 const router = Router();
 const { auth } = middlewares;
-const { addCentre, addRoom } = AccommodationController;
+const { addCentre, addRoom, getAllAccommodation } = AccommodationController;
 
 router.post('/', [auth, permitUser(['travel_admin']),
   multer.single('image'), validator(centreSchema)], addCentre);
 router.post('/:accommodationId/room', [auth, permitUser(['travel_admin']),
   multer.array('images'), validator(roomSchema)], addRoom);
+router.get('/', auth, getAllAccommodation);
 
 export default router;

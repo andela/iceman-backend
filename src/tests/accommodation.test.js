@@ -13,6 +13,7 @@ chai.should();
 const URL_PREFIX = '/api/v1/accommodation';
 let loginUser;
 let centre;
+let noAccommodation;
 
 describe('/api/v1/accommodation', () => {
   const filePath = `${__dirname}/testData/house.png`;
@@ -36,6 +37,11 @@ describe('/api/v1/accommodation', () => {
       .post('/api/v1/auth/login')
       .set('Content-Type', 'application/json')
       .send(Helper.pickFields(user, ['email', 'password']));
+
+    noAccommodation = await chai.request(app)
+      .get(`${URL_PREFIX}`)
+      .set('token', loginUser.body.data.token);
+
 
     centre = await chai.request(app)
       .post(`${URL_PREFIX}`)
@@ -170,6 +176,18 @@ describe('/api/v1/accommodation', () => {
         .attach('images', '');
 
       res.should.have.status(400);
+    });
+  });
+  describe('GET /', () => {
+    it('should return 200 if there are one or more accommodation', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+    });
+    it('should return 404 if there are no accommodation', async () => {
+      noAccommodation.should.have.status(400);
     });
   });
 });

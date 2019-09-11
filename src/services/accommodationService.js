@@ -55,4 +55,13 @@ export default class AccommodationService {
 
     return dataValues;
   }
+
+  /**
+ * @returns {object} - response with all accommodation
+ */
+  static async getAllAccommodation() {
+    const result = await Accommodation.findAll({ include: [Room] });
+
+    return result.length > 0 ? result : error('There are no accommodation');
+  }
 }

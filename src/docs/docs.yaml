@@ -541,10 +541,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - in: header
-          name: token
-          description: Authenticate User
-          required: true
         - name: name
           in: formData
           type: string
@@ -580,7 +576,27 @@ paths:
         200:
           description: Success
           schema:
-            $ref: '#definitions'
+            $ref: '#definitions/Accommodation'
+      security:
+        - api_key: []
+    get:
+      tags: 
+        - Book Accommodation 
+      summary: Get all accommodation
+      produces:
+        - application/json
+      responses:
+        404:
+          description: No accommodation yet
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/GetAccommodation'
+      security:
+        - api_key: []
+        
   /accommodation/{accommodationId}/room:
     post:
       tags: 
@@ -591,10 +607,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - in: header
-          name: token
-          description: Authenticate User
-          required: true
         - in: path
           name: accommodationId
           required: true
@@ -632,7 +644,8 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/Room'
-
+      security:
+        - api_key: []
             
 definitions:
   AuthReponse:
@@ -754,7 +767,31 @@ definitions:
             type: string
           accommodationId:
             type: integer
-  Room:
+  Accommodation:
+    properties:
+      status:
+        type: string
+      data:
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          country:
+            type: string
+          state:
+            type: string
+          city:
+            type: string
+          address:
+            type: string
+          image:
+            type: string
+          description:
+            type: string
+          roomsCount:
+            type: integer
+  GetAccommodation:
     properties:
       status:
         type: string
@@ -780,6 +817,32 @@ definitions:
               type: string
             roomsCount:
               type: integer
+            Rooms:
+              type: array
+              items:
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  roomType:
+                    type: string
+                  facilities:
+                    type: array
+                    items:
+                      type: string
+                  price:
+                    type: number
+                  status:
+                    type: string
+                  images:
+                    type: array
+                    items:
+                      type: string
+                  description:
+                    type: string
+                  accommodationId:
+                    type: integer
 
 securityDefinitions:
   api_key:
