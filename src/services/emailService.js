@@ -7,7 +7,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const templates = {
   verify_email: process.env.VERIFY_TEMPLATE,
-  reset_password: process.env.RESET_TEMPLATE
+  reset_password: process.env.RESET_TEMPLATE,
+  notification: process.env.NOTIFICATION
 };
 
 /**
@@ -17,7 +18,7 @@ const templates = {
  */
 export const sendMail = async (data) => {
   const {
-    receiver, sender, templateName, url, name
+    receiver, sender, templateName, url, name, msg,
   } = data;
 
   const message = {
@@ -28,10 +29,12 @@ export const sendMail = async (data) => {
     dynamic_template_data: {
       name,
       url,
+      msg
     }
   };
 
   try {
+    console.log(message);
     await sgMail.send(message);
   } catch (error) {
     Response.error(error);

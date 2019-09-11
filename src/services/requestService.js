@@ -1,5 +1,6 @@
-import { Request } from '../models';
+import { Request, User } from '../models';
 import Response from '../utils/response';
+import Notification from './notificationService';
 
 const { error } = Response;
 
@@ -45,6 +46,13 @@ export default class RequestService {
 
     body.destination = body.destination.split(',');
 
+    const send = await User.findOne({ where: id });
+    const { dataValues: sender } = send;
+    const receive = await User.findOne({ where: { id: sender.lineManager } });
+    const { dataValues: receiver } = receive;
+
+    await Notification.createNotificationMsg({ sender, receiver, type: 'newRequest' });
+
     return Request.create({ ...body, userId: id });
   }
 
@@ -65,6 +73,15 @@ export default class RequestService {
     if (body.tripType !== 'multi-city') error('Trip type must be multi city');
 
     const { dataValues } = await Request.create({ ...body, destination, userId: id });
+
+    const send = await User.findOne({ where: id });
+    const { dataValues: sender } = send;
+    const receive = await User.findOne({ where: { id: sender.lineManager } });
+    const { dataValues: receiver } = receive;
+
+    await Notification.createNotificationMsg({
+      sender, receiver, type: 'newRequest', url: dataValues.id
+    });
 
     return dataValues;
   }

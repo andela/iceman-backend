@@ -110,3 +110,10 @@ export const rememberSchema = Joi.object().keys({
       message: 'Input should either be true or false',
     })),
 });
+
+export const optSchema = Joi.object().keys({
+  emailNotification: Joi.boolean().required()
+    .error(() => ({
+      message: 'Input should either be true or false',
+    })),
+});

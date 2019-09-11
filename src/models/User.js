@@ -31,6 +31,9 @@ module.exports = (sequelize, DataTypes) => {
       roleId: {
         type: DataTypes.INTEGER,
       },
+      lineManager: {
+        type: DataTypes.INTEGER
+      },
       gender: {
         type: DataTypes.STRING,
         allowNull: true
@@ -60,6 +63,9 @@ module.exports = (sequelize, DataTypes) => {
       passportName: {
         type: DataTypes.STRING
       },
+      emailNotify: {
+        type: DataTypes.BOOLEAN
+      }
     },
     { },
   );

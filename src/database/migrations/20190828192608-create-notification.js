@@ -9,16 +9,22 @@ module.exports = {
     type: {
       type: Sequelize.STRING
     },
-    userId: {
+    senderId: {
       type: Sequelize.INTEGER,
-      references: {
-        model: 'Users',
-        key: 'id',
-        as: 'userId'
-      }
     },
-    date: {
-      type: Sequelize.DATE
+    receiverId: {
+      type: Sequelize.INTEGER,
+    },
+    message: {
+      type: Sequelize.STRING
+    },
+    url: {
+      type: Sequelize.STRING
+    },
+    isRead: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     },
     createdAt: {
       allowNull: false,
