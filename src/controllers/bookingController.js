@@ -13,7 +13,7 @@ export default class BookingController {
      * @param {object} res - response message
      * @returns {object} - response data
      */
-  static async book(req, res) {
+  static async createBooking(req, res) {
     try {
       const data = book(req);
 

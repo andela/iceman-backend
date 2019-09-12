@@ -1,11 +1,16 @@
 import { Router } from 'express';
-import { book } from '../controllers/bookingController';
+import BookingController from '../controllers/bookingController';
 import { bookingSchema } from '../validation/schemas';
 import { validator } from '../validation/validator';
-import { auth } from '../middlewares';
+import middlewares from '../middlewares';
+import { checkBooking } from '../middlewares/checker';
+
+const { auth } = middlewares;
+
+const { createBooking } = BookingController;
 
 const router = Router();
 
-router.post('/bookings/:requestId/:accommodationId', [auth, validator(bookingSchema)], book);
+router.post('/create/:requestId/:accommodationId', [auth, checkBooking, validator(bookingSchema)], createBooking);
 
 export default router;
