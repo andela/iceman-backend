@@ -186,76 +186,76 @@ describe('Assign User Role', () => {
     });
   });
 
-  describe('Remember and get user profile information', () => {
-    it('should not remember profile with invalid token', async () => {
-      const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/remember_profile`);
+  // describe('Remember and get user profile information', () => {
+  //   it('should not remember profile with invalid token', async () => {
+  //     const res = await chai.request(app)
+  //       .patch(`${URL_PREFIX}/remember_profile`);
 
-      res.should.have.status(401);
-      res.body.should.have.property('error');
-      res.body.error.should.equal('Access Denied, No token provided');
-    });
+  //     res.should.have.status(401);
+  //     res.body.should.have.property('error');
+  //     res.body.error.should.equal('Access Denied, No token provided');
+  //   });
 
-    it('should remember user profile information', async () => {
-      const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/remember_profile`)
-        .set('token', userToken)
-        .send({ rememberProfile: 'true' });
+  //   it('should remember user profile information', async () => {
+  //     const res = await chai.request(app)
+  //       .patch(`${URL_PREFIX}/remember_profile`)
+  //       .set('token', userToken)
+  //       .send({ rememberProfile: 'true' });
 
-      res.should.have.status(200);
-      res.body.should.have.property('message');
-      res.body.message.should.equal('Remember Profile Information Successfully Updated');
-    });
+  //     res.should.have.status(200);
+  //     res.body.should.have.property('message');
+  //     res.body.message.should.equal('Remember Profile Information Successfully Updated');
+  //   });
 
-    it('should get user information if remember profile is true', async () => {
-      const res = await chai.request(app)
-        .get(`${URL_PREFIX}/user_information`)
-        .set('token', userToken);
+  //   it('should get user information if remember profile is true', async () => {
+  //     const res = await chai.request(app)
+  //       .get(`${URL_PREFIX}/user_information`)
+  //       .set('token', userToken);
 
-      res.should.have.status(200);
-      res.body.should.have.property('data');
-      res.body.data.should.have.property('roleId');
-    });
+  //     res.should.have.status(200);
+  //     res.body.should.have.property('data');
+  //     res.body.data.should.have.property('roleId');
+  //   });
 
-    it('should change remember profile settings to false', async () => {
-      const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/remember_profile`)
-        .set('token', userToken)
-        .send({ rememberProfile: 'false' });
+  //   it('should change remember profile settings to false', async () => {
+  //     const res = await chai.request(app)
+  //       .patch(`${URL_PREFIX}/remember_profile`)
+  //       .set('token', userToken)
+  //       .send({ rememberProfile: 'false' });
 
-      res.should.have.status(200);
-      res.body.should.have.property('message');
-      res.body.message.should.equal('Remember Profile Information Successfully Updated');
-    });
+  //     res.should.have.status(200);
+  //     res.body.should.have.property('message');
+  //     res.body.message.should.equal('Remember Profile Information Successfully Updated');
+  //   });
 
-    it('should not get user information if remember profile is false', async () => {
-      const res = await chai.request(app)
-        .get(`${URL_PREFIX}/user_information`)
-        .set('token', userToken);
+  //   it('should not get user information if remember profile is false', async () => {
+  //     const res = await chai.request(app)
+  //       .get(`${URL_PREFIX}/user_information`)
+  //       .set('token', userToken);
 
-      res.should.have.status(400);
-      res.body.should.have.property('error');
-      res.body.error.should.equal('This feature is not enabled');
-    });
+  //     res.should.have.status(400);
+  //     res.body.should.have.property('error');
+  //     res.body.error.should.equal('This feature is not enabled');
+  //   });
 
-    it('should not remember profile with wrong input', async () => {
-      const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/remember_profile`)
-        .set('token', userToken)
-        .send({ rememberProfile: '' });
+  //   it('should not remember profile with wrong input', async () => {
+  //     const res = await chai.request(app)
+  //       .patch(`${URL_PREFIX}/remember_profile`)
+  //       .set('token', userToken)
+  //       .send({ rememberProfile: '' });
 
-      res.should.have.status(400);
-      res.body.should.have.property('error');
-      res.body.error.should.equal('Input should either be true or false');
-    });
+  //     res.should.have.status(400);
+  //     res.body.should.have.property('error');
+  //     res.body.error.should.equal('Input should either be true or false');
+  //   });
 
-    it('should not get user details with invalid token', async () => {
-      const res = await chai.request(app)
-        .get(`${URL_PREFIX}/user_information`);
+  //   it('should not get user details with invalid token', async () => {
+  //     const res = await chai.request(app)
+  //       .get(`${URL_PREFIX}/user_information`);
 
-      res.should.have.status(401);
-      res.body.should.have.property('error');
-      res.body.error.should.equal('Access Denied, No token provided');
-    });
-  });
+  //     res.should.have.status(401);
+  //     res.body.should.have.property('error');
+  //     res.body.error.should.equal('Access Denied, No token provided');
+  //   });
+  // });
 });

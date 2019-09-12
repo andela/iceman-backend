@@ -8,17 +8,29 @@ import {
   missingRequiredField,
   oneWayTrip,
   user,
-  returnRequest
+  returnRequest,
+  tripRequest
 } from './testData/sampleData';
 
 chai.use(chaiHttp);
 chai.should();
 
 const URL_PREFIX = '/api/v1/requests';
+const USER_PREFIX = '/api/v1/auth';
 let loginUser;
 let loginUser2;
 let loginUser3;
 let request;
+
+const profileDetails = {
+  gender: 'Male',
+  dateOfBirth: '1994-05-20',
+  preferredLanguage: 'English',
+  residentialAddress: 'Benin City, Nigeria',
+  preferredCurrency: 'Nigerian Naira (NGN)',
+  passportName: 'Test Tester',
+  passportNumber: '3434322112'
+};
 
 describe('/api/v1/requests', () => {
   before(async () => {
@@ -153,6 +165,21 @@ describe('/api/v1/requests', () => {
       expect(status).to.equal(400);
     });
 
+    it('should not use user details to make a request if rememberProfile is false', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/one-way`)
+        .set('token', loginUser2.body.data.token)
+        .send(tripRequest);
+
+      res.should.have.status(400);
+      res.body.error[0].should.equal('passportName is Required');
+      res.body.error[1].should.equal('passportNumber is Required');
+      res.body.error[2].should.equal('gender is Required');
+      res.body.error[3].should.equal('preferredLanguage is Required');
+      res.body.error[5].should.equal('preferredCurrency is Required');
+      res.body.error[4].should.equal('residentialAddress is Required');
+    });
+
     it('should return 201 if one way trip was created', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/one-way`)
@@ -162,6 +189,47 @@ describe('/api/v1/requests', () => {
       expect(JSON.parse(res.text).data.source).to.equal('Lagos');
       expect(res.status).to.equal(201);
     });
+
+    it('should update user profile', async () => {
+      const res = await chai.request(app)
+        .patch(`${USER_PREFIX}/profile`)
+        .set('token', loginUser2.body.data.token)
+        .send(profileDetails);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.should.have.property('data');
+      res.body.data.should.be.a('object');
+      res.body.data.should.have.property('firstName').eql('Samuel');
+      res.body.data.should.have.property('lastName').eql('koroh');
+      res.body.data.should.have.property('email').eql('user2@gmail.com');
+      res.body.data.should.have.property('roleId');
+      res.body.data.should.have.property('gender').eql('Male');
+      res.body.data.should.have.property('dateOfBirth');
+      res.body.data.should.have.property('preferredLanguage').eql('English');
+      res.body.data.should.have.property('preferredCurrency').eql('Nigerian Naira (NGN)');
+      res.body.data.should.have.property('residentialAddress').eql('Benin City, Nigeria');
+    });
+
+    it('should use user details to make a request if rememberProfile is true', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/one-way`)
+        .set('token', loginUser2.body.data.token)
+        .send(tripRequest);
+
+      res.should.have.status(201);
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('tripType', 'one-way');
+      res.body.data.should.have.property('returnDate');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('userId');
+      res.body.data.should.have.property('gender');
+      res.body.data.should.have.property('preferredLanguage');
+      res.body.data.should.have.property('preferredCurrency');
+      res.body.data.should.have.property('residentialAddress');
+    });
+
 
     it('should return 409 if the trip is already booked', async () => {
       const { text, status } = await chai.request(app)
@@ -173,6 +241,7 @@ describe('/api/v1/requests', () => {
       expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
     });
   });
+
   describe('PATCH /', () => {
     it('should update an open trip request when user is logged in and required details are provided', async () => {
       const res = await chai.request(app)
@@ -350,7 +419,7 @@ describe('/api/v1/requests', () => {
       res.body.error[2].should.equal('Please select your destination(s)');
       res.body.error[3].should.equal('Travel date is required e.g YYYY-MM-DD');
       res.body.error[4].should.equal('Reason is required');
-      res.body.error[5].should.equal('Accommodation is required');
+      res.body.error[7].should.equal('Accommodation is required');
     });
   });
 });

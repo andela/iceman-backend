@@ -9,7 +9,6 @@ import {
   verifyEmail,
   LogInSchema,
   roleSchema,
-  rememberSchema,
   profileSchema,
 } from '../validation/schemas';
 
@@ -23,9 +22,7 @@ const {
   resendVerification,
   getProfile,
   updateProfile,
-  assignRole,
-  rememberProfile,
-  getUserInformation
+  assignRole
 } = AuthController;
 const { authenticate, callback } = PassportController;
 const { auth, permitUser } = middlewares;
@@ -43,7 +40,5 @@ router.get('/facebook', authenticate('facebook', ['email', 'public_profile']));
 router.get('/facebook/callback', callback('facebook'));
 router.get('/google', authenticate('google', ['email', 'profile']));
 router.get('/google/callback', callback('google'));
-router.patch('/remember_profile', auth, validate(rememberSchema, 'body'), rememberProfile);
-router.get('/user_information', auth, getUserInformation);
 
 export default router;

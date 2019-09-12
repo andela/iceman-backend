@@ -1,4 +1,4 @@
-import { Request } from '../models';
+import { Request, User } from '../models';
 import Response from '../utils/response';
 
 const { error } = Response;
@@ -39,11 +39,15 @@ export default class RequestService {
    */
   static async oneway({ body, user: { id } }) {
     const { travelDate } = body;
+    // console.log(body);
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
-
     if (existingRequest) error('You\'ve already booked this trip');
 
     body.destination = body.destination.split(',');
+
+    if (body.rememberProfile !== null) {
+      await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+    }
 
     return Request.create({ ...body, userId: id });
   }
