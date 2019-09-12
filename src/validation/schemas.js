@@ -92,7 +92,7 @@ export const requestSchema = Joi.object().keys({
 /**
  * Schema for validating centre
  */
-export const centreSchema = Joi.object().keys({
+export const accommodationSchema = Joi.object().keys({
   name: Joi.string().required().error(() => ({ message: 'Please provide the centre name' })),
   country: Joi.string().required().error(() => ({ message: 'Please select country of the centre' })),
   state: Joi.string().required().error(() => ({ message: 'Please select state of the centre' })),
