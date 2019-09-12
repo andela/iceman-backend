@@ -21,7 +21,10 @@ const URL_PREFIX = '/api/v1/requests';
 let loginUser;
 let loginUser2;
 let loginUser3;
+let department;
 let request;
+let manager;
+let manager2;
 
 describe('/api/v1/requests', () => {
   before(async () => {
@@ -29,6 +32,7 @@ describe('/api/v1/requests', () => {
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Request');
     await db.Role.bulkCreate(insertRoles);
+
     await TestHelper.createUser({
       ...user, roleId: 5
     });
@@ -39,6 +43,14 @@ describe('/api/v1/requests', () => {
 
     await TestHelper.createUser({
       ...user, email: 'user3@gmail.com', roleId: 5
+    });
+
+    await TestHelper.createUser({
+      ...user, email: 'manager@gmail.com', roleId: 4
+    });
+
+    await TestHelper.createUser({
+      ...user, email: 'manager2@gmail.com', roleId: 4
     });
 
     loginUser = await chai.request(app)
@@ -61,6 +73,23 @@ describe('/api/v1/requests', () => {
       .set('Content-Type', 'application/json')
       .set('token', loginUser.body.data.token)
       .send(multiRequest);
+
+    manager = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'manager@gmail.com', password: user.password });
+
+    manager2 = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'manager2@gmail.com', password: user.password });
+
+    department = await TestHelper.createDepartment({ department: 'dev', manager: manager.body.data.id });
+
+    await TestHelper.createUserDepartment({
+      userId: loginUser2.body.data.id,
+      departmentId: department.id
+    });
   });
 
   describe('POST /multi-city', () => {
@@ -145,6 +174,7 @@ describe('/api/v1/requests', () => {
       res.should.have.status(401);
     });
   });
+
   describe('POST / Oneway Trip', () => {
     it('should return 400 error if source is not provided', async () => {
       const { status } = await chai.request(app)
@@ -184,6 +214,7 @@ describe('/api/v1/requests', () => {
       expect(JSON.parse(text).error).to.equal('You are not allowed to make multiple request');
     });
   });
+
   describe('PATCH /', () => {
     it('should update an open trip request when user is logged in and required details are provided', async () => {
       const res = await chai.request(app)
@@ -250,6 +281,7 @@ describe('/api/v1/requests', () => {
       res.body.should.be.an('object');
     });
   });
+
   describe('GET /', () => {
     it('should retrieve all requests made by the users', async () => {
       const res = await chai.request(app)
@@ -272,6 +304,41 @@ describe('/api/v1/requests', () => {
 
       res.should.have.status(404);
       expect(JSON.parse(res.text).error).to.equal('You\'ve not make any requests');
+    });
+
+    it('should retrieve all open requests made by manager\'s direct report', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/pending`)
+        .set('token', manager.body.data.token);
+
+      res.should.have.status(200);
+      res.body.data.length.should.equal(1);
+      res.body.data[0].should.have.property('destination');
+      res.body.data[0].should.have.property('source');
+      res.body.data[0].should.have.property('tripType');
+      res.body.data[0].should.have.property('returnDate');
+      res.body.data[0].should.have.property('travelDate');
+      res.body.data[0].should.have.property('userId');
+      res.body.data[0].should.have.property('status');
+    });
+
+    it('should return 404 if manager\'s direct reports has no pending orders', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/pending`)
+        .set('token', manager2.body.data.token);
+
+      res.should.have.status(404);
+      expect(JSON.parse(res.text).error).to.equal('There are no pending requests');
+    });
+
+    it('should not get open request when logged in user is not a manager', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/pending`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(403);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You are not allowed to perform this operation');
     });
   });
 
@@ -361,6 +428,81 @@ describe('/api/v1/requests', () => {
       res.body.error[2].should.equal('Travel date is required e.g YYYY-MM-DD');
       res.body.error[3].should.equal('Reason is required');
       res.body.error[4].should.equal('Accommodation is required');
+    });
+  });
+
+  describe('GET /Search', () => {
+    it('should return 200 if source search was successful', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?source=Lagos`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data[0].should.have.property('id');
+      res.body.data[0].should.have.property('source').eql('Lagos');
+      res.body.data[0].should.have.property('destination').eql(['Abuja']);
+      res.body.data[0].should.have.property('travelDate');
+    });
+
+    it('should return 200 if destination search was successful', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?destination=Abuja`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data[0].should.have.property('id');
+      res.body.data[0].should.have.property('source').eql('Lagos');
+      res.body.data[0].should.have.property('destination').eql(['Abuja']);
+      res.body.data[0].should.have.property('travelDate');
+    });
+
+    it('should return 200 if userId search was successful', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?userId=${loginUser.body.data.id}`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data[0].should.have.property('id');
+      res.body.data[0].should.have.property('source').eql('Nigeria');
+      res.body.data[0].should.have.property('travelDate');
+    });
+
+    it('should return 200 if status search was successful', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?status=open`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.have.property('status').eql('success');
+      res.body.data[0].should.have.property('id');
+      res.body.data[0].should.have.property('source').eql('Lagos');
+      res.body.data[0].should.have.property('destination').eql(['Abuja']);
+      res.body.data[0].should.have.property('travelDate');
+    });
+
+    it('should return 400 error source data not found', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?source=0`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('No result found');
+    });
+
+    it('should return 400 error data not found', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/search?destination=0`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.have.property('status').eql('error');
+      res.body.error.should.equal('No result found');
     });
   });
 });
