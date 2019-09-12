@@ -114,6 +114,7 @@ export default class AccommodationService {
 
     if (files.length > 0) {
       const res = await uploadImages(files);
+
       body.image = res;
     }
 
@@ -141,6 +142,6 @@ export default class AccommodationService {
   static async getAllAccommodation() {
     const result = await Accommodation.findAll({ include: [Room] });
 
-    return result.length > 0 ? result : error('There are no accommodation');
+    return result.length > 0 ? result : error('There are no accommodation yet');
   }
 }

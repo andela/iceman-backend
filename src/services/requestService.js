@@ -39,13 +39,17 @@ export default class RequestService {
    */
   static async oneway({ body, user: { id } }) {
     const { travelDate } = body;
+    const destination = body.destination.split(',');
+
+    if (destination.length > 1) error('Request destination must one');
+
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
-    if (existingRequest) error('You\'ve already booked this trip');
+    if (existingRequest) error('You are not allowed to make multiple request');
 
-    body.destination = body.destination.split(',');
+    body.tripType = 'one-way';
 
-    return Request.create({ ...body, userId: id });
+    return Request.create({ ...body, destination, userId: id });
   }
 
   /**
@@ -56,13 +60,15 @@ export default class RequestService {
     const { travelDate } = body;
     const destination = body.destination.split(',');
 
-    if (destination.length <= 1) error('Request must be more than one');
+    if (destination.length <= 1) error('Request destination must be more than one');
+
+    if (!body.returnDate) error('Return date is required');
 
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
-    if (existingRequest) error('You\'ve already booked this trip');
+    if (existingRequest) error('You are not allowed to make multiple request');
 
-    if (body.tripType !== 'multi-city') error('Trip type must be mulit city');
+    body.tripType = 'multi-city';
 
     const { dataValues } = await Request.create({ ...body, destination, userId: id });
 
@@ -94,7 +100,7 @@ export default class RequestService {
 
     if (!body.returnDate) error('Return date is required');
 
-    if (existingRequest) error('You\'ve already booked this trip');
+    if (existingRequest) error('You are not allowed to make multiple request');
 
     body.destination = body.destination.split(',');
 

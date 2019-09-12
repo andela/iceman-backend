@@ -7,7 +7,14 @@ export const multiRequest = {
   reason: 'reason',
   accommodation: 'accommodation'
 };
-
+export const multiRequest2 = {
+  source: 'Nigeria',
+  destination: 'Abuja, USA, POLAND',
+  tripType: 'multi-city',
+  travelDate: Date.now(),
+  reason: 'reason',
+  accommodation: 'accommodation'
+};
 export const missingRequiredField = {
   tripType: 'multi-city',
   travelDate: Date.now(),

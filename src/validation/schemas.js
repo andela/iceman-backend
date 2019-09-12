@@ -80,7 +80,7 @@ export const roleSchema = Joi.object().keys({
  */
 export const requestSchema = Joi.object().keys({
   source: Joi.string().required().error(() => ({ message: 'Source is required' })),
-  tripType: Joi.string().required().error(() => ({ message: 'Please select your trip type. Should be oneway, return or multicity' })),
+  tripType: Joi.string(),
   destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
   travelDate: Joi.date().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
   returnDate: Joi.date(),

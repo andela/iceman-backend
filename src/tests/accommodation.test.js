@@ -217,7 +217,7 @@ describe('/api/v1/accommodation', () => {
     });
     it('should return 400 if there are no accommodation', async () => {
       noAccommodation.should.have.status(400);
-      noAccommodation.body.should.have.property('error', 'There are no accommodation');
+      noAccommodation.body.should.have.property('error', 'There are no accommodation yet');
     });
   });
   describe('PATCH /', () => {

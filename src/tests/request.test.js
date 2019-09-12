@@ -7,6 +7,7 @@ import db from '../models';
 import insertRoles from '../utils/insertTestRoles';
 import {
   multiRequest,
+  multiRequest2,
   missingRequiredField,
   oneWayTrip,
   user,
@@ -80,7 +81,7 @@ describe('/api/v1/requests', () => {
         .send(multiRequest);
 
       expect(status).to.equal(400);
-      expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
+      expect(JSON.parse(text).error).to.equal('You are not allowed to make multiple request');
     });
 
     it('should return 400 if the reuest is less than 2', async () => {
@@ -90,7 +91,7 @@ describe('/api/v1/requests', () => {
         .send(oneWayTrip);
 
       expect(status).to.equal(400);
-      expect(JSON.parse(text).error).to.equal('Request must be more than one');
+      expect(JSON.parse(text).error).to.equal('Request destination must be more than one');
     });
 
     it('should return 400 if pass empty requests', async () => {
@@ -108,10 +109,10 @@ describe('/api/v1/requests', () => {
         .post(`${URL_PREFIX}/multi-city`)
         .set('Content-Type', 'application/json')
         .set('token', loginUser3.body.data.token)
-        .send({ ...multiRequest, tripType: 'one-way' });
+        .send({ ...multiRequest2 });
 
       res.should.have.status(400);
-      expect(JSON.parse(res.text).error).to.equal('Trip type must be mulit city');
+      res.body.should.have.property('error', 'Return date is required');
     });
 
     it('should return 400 if required fields where not passed', async () => {
@@ -154,6 +155,15 @@ describe('/api/v1/requests', () => {
       expect(status).to.equal(400);
     });
 
+    it('should return 400 if the destination is more than one', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/one-way`)
+        .set('token', loginUser2.body.data.token)
+        .send(multiRequest);
+
+      expect(res.status).to.equal(409);
+    });
+
     it('should return 201 if one way trip was created', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/one-way`)
@@ -171,7 +181,7 @@ describe('/api/v1/requests', () => {
         .send(oneWayTrip);
 
       expect(status).to.equal(409);
-      expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
+      expect(JSON.parse(text).error).to.equal('You are not allowed to make multiple request');
     });
   });
   describe('PATCH /', () => {
@@ -302,7 +312,7 @@ describe('/api/v1/requests', () => {
 
       res.should.have.status(400);
       res.body.should.have.property('status').eql('error');
-      res.body.error.should.equal('You\'ve already booked this trip');
+      res.body.error.should.equal('You are not allowed to make multiple request');
     });
 
     it('should return 400 error if trip type is not return trip', async () => {
@@ -347,11 +357,10 @@ describe('/api/v1/requests', () => {
       res.should.have.status(400);
       res.body.should.have.property('status').eql('error');
       res.body.error[0].should.equal('Source is required');
-      res.body.error[1].should.equal('Please select your trip type. Should be oneway, return or multicity');
-      res.body.error[2].should.equal('Please select your destination(s)');
-      res.body.error[3].should.equal('Travel date is required e.g YYYY-MM-DD');
-      res.body.error[4].should.equal('Reason is required');
-      res.body.error[5].should.equal('Accommodation is required');
+      res.body.error[1].should.equal('Please select your destination(s)');
+      res.body.error[2].should.equal('Travel date is required e.g YYYY-MM-DD');
+      res.body.error[3].should.equal('Reason is required');
+      res.body.error[4].should.equal('Accommodation is required');
     });
   });
 });
