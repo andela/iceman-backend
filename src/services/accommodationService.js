@@ -1,8 +1,8 @@
+import { Op } from 'sequelize';
 import cloudinary from 'cloudinary';
 import Response from '../utils/response';
 import uploadImages from '../utils/uploadFiles';
 import { Accommodation, Room } from '../models';
-
 
 const { error } = Response;
 
@@ -19,7 +19,9 @@ export default class AccommodationService {
   static async createAccommodation({ body, file, user }) {
     if (!file) error('Please upload a valid image');
 
-    const result = await Accommodation.findOne({ where: { name: body.name, userId: user.id } });
+    const result = await Accommodation.findOne({
+      where: { name: { [Op.iLike]: `%${body.name}` }, userId: user.id }
+    });
 
     if (result) error('This centre already exists');
 
@@ -77,7 +79,9 @@ export default class AccommodationService {
     if (files.length < 1) error('Please upload a valid image(s)');
 
     const { accommodationId } = params;
-    const result = await Room.findOne({ where: { name: body.name, accommodationId } });
+    const result = await Room.findOne({
+      where: { name: { [Op.iLike]: `%${body.name}` }, accommodationId }
+    });
 
     if (result) error('This room already exists');
 
@@ -108,7 +112,7 @@ export default class AccommodationService {
 
     if (!result) error('The room does not exists');
 
-    if (files) {
+    if (files.length > 0) {
       const res = await uploadImages(files);
       body.image = res;
     }
