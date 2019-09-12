@@ -31,7 +31,10 @@ export default class RequestService {
 
     body.destination = body.destination.split(',');
 
-    const updatedRequest = await Request.update(body, { where: { id }, returning: true });
+    const updatedRequest = await Request.update(body, {
+      where: { id: params.requestId },
+      returning: true
+    });
 
     return updatedRequest[1][0].dataValues;
   }
@@ -80,20 +83,55 @@ export default class RequestService {
 
   /**
    * @param {object} body - arrays of request object
-   * @returns {object} obej - return object
+   * @returns {object} obj - return object
    */
   static async getRequests({ user: { id } }) {
     const result = await Request.findAll({ where: { userId: id } });
 
-    if (result.length === 0) error('You\'ve not make any requests');
+    if (result.length === 0) error('You\'ve not made any requests');
 
     return result;
   }
 
   /**
-     * @param {object} details - user trip details
-     * @returns {object} trip - details
-     */
+   *
+   * @param {number} id - manager's id
+   * @return {object} - open requests
+   */
+  static async availOpenRequests({ user: { id } }) {
+    const openRequests = await Request.findAll({
+      where: { status: 'open' },
+      include: [{
+        model: User,
+        required: true,
+        attributes: ['firstName', 'lastName'],
+        include: [
+          {
+            model: UserDepartment,
+            required: true,
+            attributes: ['departmentId'],
+            include: [
+              {
+                model: Department,
+                where: { manager: id },
+                required: true,
+                attributes: ['department', 'manager']
+              }
+            ]
+          },
+        ]
+      }]
+    });
+
+    if (openRequests.length < 1) error('There are no pending requests');
+
+    return openRequests;
+  }
+
+  /**
+   * @param {object} details - user trip details
+   * @returns {object} trip - details
+   */
   static async returnRequest({ body, user: { id } }) {
     const { travelDate } = body;
 
@@ -139,40 +177,5 @@ export default class RequestService {
     if (data.length === 0) error('No result found');
 
     return data;
-  }
-
-  /**
-   *
-   * @param {number} id - manager's id
-   * @return {object} - open requests
-   */
-  static async availOpenRequests({ user: { id } }) {
-    const openRequests = await Request.findAll({
-      where: { status: 'open' },
-      include: [{
-        model: User,
-        required: true,
-        attributes: ['firstName', 'lastName'],
-        include: [
-          {
-            model: UserDepartment,
-            required: true,
-            attributes: ['departmentId'],
-            include: [
-              {
-                model: Department,
-                where: { manager: id },
-                required: true,
-                attributes: ['department', 'manager']
-              }
-            ]
-          },
-        ]
-      }]
-    });
-
-    if (openRequests.length < 1) error('There are no pending requests');
-
-    return openRequests;
   }
 }

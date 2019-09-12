@@ -317,6 +317,17 @@ describe('/api/v1/auth', () => {
       res.body.error.should.equal('User Email is Already Verified');
     });
 
+    it('should not verify a user that does not exist', async () => {
+      const nonExistentUserToken = Helper.genToken({ id: 400, isAdmin: false });
+
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/verify?token=${nonExistentUserToken}`);
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('User not found');
+    });
+
     it('should notify user for to resend verification link on expired token', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/verify?token=kkkklkj`);

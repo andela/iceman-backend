@@ -29,7 +29,7 @@ if (!isProduction) {
 // versioning api
 app.use('/api/v1', router);
 
-app.get('/', (req, res) => res.status(200).send('Welcome to Barefoot Normad'));
+app.get('/', (req, res) => res.status(200).send('Welcome to Barefoot Nomad'));
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // catch 404 and forward to error handler

@@ -303,7 +303,7 @@ describe('/api/v1/requests', () => {
         .set('token', loginUser3.body.data.token);
 
       res.should.have.status(404);
-      expect(JSON.parse(res.text).error).to.equal('You\'ve not make any requests');
+      expect(JSON.parse(res.text).error).to.equal('You\'ve not made any requests');
     });
 
     it('should retrieve all open requests made by manager\'s direct report', async () => {
