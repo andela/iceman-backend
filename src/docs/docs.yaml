@@ -286,9 +286,6 @@ paths:
                 required: true
               destination:
                 type: string
-              tripType:
-                type: string
-                required: true
               travelDate:
                 type: string
                 format: date
@@ -336,13 +333,6 @@ paths:
                 type: string
               destination:
                 type: string
-              tripType:
-                type: string
-                description: Trip type
-                enum:
-                  - one-way
-                  - return
-                  - multi-city
               travelDate:
                 type: string
                 format: date-time
@@ -400,13 +390,6 @@ paths:
                 type: string
               destination:
                 type: string
-              tripType:
-                type: string
-                description: Trip type
-                enum:
-                  - one-way
-                  - return
-                  - multi-city
               travelDate:
                 type: string
                 format: date-time
@@ -450,8 +433,6 @@ paths:
               source:
                 type: string
               destination:
-                type: string
-              tripType:
                 type: string
               travelDate:
                 type: string
@@ -837,7 +818,7 @@ definitions:
             items:
               type: string
             required: true
-          type:
+          tripType:
             type: string
           travelDate:
             type: string
