@@ -3,7 +3,7 @@ import Response from '../utils/response';
 
 const { success, badRequest } = Response;
 const {
-  updateRequest, multiCityRequest, getRequests, returnRequest
+  updateRequest, multiCityRequest, getRequests, availOpenRequests, returnRequest, oneway, search
 } = RequestService;
 
 /**
@@ -12,7 +12,7 @@ const {
 export default class RequestController {
   /**
  * Update a pending trip request
- * @param {object} req - requset object
+ * @param {object} req - request object
  * @param {object} res - response object
  * @return {json} - json
  */
@@ -33,7 +33,7 @@ export default class RequestController {
  */
   static async oneWay(req, res) {
     try {
-      const data = await RequestService.oneway(req);
+      const data = await oneway(req);
 
       success(res, data, 201);
     } catch ({ message: err }) {
@@ -72,13 +72,44 @@ export default class RequestController {
   }
 
   /**
-    @param {object} req - request object
+   * @param {object} req - request object
+   * @param {object} res - response object
+   * @return {json} - open requests
+   */
+  static async availOpenRequests(req, res) {
+    try {
+      const result = await availOpenRequests(req);
+
+      success(res, result);
+    } catch ({ message: err }) {
+      badRequest(res, err, 404);
+    }
+  }
+
+  /**
+   * @param {object} req - request object
    * @param {object} res - reponse object
    * @returns {object} data - trip details
    */
   static async returnRequest(req, res) {
     try {
       const data = await returnRequest(req);
+
+      success(res, data);
+    } catch ({ message: err }) {
+      badRequest(res, err);
+    }
+  }
+
+  /**
+ * User search request and approval
+ * @param {*} query - search query
+ * @param {object} res - response
+ * @returns {object} - data
+ */
+  static async search({ query }, res) {
+    try {
+      const data = await search(query);
 
       success(res, data);
     } catch ({ message: err }) {

@@ -36,6 +36,26 @@ module.exports = {
       type: Sequelize.INTEGER,
       defaultValue: 6,
     },
+    gender: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    dateOfBirth: {
+      type: Sequelize.DATE,
+      allowNull: true
+    },
+    preferredLanguage: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    residentialAddress: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    preferredCurrency: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
     resetToken: {
       type: Sequelize.STRING
     },
