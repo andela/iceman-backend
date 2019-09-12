@@ -11,7 +11,7 @@ chai.use(chaiHttp);
 chai.should();
 
 const URL_PREFIX = '/api/v1/accommodation';
-let loginUser;
+let loginUser, loginUser2;
 let centre;
 let noAccommodation;
 
@@ -20,6 +20,7 @@ describe('/api/v1/accommodation', () => {
   const filePath2 = `${__dirname}/testData/badimage.txt`;
 
   after(async () => {
+    await TestHelper.destroyModel('Like');
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Room');
     await TestHelper.destroyModel('Accommodation');
@@ -28,6 +29,7 @@ describe('/api/v1/accommodation', () => {
   });
 
   before(async () => {
+    await TestHelper.destroyModel('Like');
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Room');
     await TestHelper.destroyModel('Accommodation');
@@ -47,6 +49,11 @@ describe('/api/v1/accommodation', () => {
       .post('/api/v1/auth/login')
       .set('Content-Type', 'application/json')
       .send(Helper.pickFields(user, ['email', 'password']));
+
+    loginUser2 = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'user2@gmail.com', password: user.password });
 
     noAccommodation = await chai.request(app)
       .get(`${URL_PREFIX}`)
@@ -107,6 +114,7 @@ describe('/api/v1/accommodation', () => {
       res.should.have.status(400);
       res.body.should.have.property('error', 'Please upload a valid image');
     });
+
     it('should return 400 if relevant details is not provieded', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}`)
@@ -122,6 +130,7 @@ describe('/api/v1/accommodation', () => {
       res.should.have.status(400);
     });
   });
+
   describe('POST /:centreId/room', () => {
     it('should return 200 if the room was added successfully', async () => {
       const res = await chai.request(app)
@@ -176,7 +185,8 @@ describe('/api/v1/accommodation', () => {
       res.should.have.status(400);
       res.body.should.have.property('error', 'Please upload a valid image(s)');
     });
-    it('should return 400 if relevant details is not provieded', async () => {
+
+    it('should return 400 if relevant details are not provided', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/${centre.body.data.id}/room`)
         .set('token', loginUser.body.data.token)
@@ -188,6 +198,7 @@ describe('/api/v1/accommodation', () => {
       res.should.have.status(400);
     });
   });
+
   describe('GET /', () => {
     it('should return 200 if there are one or more accommodation', async () => {
       const res = await chai.request(app)
@@ -196,8 +207,132 @@ describe('/api/v1/accommodation', () => {
 
       res.should.have.status(200);
     });
+
     it('should return 404 if there are no accommodation', async () => {
       noAccommodation.should.have.status(400);
+    });
+  });
+
+  describe('POST /:accommodationId/like', () => {
+    it('should deny user access when not logged in', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/1/like`);
+
+      res.should.have.status(401);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, No token provided');
+    });
+
+    it('should deny access when token is invalid', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/1/like`)
+        .set('token', 'invalid token');
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, Invalid token');
+    });
+
+    it('should fail if accommodation ID entered is not a valid integer', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/a/like`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error[0].should.equal('Accommodation ID must be an integer greater than or equal to 1');
+    });
+
+    it('should fail if accommodation centre does not exist', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/144/like`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('This accommodation centre does not exist');
+    });
+
+    it('should post like to accommodation centre if all conditions are met', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/1/like`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(201);
+      res.body.should.be.an('object');
+      res.body.data.should.have.property('userId');
+      res.body.data.should.have.property('accommodationId');
+    });
+
+    it('should fail if accommodation has already been liked by user', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/1/like`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You\'ve already liked this centre');
+    });
+  });
+
+  describe('DELETE /:accommodationId/like', () => {
+    it('should deny user access when not logged in', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/1/like`);
+
+      res.should.have.status(401);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, No token provided');
+    });
+
+    it('should deny access when token is invalid', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/1/like`)
+        .set('token', 'invalid token');
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, Invalid token');
+    });
+
+    it('should fail if accommodation ID entered is not a valid integer', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/a/like`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error[0].should.equal('Accommodation ID must be an integer greater than or equal to 1');
+    });
+
+    it('should fail if accommodation centre does not exist', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/144/like`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('This accommodation centre does not exist');
+    });
+
+    it('should unlike the accommodation centre if all conditions are met', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/1/like`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.be.an('object');
+      res.body.message.should.equal('You\'ve unliked this centre successfully');
+    });
+
+    it('should fail if the accommodation centre has already been unliked by user', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/1/like`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You\'ve already unliked this centre');
     });
   });
 });

@@ -1,8 +1,10 @@
 import Response from '../utils/response';
 import AccommodationService from '../services/accommodationService';
 
-const { success, badRequest } = Response;
-const { addCentre, addRoom, getAllAccommodation } = AccommodationService;
+const { success, badRequest, successMessage } = Response;
+const {
+  addCentre, addRoom, getAllAccommodation, likeAccommodation, unlikeAccommodation
+} = AccommodationService;
 
 /**
  * Booking Controller Class
@@ -48,6 +50,36 @@ export default class AccommodationController {
       const data = await getAllAccommodation();
 
       success(res, data);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+ * @param {object} req - request object
+ * @param {object} res - response object
+ * @return {object} user - return object containing status and data
+ */
+  static async likeAccommodation(req, res) {
+    try {
+      const data = await likeAccommodation(req);
+
+      success(res, data, 201);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+ * @param {object} req - request object
+ * @param {object} res - response object
+ * @return {object} user - return object containing status and data
+ */
+  static async unlikeAccommodation(req, res) {
+    try {
+      await unlikeAccommodation(req);
+
+      successMessage(res, 'You\'ve unliked this centre successfully');
     } catch ({ message: error }) {
       badRequest(res, error);
     }

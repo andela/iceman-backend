@@ -1,7 +1,7 @@
 import cloudinary from 'cloudinary';
 import Response from '../utils/response';
 import uploadImages from '../utils/uploadFiles';
-import { Accommodation, Room } from '../models';
+import { Accommodation, Room, Like } from '../models';
 
 
 const { error } = Response;
@@ -63,5 +63,43 @@ export default class AccommodationService {
     const result = await Accommodation.findAll({ include: [Room] });
 
     return result.length > 0 ? result : error('There are no accommodation');
+  }
+
+  /**
+   * @param {number} accommodationId - ID of specified accommodation centre
+   * @param {number} id - ID of logged in user
+   * @return {object} - Server response
+   */
+  static async likeAccommodation({ params: { accommodationId }, user: { id } }) {
+    const centreExists = await Accommodation.count({ where: { id: accommodationId } });
+
+    if (!centreExists) error('This accommodation centre does not exist');
+
+    const isLiked = await Like.count({ where: { accommodationId, userId: id } });
+
+    if (isLiked) error('You\'ve already liked this centre');
+
+    const { dataValues } = await Like.create({ userId: id, accommodationId });
+
+    return dataValues;
+  }
+
+  /**
+   * @param {number} accommodationId - ID of specified accommodation centre
+   * @param {number} id - ID of logged in user
+   * @return {object} - Server response
+   */
+  static async unlikeAccommodation({ params: { accommodationId }, user: { id } }) {
+    const centreExists = await Accommodation.count({ where: { id: accommodationId } });
+
+    if (!centreExists) error('This accommodation centre does not exist');
+
+    const isLiked = await Like.count({ where: { accommodationId, userId: id } });
+
+    if (!isLiked) error('You\'ve already unliked this centre');
+
+    const response = await Like.destroy({ where: { accommodationId, userId: id } });
+
+    return response;
   }
 }

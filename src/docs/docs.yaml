@@ -13,6 +13,8 @@ tags:
     description: Manage User Authentication and Profile
   - name: Requests
     description: Manage Travel Requests
+  - name: Accommodation
+    description: Manage Accommodation Facilities
 host: localhost:3000
 basePath: /api/v1
 paths:
@@ -749,7 +751,7 @@ paths:
   /accommodation:
     post:
       tags:
-        - Book Accommodation
+        - Accommodation
       summary: Add new centre
       consumes:
         - multipart/form-data
@@ -796,7 +798,7 @@ paths:
         - api_key: []
     get:
       tags:
-        - Book Accommodation
+        - Accommodation
       summary: Get all accommodation
       produces:
         - application/json
@@ -815,7 +817,7 @@ paths:
   /accommodation/{accommodationId}/room:
     post:
       tags:
-        - Book Accommodation
+        - Accommodation
       summary: Add new room to centre
       consumes:
         - multipart/form-data
@@ -859,6 +861,54 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/Room'
+      security:
+        - api_key: []
+
+  /accommodation/{accommodationId}/like:
+    post:
+      tags:
+        - Accommodation
+      summary: Like an accommodation centre
+      description: Like an accommodation centre
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: accommodationId
+          type: integer
+          description: ID of accommodation centre
+          required: true
+      responses:
+        400:
+          description: Bad Request
+        401:
+          description: Access Denied, no token provided
+        201:
+          description: Success
+          schema:
+            $ref: '#definitions/Like'
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Accommodation
+      summary: Unlike an accommodation centre
+      description: Unlike an accommodation centre
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: accommodationId
+          type: integer
+          description: ID of accommodation centre
+          required: true
+      responses:
+        400:
+          description: Bad Request
+        401:
+          description: Access Denied, no token provided
+        200:
+          description: Success
       security:
         - api_key: []
 
@@ -1178,6 +1228,19 @@ definitions:
                     type: string
                   accommodationId:
                     type: integer
+  Like:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          userId:
+            type: integer
+          accommodationId:
+            type: integer
 
 securityDefinitions:
   api_key:

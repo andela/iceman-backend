@@ -48,11 +48,16 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>POST</td><td>/api/v1/requests/multi-city</td><td>Allow user to make multi city request</td></tr>
 <tr><td>POST</td><td>/api/v1/requests/one-way</td><td>Allow user to make one way request</td></tr>
 <tr><td>POST</td><td>/api/v1/requests/return</td><td>Create a return trip</td></tr>
-<tr><td>PATCH</td><td>/api/v1/requests/:id</td><td>Updates trip requests</td></tr>
+<tr><td>PATCH</td><td>/api/v1/requests/:requestId</td><td>Updates trip requests</td></tr>
 <tr><td>GET</td><td>/api/v1/requests</td><td>Retrieve user requests</td></tr>
 <tr><td>GET</td><td>/api/v1/requests/return</td><td>Create a return trip</td></tr>
 <tr><td>GET</td><td>/api/v1/requests/pending</td><td>Avail open requests for approval</td></tr>
-<tr><td>PATCH</td><td>/api/v1/requests/:id/respond</td><td>Approve or Reject a travel request</td></tr>
+<tr><td>PATCH</td><td>/api/v1/requests/:requestId/respond</td><td>Approve or Reject a travel request</td></tr>
+<tr><td>POST</td><td>/api/v1/accommodation</td><td>Add an Accommodation Centre</td></tr>
+<tr><td>POST</td><td>/api/v1/accommodation/:accommodationId/room</td><td>Add a room to an Accommodation Centre</td></tr>
+<tr><td>GET</td><td>/api/v1/accommodation</td><td>Get all Accommodation Centres</td></tr>
+<tr><td>POST</td><td>/api/v1/accommodation/:accommodationId/like</td><td>Like an Accommodation Centre</td></tr>
+<tr><td>DELETE</td><td>/api/v1/accommodation/:accommodationId/like</td><td>Unlike an Accommodation Centre</td></tr>
 </table>
 
 ## API Documentation

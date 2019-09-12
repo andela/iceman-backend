@@ -147,3 +147,13 @@ export const roomSchema = Joi.object().keys({
   status: Joi.string(),
   description: Joi.string(),
 });
+
+/**
+ * Schema for request ID
+ */
+export const accommodationIdSchema = Joi.object().keys({
+  accommodationId: Joi.number().integer().min(1).required()
+    .error(() => ({
+      message: 'Accommodation ID must be an integer greater than or equal to 1',
+    })),
+});
