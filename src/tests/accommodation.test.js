@@ -20,6 +20,7 @@ describe('/api/v1/accommodation', () => {
   const filePath2 = `${__dirname}/testData/badimage.txt`;
 
   after(async () => {
+    await TestHelper.destroyModel('Feedback');
     await TestHelper.destroyModel('Like');
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Room');
@@ -29,6 +30,7 @@ describe('/api/v1/accommodation', () => {
   });
 
   before(async () => {
+    await TestHelper.destroyModel('Feedback');
     await TestHelper.destroyModel('Like');
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Room');
@@ -333,6 +335,136 @@ describe('/api/v1/accommodation', () => {
       res.should.have.status(400);
       res.body.should.be.an('object');
       res.body.error.should.equal('You\'ve already unliked this centre');
+    });
+  });
+
+  describe('POST /:accommodationId/feedback', () => {
+    it('should deny user access when not logged in', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/1/feedback`)
+        .send({ comment: 'Very nice place' });
+
+      res.should.have.status(401);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, No token provided');
+    });
+
+    it('should deny access when token is invalid', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/1/feedback`)
+        .set('token', 'invalid token')
+        .send({ comment: 'Very nice place' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, Invalid token');
+    });
+
+    it('should fail if accommodation ID entered is not a valid integer', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/a/feedback`)
+        .set('token', loginUser2.body.data.token)
+        .send({ comment: 'Very nice place' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error[0].should.equal('Accommodation ID must be an integer greater than or equal to 1');
+    });
+
+    it('should fail if no comment is entered in the request body', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/1/feedback`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error[0].should.equal('Please enter your comment');
+    });
+
+    it('should fail if accommodation centre does not exist', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/144/feedback`)
+        .set('token', loginUser2.body.data.token)
+        .send({ comment: 'Very nice place' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('This accommodation centre does not exist');
+    });
+
+    it('should post feedback successfully if all conditions are met', async () => {
+      const res = await chai.request(app)
+        .post(`${URL_PREFIX}/1/feedback`)
+        .set('token', loginUser2.body.data.token)
+        .send({ comment: 'Very nice place' });
+
+      res.should.have.status(201);
+      res.body.should.be.an('object');
+      res.body.data.should.have.property('id');
+      res.body.data.should.have.property('userId');
+      res.body.data.should.have.property('accommodationId');
+      res.body.data.should.have.property('comment').eql('Very nice place');
+    });
+  });
+
+  describe('DELETE /feedback/feedbackId', async () => {
+    it('should deny user access when not logged in', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/feedback/1`);
+
+      res.should.have.status(401);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, No token provided');
+    });
+
+    it('should deny access when token is invalid', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/feedback/1`)
+        .set('token', 'invalid token');
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, Invalid token');
+    });
+
+    it('should fail if feedback ID entered is not a valid integer', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/feedback/a`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error[0].should.equal('Feedback ID must be an integer greater than or equal to 1');
+    });
+
+    it('should fail if feedback does not exist', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/feedback/144`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('This feedback comment does not exist');
+    });
+
+    it('should fail if feedback does not belong to the user', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/feedback/1`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You are not allowed to delete this feedback comment');
+    });
+
+    it('should remove feedback comment successfully if all conditions are met', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/feedback/1`)
+        .set('token', loginUser2.body.data.token);
+
+      res.should.have.status(200);
+      res.body.should.be.an('object');
+      res.body.message.should.equal('You\'ve removed this feedback successfully');
     });
   });
 });

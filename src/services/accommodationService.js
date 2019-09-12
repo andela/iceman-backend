@@ -1,7 +1,9 @@
 import cloudinary from 'cloudinary';
 import Response from '../utils/response';
 import uploadImages from '../utils/uploadFiles';
-import { Accommodation, Room, Like } from '../models';
+import {
+  Accommodation, Room, Like, Feedback
+} from '../models';
 
 
 const { error } = Response;
@@ -60,7 +62,7 @@ export default class AccommodationService {
  * @returns {object} - response with all accommodation
  */
   static async getAllAccommodation() {
-    const result = await Accommodation.findAll({ include: [Room] });
+    const result = await Accommodation.findAll({ include: [Room, Like, Feedback] });
 
     return result.length > 0 ? result : error('There are no accommodation');
   }
@@ -99,6 +101,45 @@ export default class AccommodationService {
     if (!isLiked) error('You\'ve already unliked this centre');
 
     const response = await Like.destroy({ where: { accommodationId, userId: id } });
+
+    return response;
+  }
+
+  /**
+   * @param {string} comment - Feedback comment
+   * @param {number} accommodationId - ID of specified accommodation centre
+   * @param {number} id - ID of logged in user
+   * @return {object} - Server response
+   */
+  static async addFeedback({
+    body: { comment },
+    params: { accommodationId },
+    user: { id }
+  }) {
+    const centreExists = await Accommodation.count({ where: { id: accommodationId } });
+
+    if (!centreExists) error('This accommodation centre does not exist');
+
+    const { dataValues } = await Feedback.create({ comment, accommodationId, userId: id });
+
+    return dataValues;
+  }
+
+  /**
+   * @param {number} feedbackId - ID of specified feedback comment
+   * @param {number} id - ID of logged in user
+   * @returns {object} - Server response
+   */
+  static async removeFeedback({ params: { feedbackId }, user: { id } }) {
+    const feedback = await Feedback.findOne({ where: { id: feedbackId } });
+
+    if (!feedback) error('This feedback comment does not exist');
+
+    const { userId } = feedback;
+
+    if (userId !== id) error('You are not allowed to delete this feedback comment');
+
+    const response = await Feedback.destroy({ where: { id: feedbackId } });
 
     return response;
   }

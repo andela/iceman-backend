@@ -58,6 +58,8 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>GET</td><td>/api/v1/accommodation</td><td>Get all Accommodation Centres</td></tr>
 <tr><td>POST</td><td>/api/v1/accommodation/:accommodationId/like</td><td>Like an Accommodation Centre</td></tr>
 <tr><td>DELETE</td><td>/api/v1/accommodation/:accommodationId/like</td><td>Unlike an Accommodation Centre</td></tr>
+<tr><td>POST</td><td>/api/v1/accommodation/:accommodationId/feedback</td><td>Post a feedback comment on an accommodation centre</td></tr>
+<tr><td>DELETE</td><td>/api/v1/accommodation/feedback/:feedbackId</td><td>Delete a feedback comment</td></tr>
 </table>
 
 ## API Documentation

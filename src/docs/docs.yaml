@@ -909,6 +909,81 @@ paths:
           description: Access Denied, no token provided
         200:
           description: Success
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
+
+  /accommodation/{accommodationId}/feedback:
+    post:
+      tags:
+        - Accommodation
+      summary: Post a feedback comment on an accommodation centre
+      description: Post a feedback comment on an accommodation centre
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: accommodationId
+          type: integer
+          description: ID of accommodation centre
+          required: true
+        - in: body
+          name: Feedback schema
+          description: Feedback details
+          required: true
+          schema:
+            type: object
+            properties:
+              comment:
+                type: string
+      responses:
+        400:
+          description: Bad request
+        401:
+          description: Access Denied, no token provided
+        201:
+          description: Success
+          schema:
+            $ref: '#definitions/Feedback'
+      security:
+        - api_key: []
+
+  /accommodation/feedback/{feedbackId}:
+    delete:
+      tags:
+        - Accommodation
+      summary: Remove a feedback comment
+      description: Remove a feedback comment
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: feedbackId
+          type: integer
+          description: ID of feedback comment
+          required: true
+      responses:
+        400:
+          description: Bad Request
+        401:
+          description: Access Denied, no token provided
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              message:
+                type: string
       security:
         - api_key: []
 
@@ -961,6 +1036,7 @@ definitions:
           updatedAt:
             type: string
             format: date-time
+
   UsersResponse:
     properties:
       status:
@@ -1007,12 +1083,14 @@ definitions:
           updatedAt:
             type: string
             format: date-time
+
   ErrorResponse:
     properties:
       status:
         type: string
       error:
         type: string
+
   Request:
     properties:
       status:
@@ -1046,6 +1124,12 @@ definitions:
             type: string
           userId:
             type: integer
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
 
   DownlineRequests:
     properties:
@@ -1089,6 +1173,12 @@ definitions:
                     type: string
                   lastName:
                     type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
   MyRequest:
     properties:
       status:
@@ -1123,6 +1213,12 @@ definitions:
               type: string
             userId:
               type: integer
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
   Room:
     properties:
       status:
@@ -1152,6 +1248,13 @@ definitions:
             type: string
           accommodationId:
             type: integer
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+
   Accommodation:
     properties:
       status:
@@ -1176,6 +1279,13 @@ definitions:
             type: string
           roomsCount:
             type: integer
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+
   GetAccommodation:
     properties:
       status:
@@ -1228,6 +1338,13 @@ definitions:
                     type: string
                   accommodationId:
                     type: integer
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+
   Like:
     properties:
       status:
@@ -1241,6 +1358,34 @@ definitions:
             type: integer
           accommodationId:
             type: integer
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+
+  Feedback:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          userId:
+            type: integer
+          accommodationId:
+            type: integer
+          comment:
+            type: string
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
 
 securityDefinitions:
   api_key:

@@ -3,7 +3,13 @@ import AccommodationService from '../services/accommodationService';
 
 const { success, badRequest, successMessage } = Response;
 const {
-  addCentre, addRoom, getAllAccommodation, likeAccommodation, unlikeAccommodation
+  addCentre,
+  addRoom,
+  getAllAccommodation,
+  likeAccommodation,
+  unlikeAccommodation,
+  addFeedback,
+  removeFeedback
 } = AccommodationService;
 
 /**
@@ -13,7 +19,7 @@ export default class AccommodationController {
 /**
  * @param {object} req - request object
  * @param {object} res - response object
- * @return {object} user - return object containing status and data
+ * @return {object} return object containing status and data
  */
   static async addCentre(req, res) {
     try {
@@ -28,7 +34,7 @@ export default class AccommodationController {
   /**
  * @param {object} req - request object
  * @param {object} res - response object
- * @return {object} user - return object containing status and data
+ * @return {object} - return object containing status and data
  */
   static async addRoom(req, res) {
     try {
@@ -43,7 +49,7 @@ export default class AccommodationController {
   /**
  * @param {object} req - request object
  * @param {object} res - response object
- * @return {object} user - return object containing status and data
+ * @return {object} - return object containing status and data
  */
   static async getAllAccommodation(req, res) {
     try {
@@ -58,7 +64,7 @@ export default class AccommodationController {
   /**
  * @param {object} req - request object
  * @param {object} res - response object
- * @return {object} user - return object containing status and data
+ * @return {object} - return object containing status and data
  */
   static async likeAccommodation(req, res) {
     try {
@@ -73,13 +79,43 @@ export default class AccommodationController {
   /**
  * @param {object} req - request object
  * @param {object} res - response object
- * @return {object} user - return object containing status and data
+ * @return {object} - return object containing status and data
  */
   static async unlikeAccommodation(req, res) {
     try {
       await unlikeAccommodation(req);
 
       successMessage(res, 'You\'ve unliked this centre successfully');
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+ * @param {object} req - request object
+ * @param {object} res - response object
+ * @return {object} - return object containing status and data
+ */
+  static async addFeedback(req, res) {
+    try {
+      const data = await addFeedback(req);
+
+      success(res, data, 201);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+ * @param {object} req - request object
+ * @param {object} res - response object
+ * @return {object} - return object containing status and data
+ */
+  static async removeFeedback(req, res) {
+    try {
+      await removeFeedback(req);
+
+      successMessage(res, 'You\'ve removed this feedback successfully');
     } catch ({ message: error }) {
       badRequest(res, error);
     }
