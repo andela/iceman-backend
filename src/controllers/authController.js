@@ -31,6 +31,20 @@ export default class AuthController {
   }
 
   /**
+ * @param {object} res - response object
+ * @return {object} user - return object containing status and data
+ */
+  static async logout({ body: { email, password } }, res) {
+    try {
+      const data = await AuthService.login(email, password);
+
+      Response.success(res, data);
+    } catch ({ message: error }) {
+      Response.badRequest(res, error);
+    }
+  }
+
+  /**
    * @param {object} req request body
    * @param {object} res response body
    * @returns  {object} message
