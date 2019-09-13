@@ -26,11 +26,20 @@ const superAdmin = {
 
 
 describe('Assign User Role', () => {
+  after(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+  });
+
   before(async () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
     await db.Role.bulkCreate(insertRoles);
+    await TestHelper.createUser({
+      ...superAdmin, roleId: 1
+    });
   });
 
   beforeEach(async () => {
@@ -43,9 +52,7 @@ describe('Assign User Role', () => {
 
   describe('PATCH /assign_role', () => {
     before(async () => {
-      await TestHelper.createUser({
-        ...superAdmin, roleId: 1
-      });
+
     });
 
     it('should sign up a new user', async () => {

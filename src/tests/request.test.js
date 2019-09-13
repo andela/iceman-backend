@@ -3,11 +3,14 @@ import chaiHttp from 'chai-http';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
+import db from '../models';
+import insertRoles from '../utils/insertTestRoles';
 import {
   multiRequest,
   missingRequiredField,
   oneWayTrip,
   user,
+  managerUser,
   returnRequest
 } from './testData/sampleData';
 
@@ -18,81 +21,110 @@ const URL_PREFIX = '/api/v1/requests';
 let loginUser;
 let loginUser2;
 let loginUser3;
+let loginManager;
 let department;
-let userDepartment;
 let request;
+let managerRequest;
 let manager;
 let manager2;
 
 describe('/api/v1/requests', () => {
-  before(async () => {
-    await TestHelper.destroyModel('User');
+  after(async () => {
     await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');
   });
 
-  describe('POST /multi-city', () => {
-    before(async () => {
-      await TestHelper.createUser({
-        ...user, email: 'manager@gmail.com', roleId: 4
-      });
+  before(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
+    await db.Role.bulkCreate(insertRoles);
 
-      await TestHelper.createUser({
-        ...user, email: 'manager2@gmail.com', roleId: 4
-      });
-
-      await TestHelper.createUser({
-        ...user, roleId: 5
-      });
-
-      await TestHelper.createUser({
-        ...user, email: 'user2@gmail.com', roleId: 5
-      });
-
-      await TestHelper.createUser({
-        ...user, email: 'user3@gmail.com', roleId: 5
-      });
-
-      loginUser = await chai.request(app)
-        .post('/api/v1/auth/login')
-        .set('Content-Type', 'application/json')
-        .send(Helper.pickFields(user, ['email', 'password']));
-
-      loginUser2 = await chai.request(app)
-        .post('/api/v1/auth/login')
-        .set('Content-Type', 'application/json')
-        .send({ email: 'user2@gmail.com', password: user.password });
-
-      loginUser3 = await chai.request(app)
-        .post('/api/v1/auth/login')
-        .set('Content-Type', 'application/json')
-        .send({ email: 'user3@gmail.com', password: user.password });
-
-      manager = await chai.request(app)
-        .post('/api/v1/auth/login')
-        .set('Content-Type', 'application/json')
-        .send({ email: 'manager@gmail.com', password: user.password });
-
-      manager2 = await chai.request(app)
-        .post('/api/v1/auth/login')
-        .set('Content-Type', 'application/json')
-        .send({ email: 'manager2@gmail.com', password: user.password });
-
-      request = await chai.request(app)
-        .post(`${URL_PREFIX}/multi-city`)
-        .set('Content-Type', 'application/json')
-        .set('token', loginUser.body.data.token)
-        .send(multiRequest);
-
-      department = await TestHelper.createDepartment({ department: 'dev', manager: manager.body.data.id });
-
-      userDepartment = await TestHelper.createUserDepartment({
-        userId: loginUser2.body.data.id,
-        departmentId: department.id
-      });
+    await TestHelper.createUser({
+      ...user, email: 'manager@gmail.com', roleId: 4
     });
 
+    await TestHelper.createUser({
+      ...user, email: 'manager2@gmail.com', roleId: 4
+    });
+
+    await TestHelper.createUser({
+      ...user, roleId: 5
+    });
+
+    await TestHelper.createUser({
+      ...user, email: 'user2@gmail.com', roleId: 5
+    });
+
+    await TestHelper.createUser({
+      ...user, email: 'user3@gmail.com', roleId: 5
+    });
+
+    await TestHelper.createUser({
+      ...managerUser, roleId: 4,
+    });
+
+    loginUser = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send(Helper.pickFields(user, ['email', 'password']));
+
+    loginUser2 = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'user2@gmail.com', password: user.password });
+
+    loginUser3 = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'user3@gmail.com', password: user.password });
+
+    loginManager = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send(Helper.pickFields(managerUser, ['email', 'password']));
+
+    request = await chai.request(app)
+      .post(`${URL_PREFIX}/multi-city`)
+      .set('Content-Type', 'application/json')
+      .set('token', loginUser.body.data.token)
+      .send(multiRequest);
+
+    managerRequest = await chai.request(app)
+      .post(`${URL_PREFIX}/multi-city`)
+      .set('Content-Type', 'application/json')
+      .set('token', loginManager.body.data.token)
+      .send(multiRequest);
+
+    manager = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'manager@gmail.com', password: user.password });
+
+    manager2 = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'manager2@gmail.com', password: user.password });
+
+    department = await TestHelper.createDepartment({ department: 'dev', manager: manager.body.data.id });
+
+    await TestHelper.createUserDepartment({
+      userId: loginUser2.body.data.id,
+      departmentId: department.id
+    });
+
+    await TestHelper.createUserDepartment({
+      userId: loginManager.body.data.id,
+      departmentId: department.id
+    });
+  });
+
+  describe('POST /multi-city', async () => {
     it('should return 200 if the request finished successfully', async () => {
       request.should.have.status(200);
       request.body.data.should.have.property('destination');
@@ -113,7 +145,7 @@ describe('/api/v1/requests', () => {
       expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
     });
 
-    it('should return 400 if the reuest is less than 2', async () => {
+    it('should return 400 if the request is less than 2', async () => {
       const { text, status } = await chai.request(app)
         .post(`${URL_PREFIX}/multi-city`)
         .set('token', loginUser.body.data.token)
@@ -285,6 +317,7 @@ describe('/api/v1/requests', () => {
       res.body.data[0].should.have.property('userId');
       res.body.data[0].should.have.property('status');
     });
+
     it('should return 404 if the user has no requests', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/userRequests`)
@@ -293,14 +326,16 @@ describe('/api/v1/requests', () => {
       res.should.have.status(404);
       expect(JSON.parse(res.text).error).to.equal('You\'ve not made any requests');
     });
+  });
 
+  describe('GET /pending', () => {
     it('should retrieve all open requests made by manager\'s direct report', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/pending`)
         .set('token', manager.body.data.token);
 
       res.should.have.status(200);
-      res.body.data.length.should.equal(1);
+      res.body.data.length.should.equal(2);
       res.body.data[0].should.have.property('destination');
       res.body.data[0].should.have.property('source');
       res.body.data[0].should.have.property('tripType');
@@ -327,6 +362,132 @@ describe('/api/v1/requests', () => {
       res.should.have.status(403);
       res.body.should.be.an('object');
       res.body.error.should.equal('You are not allowed to perform this operation');
+    });
+  });
+
+  describe('PATCH /respond', () => {
+    it('should reject a trip request successfully when user is logged in', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', manager.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(200);
+      res.body.should.be.an('object');
+      res.body.should.have.property('status').eql('success');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('tripType');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('returnDate');
+      res.body.data.should.have.property('reason');
+      res.body.data.should.have.property('accommodation');
+      res.body.data.should.have.property('status').eql('rejected');
+    });
+
+    it('should approve a trip request successfully when user is logged in', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', manager.body.data.token)
+        .send({ status: 'approved' });
+
+      res.should.have.status(200);
+      res.body.should.be.an('object');
+      res.body.should.have.property('status').eql('success');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('tripType');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('returnDate');
+      res.body.data.should.have.property('reason');
+      res.body.data.should.have.property('accommodation');
+      res.body.data.should.have.property('status').eql('approved');
+    });
+
+    it('should fail if request ID entered is not a valid integer', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/a/respond`)
+        .set('token', manager.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error[0].should.equal('Request ID must be an integer greater than or equal to 1');
+    });
+
+    it('should fail if no response status is passed in the request body', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', manager.body.data.token);
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error[0].should.equal('Please enter your response status. Should be accepted or rejected');
+    });
+
+    it('should throw not found error when request does not exist', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/144/respond`)
+        .set('token', manager.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Trip request not found');
+    });
+
+    it('should fail if the manager tries to respond to his own request', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', loginManager.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You cannot respond to your own request');
+    });
+
+    it('should fail if the requester is not from the manager\'s direct report', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', manager2.body.data.token)
+        .send({ status: 'approved' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('This request is not from your direct report');
+    });
+
+    it('should fail if the user is not a manager', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
+        .set('token', loginUser.body.data.token)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(403);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('You are not allowed to perform this operation');
+    });
+
+    it('should deny user access when not logged in', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/1/respond`)
+        .send({ status: 'rejected' });
+
+      res.should.have.status(401);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, No token provided');
+    });
+
+    it('should deny access when token is invalid', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/1/respond`)
+        .set('token', 'invalid token')
+        .send({ status: 'rejected' });
+
+      res.should.have.status(400);
+      res.body.should.be.an('object');
+      res.body.error.should.equal('Access Denied, Invalid token');
     });
   });
 
@@ -412,7 +573,7 @@ describe('/api/v1/requests', () => {
       res.should.have.status(400);
       res.body.should.have.property('status').eql('error');
       res.body.error[0].should.equal('Source is required');
-      res.body.error[1].should.equal('Please select your trip type. Should be oneway, return or multicity');
+      res.body.error[1].should.equal('Please select your trip type. Should be one-way, return or multi-city');
       res.body.error[2].should.equal('Please select your destination(s)');
       res.body.error[3].should.equal('Travel date is required e.g YYYY-MM-DD');
       res.body.error[4].should.equal('Reason is required');

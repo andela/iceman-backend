@@ -52,6 +52,7 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>GET</td><td>/api/v1/requests</td><td>Retrieve user requests</td></tr>
 <tr><td>GET</td><td>/api/v1/requests/return</td><td>Create a return trip</td></tr>
 <tr><td>GET</td><td>/api/v1/requests/pending</td><td>Avail open requests for approval</td></tr>
+<tr><td>PATCH</td><td>/api/v1/requests/:id/respond</td><td>Approve or Reject a travel request</td></tr>
 </table>
 
 ## API Documentation
