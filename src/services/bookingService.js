@@ -13,7 +13,7 @@ export default class BookingService {
   static async book({ body, params, user: { id } }) {
     const { requestId, accommodationId } = params;
 
-    const existingBooking = await Request.count({ where: { requestId, userId: id } });
+    const existingBooking = await Request.count({ where: { id: requestId, userId: id } });
 
     if (existingBooking) error('You\'ve already booked this accommodation');
 

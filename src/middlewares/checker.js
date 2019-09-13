@@ -1,6 +1,7 @@
-import { badRequest } from '../utils/response';
+import Response from '../utils/response';
 import { Accommodation, Request } from '../models';
 
+const { badRequest, error } = Response;
 /**
  * check booking parameters
  * @param {object} params - url parameter
@@ -9,15 +10,20 @@ import { Accommodation, Request } from '../models';
  * @returns {object } error message
  */
 export const checkBooking = async ({ params }, res, next) => {
-  const { requestId, accommodationId } = params;
+  try {
+    const { requestId, accommodationId } = params;
 
-  const existingRequest = await Request.count({ where: { requestId } });
+    const existingRequest = await Request.count({ where: { id: +requestId } });
 
-  if (!existingRequest) badRequest(res, 'You have not made a vaild request');
+    if (!existingRequest) error('You don\'t a vaild request');
 
-  const existingAccommodation = await Accommodation.count({ where: { accommodationId } });
+    const existingAccommodation = await Accommodation.count({ where: { id: +accommodationId } });
+    console.log(existingAccommodation);
 
-  if (!existingAccommodation) badRequest(res, 'You have not selected an existing accommodation');
+    if (!existingAccommodation) error('You have not selected an existing accommodation');
 
-  next();
+    next();
+  } catch ({ message: err }) {
+    badRequest(res, err);
+  }
 };
