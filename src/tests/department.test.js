@@ -10,7 +10,6 @@ dotenv.config();
 chai.use(chaiHttp);
 chai.should();
 
-let send;
 let userToken;
 let superAdminToken;
 let department;

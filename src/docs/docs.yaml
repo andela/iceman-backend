@@ -152,6 +152,8 @@ paths:
               email:
                 type: string
                 format: email
+              department:
+                type: integer
               password:
                 type: string
       responses:
@@ -370,12 +372,11 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: id
+        - name: userId
           in: path
           description: ID of user to delete
           required: true
           type: integer
-          format: int64
       responses:
         401:
           description: Access Denied, No token provided
@@ -1168,6 +1169,8 @@ definitions:
         properties:
           token:
             type: string
+          departmentId:
+            type: integer
           id:
             type: integer
           email:
@@ -1223,9 +1226,6 @@ definitions:
             type: string
           lastName:
             type: string
-          isAdmin:
-            type: boolean
-            default: false
           isVerified:
             type: boolean
             default: false

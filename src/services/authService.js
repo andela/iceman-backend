@@ -2,11 +2,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 import Helper from '../utils/helpers';
-import { User, Role } from '../models';
+import { User, Role, UserDepartment } from '../models';
 import sendmail from './emailService';
 import Response from '../utils/response';
 
-const { error, successMessage } = Response;
+const { error } = Response;
 config();
 
 const jwtSecret = process.env.JWTSECRET;
@@ -103,6 +103,9 @@ export default class AuthService {
    * */
   static async signup(userDetails) {
     const { email, password } = userDetails;
+
+    if (!userDetails.department) userDetails.department = 1;
+
     const checkEmail = await User.findOne({ where: { email } });
 
     if (checkEmail) error(`Email '${email}' already exists`);
@@ -112,10 +115,12 @@ export default class AuthService {
     const result = await User.create(userDetails);
     const { dataValues: user } = result;
 
+    await UserDepartment.create({ userId: user.id, departmentId: userDetails.department });
+
     const payload = Helper.pickFields(user, ['id', 'roleId']);
     const token = await Helper.genToken(payload);
 
-    return { token, ...Helper.omitFields(user, ['password', 'createdat', 'updatedat']) };
+    return { token, departmentId: userDetails.department, ...Helper.omitFields(user, ['password', 'createdat', 'updatedat']) };
   }
 
   /**
@@ -271,10 +276,11 @@ export default class AuthService {
    * @return {array} - array of user objects
    */
   static async deleteUser({ params }) {
-    const user = await User.findOne({ where: { id: params.userId }});
+    const user = await User.findOne({ where: { id: params.userId } });
 
     if (!user) error('user not found');
 
+    await UserDepartment.destroy({ where: { userId: params.userId } });
     await User.destroy({ where: { id: params.userId } });
 
     return 'User deleted sucessfully';

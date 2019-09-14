@@ -49,10 +49,28 @@ const profileDetails = {
 describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
+<<<<<<< HEAD
+=======
+  after(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
+  });
+
+>>>>>>> update signup endpoint to enable user select a department on signup
   before(async () => {
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
+<<<<<<< HEAD
+=======
+    await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
+    await TestHelper.createDepartment({ department: 'dev' });
+>>>>>>> update signup endpoint to enable user select a department on signup
     await db.Role.bulkCreate(insertRoles);
     await TestHelper.createUser({
       ...user, roleId: 5

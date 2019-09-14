@@ -20,10 +20,7 @@ module.exports = {
     email: {
       type: Sequelize.STRING,
       unique: true,
-      allowNull: false,
-      validate: {
-        isEmail: true
-      }
+      allowNull: false
     },
     socialId: {
       type: Sequelize.STRING,
