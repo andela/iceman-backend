@@ -23,6 +23,8 @@ const {
   getProfile,
   updateProfile,
   assignRole,
+  getAllUsers,
+  deleteUser
 } = AuthController;
 const { authenticate, callback } = PassportController;
 const { auth, permitUser } = middlewares;
@@ -40,5 +42,7 @@ router.get('/facebook', authenticate('facebook', ['email', 'public_profile']));
 router.get('/facebook/callback', callback('facebook'));
 router.get('/google', authenticate('google', ['email', 'profile']));
 router.get('/google/callback', callback('google'));
+router.get('/users', auth, permitUser(['super_admin']), getAllUsers);
+router.delete('/users/:userId', auth, permitUser(['super_admin']), deleteUser);
 
 export default router;

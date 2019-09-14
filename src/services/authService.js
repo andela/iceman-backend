@@ -6,7 +6,7 @@ import { User, Role } from '../models';
 import sendmail from './emailService';
 import Response from '../utils/response';
 
-const { error } = Response;
+const { error, successMessage } = Response;
 config();
 
 const jwtSecret = process.env.JWTSECRET;
@@ -254,5 +254,29 @@ export default class AuthService {
     await User.update({ roleId: Number(roleId) }, { where: { email } });
 
     return 'User Role Assigned Successfully';
+  }
+
+  /**
+   * getting all users
+   * @return {array} - array of user objects
+   */
+  static async getAllUsers() {
+    const users = await User.findAll({});
+
+    return users;
+  }
+
+  /**
+   * getting all users
+   * @return {array} - array of user objects
+   */
+  static async deleteUser({ params }) {
+    const user = await User.findOne({ where: { id: params.userId }});
+
+    if (!user) error('user not found');
+
+    await User.destroy({ where: { id: params.userId } });
+
+    return 'User deleted sucessfully';
   }
 }

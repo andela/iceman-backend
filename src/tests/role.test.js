@@ -23,6 +23,14 @@ const superAdmin = {
   email: process.env.SUPER_ADMIN_EMAIL,
   password: process.env.SUPER_ADMIN_PASSWORD
 };
+const user = {
+  id: 60,
+  firstName: 'user',
+  lastName: 'user',
+  email: 'user@mail.com',
+  password: 'jhgfd3456',
+  roleId: 5
+};
 
 
 describe('Assign User Role', () => {
@@ -33,6 +41,7 @@ describe('Assign User Role', () => {
     await TestHelper.createUser({
       ...superAdmin, roleId: 1
     });
+    await TestHelper.createUser(user);
   });
 
   beforeEach((done) => {
@@ -181,6 +190,38 @@ describe('Assign User Role', () => {
       res.should.have.status(400);
       res.body.should.have.property('error');
       res.body.error.should.equal('Email must be a valid email address e.g example@mail.com or example@mail.co.uk');
+    });
+  });
+
+  describe('GET /users', async () => {
+    it('should get all users super Admin is logged in', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/users`)
+        .set('token', adminToken);
+
+      res.should.have.status(200);
+    });
+  });
+
+  describe('DELETE /users', async () => {
+    it('should delete users super Admin is logged in', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/users/60`)
+        .set('token', adminToken);
+
+      res.should.have.status(200);
+      res.body.should.have.property('message');
+      res.body.message.should.equal('User deleted sucessfully');
+    });
+
+    it('should not delete a users when the id is wrong', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/users/600`)
+        .set('token', adminToken);
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('user not found');
     });
   });
 });
