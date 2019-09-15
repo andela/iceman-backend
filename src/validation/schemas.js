@@ -30,6 +30,7 @@ export const signUpSchema = Joi.object().keys({
  */
 export const profileSchema = Joi.object().keys({
   firstName: Joi.string().trim().optional(),
+  middleName: Joi.string().trim().optional(),
   lastName: Joi.string().trim().optional(),
   gender: Joi.string().trim().optional(),
   preferredLanguage: Joi.string().trim().optional(),
@@ -93,11 +94,30 @@ export const roleSchema = Joi.object().keys({
 });
 
 /**
+ * Schema for request ID
+ */
+export const requestIdSchema = Joi.object().keys({
+  requestId: Joi.number().integer().min(1).required()
+    .error(() => ({
+      message: 'Request ID must be an integer greater than or equal to 1',
+    })),
+});
+
+/**
+ * Schema for travel request response
+ */
+export const responseSchema = Joi.object().keys({
+  status: Joi.string().trim().valid('approved', 'rejected').lowercase()
+    .required()
+    .error(() => ({ message: 'Please enter your response status. Should be accepted or rejected' }))
+});
+
+/**
  * Schema for validating multi city request
  */
 export const requestSchema = Joi.object().keys({
   source: Joi.string().required().error(() => ({ message: 'Source is required' })),
-  tripType: Joi.string().required().error(() => ({ message: 'Please select your trip type. Should be oneway, return or multicity' })),
+  tripType: Joi.string().required().error(() => ({ message: 'Please select your trip type. Should be one-way, return or multi-city' })),
   destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
   travelDate: Joi.date().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
   returnDate: Joi.date(),
