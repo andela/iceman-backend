@@ -36,10 +36,6 @@ module.exports = {
       type: Sequelize.INTEGER,
       defaultValue: 6,
     },
-    lineManager: {
-      type: Sequelize.INTEGER,
-      allowNull: true
-    },
     gender: {
       type: Sequelize.STRING,
       allowNull: true

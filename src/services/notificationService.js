@@ -77,4 +77,52 @@ export default class NotificationService {
 
     return 'Email Notification status successfully updated';
   }
+
+  /**
+   * @param {object} req request object
+   * @returns {String} reponse message
+   */
+  static async getSpecificNotification(req) {
+    const { id } = req.user;
+    const { notificationId } = req.params;
+
+    const data = await Notification.findOne({ where: { id: notificationId, receiverId: id } });
+
+    await Notification.update({ isRead: true }, { where: { receiverId: id } });
+
+    if (!data.datavalues) error('Notification Not Found');
+
+    return data;
+  }
+
+  /**
+   * @param {object} req request object
+   * @returns {String} reponse message
+   */
+  static async getAllNotification(req) {
+    const { id } = req.user;
+    const data = await Notification.findAll({ where: { receiverId: id, isRead: false } });
+
+    if (!data[0]) error('No notification Found');
+
+    return data;
+  }
+
+  /**
+   * @param {object} req request object
+   * @returns {String} reponse message
+   */
+  static async markAllRead(req) {
+    const { id } = req.user;
+
+    const isExist = await Notification.findAll({ where: { receiverId: id, isRead: false } });
+
+    if (!isExist[0]) error('There is unread Notification');
+
+    const data = await Notification.update({ isRead: true }, { where: { receiverId: id } });
+
+    if (!data < 1) error('No notification Found');
+
+    return 'All Notification Marked As Read';
+  }
 }

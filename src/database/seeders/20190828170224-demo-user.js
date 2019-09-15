@@ -40,6 +40,27 @@ module.exports = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
+  {
+    id: 5,
+    firstName: 'Super',
+    lastName: 'Administrator',
+    email: 'inspiron.amos@gmail.com',
+    password: '$2b$10$wvm4CePaqyjuwQwvIt0qQ.WaWqyaUUQhWIr5VDitgaT2c57d86GM6',
+    roleId: 1,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 6,
+    firstName: 'Su',
+    lastName: 'Admin',
+    email: 'amos@gmail.com',
+    password: '$2b$10$wvm4CePaqyjuwQwvIt0qQ.WaWqyaUUQhWIr5VDitgaT2c57d86GM6',
+    roleId: 1,
+    createdAt: new Date(),
+    updatedAt: new Date()
+
+  }
   ], {}),
 
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Users', null, {})

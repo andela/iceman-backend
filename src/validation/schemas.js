@@ -124,13 +124,6 @@ export const requestSchema = Joi.object().keys({
   accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' }))
 });
 
-export const rememberSchema = Joi.object().keys({
-  rememberProfile: Joi.boolean().required()
-    .error(() => ({
-      message: 'Input should either be true or false',
-    })),
-});
-
 export const optSchema = Joi.object().keys({
   emailNotification: Joi.boolean().required()
     .error(() => ({

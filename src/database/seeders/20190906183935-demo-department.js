@@ -10,6 +10,12 @@ module.exports = {
     manager: 4,
     createdAt: new Date(),
     updatedAt: new Date()
+  },
+  {
+    department: 'IT',
+    manager: 5,
+    createdAt: new Date(),
+    updatedAt: new Date()
   }
   ], {}),
 

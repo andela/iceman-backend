@@ -1,5 +1,7 @@
 import { Op } from 'sequelize';
-import { Request, User } from '../models';
+import {
+  Request, User, UserDepartment, Department
+} from '../models';
 import Response from '../utils/response';
 import Helper from '../utils/helpers';
 import Notification from './notificationService';
@@ -63,6 +65,21 @@ export default class RequestService {
       where: { id: requestId }, returning: true
     });
 
+    const receive = await User.findOne({ where: { id: userRequest.userId } });
+    const { dataValues: receiver } = receive;
+    const send = await User.findOne({ where: { id } });
+    const { dataValues: sender } = send;
+
+    if (status === 'approved') {
+      await Notification.createNotificationMsg({
+        sender, receiver, type: 'approvedRequest', url: dataValues.id
+      });
+    } else {
+      await Notification.createNotificationMsg({
+        sender, receiver, type: 'rejectRequest', url: dataValues.id
+      });
+    }
+
     return dataValues;
   }
 
@@ -79,10 +96,15 @@ export default class RequestService {
 
     body.destination = body.destination.split(',');
 
+    const userDept = await UserDepartment.findOne({
+      include: [Department], where: { userId: id }
+    });
+    const { dataValues: { Department: { dataValues: { manager } } } } = userDept;
     const send = await User.findOne({ where: id });
     const { dataValues: sender } = send;
-    const receive = await User.findOne({ where: { id: sender.lineManager } });
+    const receive = await User.findOne({ where: { id: manager } });
     const { dataValues: receiver } = receive;
+
 
     await Notification.createNotificationMsg({ sender, receiver, type: 'newRequest' });
 
@@ -107,14 +129,16 @@ export default class RequestService {
 
     const { dataValues } = await Request.create({ ...body, destination, userId: id });
 
+    const userDept = await UserDepartment.findOne({
+      include: [Department], where: { userId: id }
+    });
+    const { dataValues: { Department: { dataValues: { manager } } } } = userDept;
     const send = await User.findOne({ where: id });
     const { dataValues: sender } = send;
-    const receive = await User.findOne({ where: { id: sender.lineManager } });
+    const receive = await User.findOne({ where: { id: manager } });
     const { dataValues: receiver } = receive;
 
-    await Notification.createNotificationMsg({
-      sender, receiver, type: 'newRequest', url: dataValues.id
-    });
+    await Notification.createNotificationMsg({ sender, receiver, type: 'newRequest' });
 
     return dataValues;
   }
