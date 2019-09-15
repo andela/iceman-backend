@@ -363,6 +363,35 @@ paths:
           description: Success
       security:
         - api_key: []
+    patch:
+      tags:
+        - Auth
+      summary: Super Admin assigns user to a department
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User and department id
+          required: true
+          schema:
+            properties:
+              userId:
+                type: integer
+                required: true
+              department:
+                type: integer
+      responses:
+        401:
+          description: Access Denied, No token provided
+        403:
+          description: Authorized access
+        200:
+          description: Success
+      security:
+        - api_key: []
   
   /auth/users/{userId}:
     delete:

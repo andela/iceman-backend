@@ -232,22 +232,33 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/users`)
         .set('token', adminToken)
-        .send({ userId, departmentId: department.id });
+        .send({ userId, department: department.id });
 
       res.should.have.status(200);
       res.body.should.have.property('message');
       res.body.message.should.equal('User department updated successfully');
     });
 
-    it('should assign user to a department when user is not found', async () => {
+    it('should not assign user to a department when user is not found', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/users`)
         .set('token', adminToken)
-        .send({ userId: 234567, departmentId: department.id });
+        .send({ userId: 234567, department: department.id });
 
       res.should.have.status(400);
       res.body.should.have.property('error');
       res.body.error.should.equal('user not found');
+    });
+
+    it('should not assign user to a department when department is not found', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/users`)
+        .set('token', adminToken)
+        .send({ userId, department: 4566 });
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('Department not found');
     });
   });
 

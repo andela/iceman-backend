@@ -2,7 +2,9 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 import Helper from '../utils/helpers';
-import { User, Role, UserDepartment } from '../models';
+import {
+  User, Role, UserDepartment, Department
+} from '../models';
 import sendmail from './emailService';
 import Response from '../utils/response';
 
@@ -287,14 +289,18 @@ export default class AuthService {
   }
 
   /**
-   *
-   * @param {object} - request body
+   * assign user to a department
+   * @param {object} body - request body
    * @return {string} - success message
    */
   static async updateUserDepartment({ body: { userId, department } }) {
     const user = await User.findOne({ where: { id: userId } });
 
     if (!user) error('user not found');
+
+    const isDepartment = await Department.findOne({ where: { id: department } });
+
+    if (!isDepartment) error('Department not found');
 
     await UserDepartment.update({ departmentId: department }, { where: { userId } });
 
