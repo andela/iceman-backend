@@ -15,6 +15,8 @@ chai.should();
 let send;
 let userToken;
 let adminToken;
+let department;
+let userId;
 
 const URL_PREFIX = '/api/v1/auth';
 const superAdmin = {
@@ -52,8 +54,12 @@ describe('Assign User Role', () => {
 =======
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');
+<<<<<<< HEAD
     await TestHelper.createDepartment({ department: 'dev' });
 >>>>>>> update signup endpoint to enable user select a department on signup
+=======
+    department = await TestHelper.createDepartment({ department: 'dev' });
+>>>>>>> add endpoint for super admin to add a user to a department
     await db.Role.bulkCreate(insertRoles);
     await TestHelper.createUser({
       ...superAdmin, roleId: 1
@@ -82,8 +88,9 @@ describe('Assign User Role', () => {
           password: '1111ghghjh'
         });
 
-      const { token } = res.body.data;
+      const { token, id } = res.body.data;
       userToken = token;
+      userId = id;
 
       res.should.have.status(201);
       res.body.should.have.property('data');
@@ -217,6 +224,30 @@ describe('Assign User Role', () => {
         .set('token', adminToken);
 
       res.should.have.status(200);
+    });
+  });
+
+  describe('PATCH /users', async () => {
+    it('should assign user to a department', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/users`)
+        .set('token', adminToken)
+        .send({ userId, departmentId: department.id });
+
+      res.should.have.status(200);
+      res.body.should.have.property('message');
+      res.body.message.should.equal('User department updated successfully');
+    });
+
+    it('should assign user to a department when user is not found', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/users`)
+        .set('token', adminToken)
+        .send({ userId: 234567, departmentId: department.id });
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('user not found');
     });
   });
 

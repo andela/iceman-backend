@@ -285,4 +285,19 @@ export default class AuthService {
 
     return 'User deleted sucessfully';
   }
+
+  /**
+   *
+   * @param {object} - request body
+   * @return {string} - success message
+   */
+  static async updateUserDepartment({ body: { userId, department } }) {
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (!user) error('user not found');
+
+    await UserDepartment.update({ departmentId: department }, { where: { userId } });
+
+    return 'User department updated successfully';
+  }
 }

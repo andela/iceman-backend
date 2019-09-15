@@ -11,7 +11,8 @@ const {
   updateProfile,
   assignUser,
   getAllUsers,
-  deleteUser
+  deleteUser,
+  updateUserDepartment
 } = AuthService;
 
 /**
@@ -175,6 +176,21 @@ export default class AuthController {
       const removeUser = await deleteUser(req);
 
       successMessage(res, removeUser);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+    *@param {object} req request object
+   * @param {object} res response object
+   * @return {object} message
+   */
+  static async assignUserTodepartment(req, res) {
+    try {
+      const assignDepartment = await updateUserDepartment(req);
+
+      successMessage(res, assignDepartment);
     } catch ({ message: error }) {
       badRequest(res, error);
     }
