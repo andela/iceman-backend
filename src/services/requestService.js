@@ -78,9 +78,8 @@ export default class RequestService {
 
     body.destination = body.destination.split(',');
 
-    if (body.rememberProfile !== null) {
-      await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
-    }
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+
 
     return Request.create({ ...body, userId: id });
   }
@@ -103,9 +102,8 @@ export default class RequestService {
 
     const { dataValues } = await Request.create({ ...body, destination, userId: id });
 
-    if (body.rememberProfile !== null) {
-      await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
-    }
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+
 
     return dataValues;
   }
@@ -159,9 +157,7 @@ export default class RequestService {
 
     const { dataValues } = await Request.create({ ...body, userId: id });
 
-    if (body.rememberProfile !== null) {
-      await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
-    }
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
 
     return dataValues;
   }
