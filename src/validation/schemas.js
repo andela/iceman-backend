@@ -132,3 +132,10 @@ export const requestSchema = Joi.object().keys({
   residentialAddress: Joi.string().trim().required().error(() => ({ message: 'residentialAddress is Required' })),
   preferredCurrency: Joi.string().trim().required().error(() => ({ message: 'preferredCurrency is Required' })),
 });
+
+export const commentSchema = Joi.object().keys({
+  comment: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Comment is required'
+    }))
+});
