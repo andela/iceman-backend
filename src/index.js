@@ -7,7 +7,6 @@ import YAML from 'yamljs';
 import 'dotenv/config';
 import router from './routes';
 import './config/passport';
-import './config/cloudinary';
 
 const swaggerDocument = YAML.load(`${process.cwd()}/src/docs/docs.yaml`);
 const isProduction = process.env.NODE_ENV === 'production';

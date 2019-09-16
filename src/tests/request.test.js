@@ -7,10 +7,10 @@ import db from '../models';
 import insertRoles from '../utils/insertTestRoles';
 import {
   multiRequest,
-  multiRequest2,
   missingRequiredField,
   oneWayTrip,
   user,
+  managerUser,
   returnRequest
 } from './testData/sampleData';
 
@@ -21,6 +21,7 @@ const URL_PREFIX = '/api/v1/requests';
 let loginUser;
 let loginUser2;
 let loginUser3;
+let loginManager;
 let department;
 let request;
 let managerRequest;
@@ -28,11 +29,29 @@ let manager;
 let manager2;
 
 describe('/api/v1/requests', () => {
-  before(async () => {
+  after(async () => {
+    await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
+  });
+
+  before(async () => {
     await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
     await db.Role.bulkCreate(insertRoles);
+
+    await TestHelper.createUser({
+      ...user, email: 'manager@gmail.com', roleId: 4
+    });
+
+    await TestHelper.createUser({
+      ...user, email: 'manager2@gmail.com', roleId: 4
+    });
 
     await TestHelper.createUser({
       ...user, roleId: 5
@@ -47,11 +66,7 @@ describe('/api/v1/requests', () => {
     });
 
     await TestHelper.createUser({
-      ...user, email: 'manager@gmail.com', roleId: 4
-    });
-
-    await TestHelper.createUser({
-      ...user, email: 'manager2@gmail.com', roleId: 4
+      ...managerUser, roleId: 4,
     });
 
     loginUser = await chai.request(app)
@@ -68,6 +83,11 @@ describe('/api/v1/requests', () => {
       .post('/api/v1/auth/login')
       .set('Content-Type', 'application/json')
       .send({ email: 'user3@gmail.com', password: user.password });
+
+    loginManager = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send(Helper.pickFields(managerUser, ['email', 'password']));
 
     request = await chai.request(app)
       .post(`${URL_PREFIX}/multi-city`)
@@ -104,7 +124,7 @@ describe('/api/v1/requests', () => {
     });
   });
 
-  describe('POST /multi-city', () => {
+  describe('POST /multi-city', async () => {
     it('should return 200 if the request finished successfully', async () => {
       request.should.have.status(200);
       request.body.data.should.have.property('destination');
@@ -122,17 +142,17 @@ describe('/api/v1/requests', () => {
         .send(multiRequest);
 
       expect(status).to.equal(400);
-      expect(JSON.parse(text).error).to.equal('You are not allowed to make multiple request');
+      expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
     });
 
-    it('should return 400 if the reuest is less than 2', async () => {
+    it('should return 400 if the request is less than 2', async () => {
       const { text, status } = await chai.request(app)
         .post(`${URL_PREFIX}/multi-city`)
         .set('token', loginUser.body.data.token)
         .send(oneWayTrip);
 
       expect(status).to.equal(400);
-      expect(JSON.parse(text).error).to.equal('Request destination must be more than one');
+      expect(JSON.parse(text).error).to.equal('Request must be more than one');
     });
 
     it('should return 400 if pass empty requests', async () => {
@@ -150,10 +170,10 @@ describe('/api/v1/requests', () => {
         .post(`${URL_PREFIX}/multi-city`)
         .set('Content-Type', 'application/json')
         .set('token', loginUser3.body.data.token)
-        .send({ ...multiRequest2 });
+        .send({ ...multiRequest, tripType: 'one-way' });
 
       res.should.have.status(400);
-      res.body.should.have.property('error', 'Return date is required');
+      expect(JSON.parse(res.text).error).to.equal('Trip type must be multi city');
     });
 
     it('should return 400 if required fields where not passed', async () => {
@@ -186,7 +206,6 @@ describe('/api/v1/requests', () => {
       res.should.have.status(401);
     });
   });
-
   describe('POST / Oneway Trip', () => {
     it('should return 400 error if source is not provided', async () => {
       const { status } = await chai.request(app)
@@ -195,15 +214,6 @@ describe('/api/v1/requests', () => {
         .send({ ...oneWayTrip, source: null });
 
       expect(status).to.equal(400);
-    });
-
-    it('should return 400 if the destination is more than one', async () => {
-      const res = await chai.request(app)
-        .post(`${URL_PREFIX}/one-way`)
-        .set('token', loginUser2.body.data.token)
-        .send(multiRequest);
-
-      expect(res.status).to.equal(409);
     });
 
     it('should return 201 if one way trip was created', async () => {
@@ -223,10 +233,9 @@ describe('/api/v1/requests', () => {
         .send(oneWayTrip);
 
       expect(status).to.equal(409);
-      expect(JSON.parse(text).error).to.equal('You are not allowed to make multiple request');
+      expect(JSON.parse(text).error).to.equal('You\'ve already booked this trip');
     });
   });
-
   describe('PATCH /', () => {
     it('should update an open trip request when user is logged in and required details are provided', async () => {
       const res = await chai.request(app)
@@ -293,11 +302,10 @@ describe('/api/v1/requests', () => {
       res.body.should.be.an('object');
     });
   });
-
-  describe('GET /', () => {
+  describe('GET /userRequests', () => {
     it('should retrieve all requests made by the users', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}`)
+        .get(`${URL_PREFIX}/userRequests`)
         .set('token', loginUser.body.data.token);
 
       res.should.have.status(200);
@@ -312,7 +320,7 @@ describe('/api/v1/requests', () => {
 
     it('should return 404 if the user has no requests', async () => {
       const res = await chai.request(app)
-        .get(`${URL_PREFIX}`)
+        .get(`${URL_PREFIX}/userRequests`)
         .set('token', loginUser3.body.data.token);
 
       res.should.have.status(404);
@@ -327,7 +335,7 @@ describe('/api/v1/requests', () => {
         .set('token', manager.body.data.token);
 
       res.should.have.status(200);
-      res.body.data.length.should.equal(1);
+      res.body.data.length.should.equal(2);
       res.body.data[0].should.have.property('destination');
       res.body.data[0].should.have.property('source');
       res.body.data[0].should.have.property('tripType');
@@ -357,8 +365,6 @@ describe('/api/v1/requests', () => {
     });
   });
 
-<<<<<<< HEAD
-=======
   describe('PATCH /respond', () => {
     it('should reject a trip request successfully when user is logged in', async () => {
       const res = await chai.request(app)
@@ -430,17 +436,6 @@ describe('/api/v1/requests', () => {
       res.body.error.should.equal('Trip request not found');
     });
 
-    it('should fail if response status passed in the body is neither approved nor rejected', async () => {
-      const res = await chai.request(app)
-        .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
-        .set('token', manager.body.data.token)
-        .send({ status: 'unknown' });
-
-      res.should.have.status(400);
-      res.body.should.be.an('object');
-      res.body.error.should.equal('Response status must be approved or rejected');
-    });
-
     it('should fail if the manager tries to respond to his own request', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
@@ -496,7 +491,6 @@ describe('/api/v1/requests', () => {
     });
   });
 
->>>>>>> feature(requests): setup travel request response
   describe('POST / ReturnTrip', () => {
     it('should return 200 if return trip was created', async () => {
       const res = await chai.request(app)
@@ -534,7 +528,7 @@ describe('/api/v1/requests', () => {
 
       res.should.have.status(400);
       res.body.should.have.property('status').eql('error');
-      res.body.error.should.equal('You are not allowed to make multiple request');
+      res.body.error.should.equal('You\'ve already booked this trip');
     });
 
     it('should return 400 error if trip type is not return trip', async () => {
@@ -579,10 +573,11 @@ describe('/api/v1/requests', () => {
       res.should.have.status(400);
       res.body.should.have.property('status').eql('error');
       res.body.error[0].should.equal('Source is required');
-      res.body.error[1].should.equal('Please select your destination(s)');
-      res.body.error[2].should.equal('Travel date is required e.g YYYY-MM-DD');
-      res.body.error[3].should.equal('Reason is required');
-      res.body.error[4].should.equal('Accommodation is required');
+      res.body.error[1].should.equal('Please select your trip type. Should be one-way, return or multi-city');
+      res.body.error[2].should.equal('Please select your destination(s)');
+      res.body.error[3].should.equal('Travel date is required e.g YYYY-MM-DD');
+      res.body.error[4].should.equal('Reason is required');
+      res.body.error[5].should.equal('Accommodation is required');
     });
   });
 

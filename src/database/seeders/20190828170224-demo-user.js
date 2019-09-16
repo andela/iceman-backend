@@ -36,15 +36,6 @@ module.exports = {
     createdAt: new Date(),
     updatedAt: new Date()
   },
-  {
-    firstName: 'supplier',
-    lastName: 'supplier',
-    email: 'supplier@mail.com',
-    password: '$2b$10$Ei9AIY7iUCU3jN3EAH7a8ez9lBmfazkBOHCI8SPbwWkD7iT4LWkYm',
-    roleId: 7,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
   ], {}),
 
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Users', null, {})

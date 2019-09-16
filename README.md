@@ -37,6 +37,8 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>POST</td><td>/api/v1/auth/signup</td><td>Creates user account</td></tr>
 <tr><td>POST</td><td>/api/v1/auth/login</td><td>Logs user in</td></tr>
 <tr><td>GET</td><td>/api/v1/users/profile</td><td>Gets user profile information</td></tr>
+<tr><td>GET</td><td>/api/v1/users</td><td>Gets all users</td></tr>
+<tr><td>PATCH</td><td>/api/v1/users</td><td>Assign user to department</td></tr>
 <tr><td>PATCH</td><td>/api/v1/users/profile</td><td>Updates user profile information</td></tr>
 <tr><td>GET</td><td>/api/v1/auth/verify</td><td>Verify user email</td></tr>
 <tr><td>GET</td><td>/api/v1/auth/resend_verification_link</td><td>Resend verification link</td></tr>
@@ -52,6 +54,10 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>GET</td><td>/api/v1/requests</td><td>Retrieve user requests</td></tr>
 <tr><td>GET</td><td>/api/v1/requests/return</td><td>Create a return trip</td></tr>
 <tr><td>GET</td><td>/api/v1/requests/pending</td><td>Avail open requests for approval</td></tr>
+<tr><td>PATCH</td><td>/api/v1/requests/:id/respond</td><td>Approve or Reject a travel request</td></tr>
+<tr><td>GET</td><td>/api/v1/departments</td><td>Get all departments</td></tr>
+<tr><td>PATCH</td><td>/api/v1/departments/manager</td><td>Assign manager to a department</td></tr>
+<tr><td>PATCH</td><td>/api/v1/requests/:id/respond</td><td>Approve or Reject a travel request</td></tr>
 <tr><td>PATCH</td><td>/api/v1/requests/:id/respond</td><td>Approve or Reject a travel request</td></tr>
 </table>
 

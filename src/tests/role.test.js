@@ -37,8 +37,6 @@ const user = {
 
 
 describe('Assign User Role', () => {
-<<<<<<< HEAD
-=======
   after(async () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
@@ -47,24 +45,14 @@ describe('Assign User Role', () => {
     await TestHelper.destroyModel('UserDepartment');
   });
 
->>>>>>> update signup endpoint to enable user select a department on signup
   before(async () => {
-    await TestHelper.destroyModel('Role');
-<<<<<<< HEAD
+    await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
-=======
+    await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');
-<<<<<<< HEAD
-    await TestHelper.createDepartment({ department: 'dev' });
->>>>>>> update signup endpoint to enable user select a department on signup
-=======
     department = await TestHelper.createDepartment({ department: 'dev' });
-<<<<<<< HEAD
->>>>>>> add endpoint for super admin to add a user to a department
-=======
     department2 = await TestHelper.createDepartment({ department: 'travels' });
->>>>>>> update assign manager logic
     await db.Role.bulkCreate(insertRoles);
     await TestHelper.createUser({
       ...superAdmin, roleId: 1
@@ -72,17 +60,19 @@ describe('Assign User Role', () => {
     await TestHelper.createUser(user);
   });
 
-  beforeEach((done) => {
+  beforeEach(async () => {
     send = sinon.stub(sgMail, 'send').resolves({});
-    done();
   });
 
-  afterEach((done) => {
+  afterEach(async () => {
     send.restore();
-    done();
   });
 
   describe('PATCH /assign_role', () => {
+    before(async () => {
+
+    });
+
     it('should sign up a new user', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)

@@ -37,20 +37,9 @@ const user3 = {
   password: 'elijah1994'
 };
 
-const profileDetails = {
-  firstName: 'Elijah',
-  lastName: 'Enuem-Udogu',
-  gender: 'Male',
-  dateOfBirth: '1994-05-20',
-  preferredLanguage: 'English',
-  residentialAddress: 'Benin City, Nigeria',
-  preferredCurrency: 'Nigerian Naira (NGN)',
-};
 describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
-<<<<<<< HEAD
-=======
   after(async () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
@@ -59,26 +48,25 @@ describe('/api/v1/auth', () => {
     await TestHelper.destroyModel('UserDepartment');
   });
 
->>>>>>> update signup endpoint to enable user select a department on signup
   before(async () => {
-    await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
-<<<<<<< HEAD
-=======
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');
     await TestHelper.createDepartment({ department: 'dev' });
->>>>>>> update signup endpoint to enable user select a department on signup
     await db.Role.bulkCreate(insertRoles);
-    await TestHelper.createUser({
+    verifiedUser = await TestHelper.createUser({
       ...user, roleId: 5
     });
 
     notVerifiedUser = await TestHelper.createUser({
       ...user,
       email: 'user2@gmail.com',
+    });
+
+    verifiedUser = await TestHelper.createUser({
+      ...user3, roleId: 5,
     });
   });
 
@@ -421,17 +409,8 @@ describe('/api/v1/auth', () => {
       res.body.error.should.equal('User not found');
     });
   });
+
   describe('GET /profile', () => {
-    beforeEach(async () => {
-      verifiedUser = await TestHelper.createUser({
-        ...user3, roleId: 5,
-      });
-    });
-
-    afterEach(async () => {
-      await TestHelper.destroyModel('User');
-    });
-
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/profile`)
@@ -491,15 +470,15 @@ describe('/api/v1/auth', () => {
   });
 
   describe('PATCH /profile', () => {
-    beforeEach(async () => {
-      verifiedUser = await TestHelper.createUser({
-        ...user3, roleId: 5,
-      });
-    });
-
-    afterEach(async () => {
-      await TestHelper.destroyModel('User');
-    });
+    const profileDetails = {
+      firstName: 'Elijah',
+      lastName: 'Enuem-Udogu',
+      gender: 'Male',
+      dateOfBirth: '1994-05-20',
+      preferredLanguage: 'English',
+      residentialAddress: 'Benin City, Nigeria',
+      preferredCurrency: 'Nigerian Naira (NGN)',
+    };
 
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)

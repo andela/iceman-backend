@@ -106,7 +106,9 @@ export const requestIdSchema = Joi.object().keys({
  * Schema for travel request response
  */
 export const responseSchema = Joi.object().keys({
-  status: Joi.string().required().error(() => ({ message: 'Please enter your response status. Should be accepted or rejected' }))
+  status: Joi.string().trim().valid('approved', 'rejected').lowercase()
+    .required()
+    .error(() => ({ message: 'Please enter your response status. Should be accepted or rejected' }))
 });
 
 /**
@@ -114,35 +116,11 @@ export const responseSchema = Joi.object().keys({
  */
 export const requestSchema = Joi.object().keys({
   source: Joi.string().required().error(() => ({ message: 'Source is required' })),
-  tripType: Joi.string(),
+  tripType: Joi.string().required().error(() => ({ message: 'Please select your trip type. Should be one-way, return or multi-city' })),
   destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
   travelDate: Joi.date().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
   returnDate: Joi.date(),
   reason: Joi.string().required().error(() => ({ message: 'Reason is required' })),
   status: Joi.string(),
   accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' }))
-});
-
-/**
- * Schema for validating centre
- */
-export const accommodationSchema = Joi.object().keys({
-  name: Joi.string().required().error(() => ({ message: 'Please provide the name of the accommodation centre' })),
-  country: Joi.string().required().error(() => ({ message: 'Please provide the country were the accommodation centre is located' })),
-  state: Joi.string().required().error(() => ({ message: 'Please provide the state were the accommodation centre is located' })),
-  city: Joi.string().required().error(() => ({ message: 'Please provide the city were the accommodation centre is located' })),
-  address: Joi.string().required().error(() => ({ message: 'Please provide the address of the accommodation centre' })),
-  description: Joi.string(),
-});
-
-/**
- * Schema for validating room
- */
-export const roomSchema = Joi.object().keys({
-  name: Joi.string().required().error(() => ({ message: 'Please provide the room name' })),
-  roomType: Joi.string().required().error(() => ({ message: 'Please select valid room type' })),
-  facilities: Joi.string().required().error(() => ({ message: 'Please specify the room facilities' })),
-  price: Joi.string(),
-  status: Joi.string(),
-  description: Joi.string(),
 });

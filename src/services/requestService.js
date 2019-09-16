@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 import { Op } from 'sequelize';
-import {
-  Request, User, UserDepartment, Department
-} from '../models';
-=======
 import { Request } from '../models';
->>>>>>> feature(requests): setup travel request response
 import Response from '../utils/response';
 import Helper from '../utils/helpers';
 
@@ -16,24 +10,7 @@ const { error } = Response;
  */
 export default class RequestService {
   /**
-<<<<<<< HEAD
-  * update trip rquest
-=======
-   * Getting a request
-   * @param {number} id -request id
-   * @return {object} - request object
-   */
-  static async getRequest(id) {
-    const userRequest = await Request.findOne({ where: { id }, returning: true });
-
-    if (!userRequest) error('Trip request not found');
-
-    return userRequest;
-  }
-
-  /**
   * update trip request
->>>>>>> feature(requests): setup travel request rejection
   * @param {number} id - request id
   * @param {object} data - request object
   * @return {object} - updated request
@@ -41,7 +18,6 @@ export default class RequestService {
   static async updateRequest({ body, params, user: { id } }) {
     const userRequest = await Request.findOne({ where: { id: params.requestId } });
 
-<<<<<<< HEAD
     if (!userRequest) error('Trip request not found');
 
     const { userId, status } = userRequest;
@@ -49,9 +25,6 @@ export default class RequestService {
     if (userId !== id) error('You are not allowed to edit this request');
 
     if (body.tripType === 'one-way') body.returnDate = null;
-=======
-    const { status } = userRequest;
->>>>>>> feature(requests): setup travel request rejection
 
     if (status !== 'open') error(`Request has been ${status}. cannot edit`);
 
@@ -66,8 +39,6 @@ export default class RequestService {
   }
 
   /**
-<<<<<<< HEAD
-=======
   * update trip request
   * @param {number} id - request id
   * @param {object} data - request object
@@ -77,8 +48,6 @@ export default class RequestService {
     const userRequest = await Request.findOne({ where: { id: requestId } });
 
     if (!userRequest) error('Trip request not found');
-
-    if (status !== 'approved' && status !== 'rejected') error('Response status must be approved or rejected');
 
     if (userRequest.userId === id) error('You cannot respond to your own request');
 
@@ -97,25 +66,19 @@ export default class RequestService {
   }
 
   /**
->>>>>>> feature(requests): setup travel request response
    * @param {object} details trip details
    * @param {number} userId ID of the user creating the request
    * @returns{void}
    */
-<<<<<<< HEAD
   static async oneway({ body, user: { id } }) {
     const { travelDate } = body;
-    const destination = body.destination.split(',');
-
-    if (destination.length > 1) error('Request destination must one');
-
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
-    if (existingRequest) error('You are not allowed to make multiple request');
+    if (existingRequest) error('You\'ve already booked this trip');
 
-    body.tripType = 'one-way';
+    body.destination = body.destination.split(',');
 
-    return Request.create({ ...body, destination, userId: id });
+    return Request.create({ ...body, userId: id });
   }
 
   /**
@@ -126,15 +89,13 @@ export default class RequestService {
     const { travelDate } = body;
     const destination = body.destination.split(',');
 
-    if (destination.length <= 1) error('Request destination must be more than one');
-
-    if (!body.returnDate) error('Return date is required');
+    if (destination.length <= 1) error('Request must be more than one');
 
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
 
-    if (existingRequest) error('You are not allowed to make multiple request');
+    if (existingRequest) error('You\'ve already booked this trip');
 
-    body.tripType = 'multi-city';
+    if (body.tripType !== 'multi-city') error('Trip type must be multi city');
 
     const { dataValues } = await Request.create({ ...body, destination, userId: id });
 
@@ -147,15 +108,9 @@ export default class RequestService {
    */
   static async getRequests({ user: { id } }) {
     const result = await Request.findAll({ where: { userId: id } });
-=======
-  static async oneway(details, userId) {
-    const { travelDate } = details;
-    const existingRequest = await Request.count({ where: { travelDate } });
->>>>>>> feature(requests): setup travel request rejection
 
     if (result.length === 0) error('You\'ve not made any requests');
 
-<<<<<<< HEAD
     return result;
   }
 
@@ -167,34 +122,7 @@ export default class RequestService {
   static async availOpenRequests({ user: { id } }) {
     const openRequests = await Request.findAll({
       where: { status: 'open' },
-<<<<<<< HEAD
-      include: [{
-        model: User,
-        required: true,
-        attributes: ['firstName', 'lastName'],
-        include: [
-          {
-            model: UserDepartment,
-            required: true,
-            attributes: ['departmentId'],
-            include: [
-              {
-                model: Department,
-                where: { manager: id },
-                required: true,
-                attributes: ['department', 'manager']
-              }
-            ]
-          },
-        ]
-      }]
-=======
-    const data = await Request.create({
-      ...details, tripType: 'one-way', status: 'open', userId,
->>>>>>> feature(requests): setup travel request rejection
-=======
       include: Helper.mapToDepartment(id)
->>>>>>> feature(requests): setup travel request response
     });
 
     if (openRequests.length < 1) error('There are no pending requests');
@@ -215,7 +143,7 @@ export default class RequestService {
 
     if (!body.returnDate) error('Return date is required');
 
-    if (existingRequest) error('You are not allowed to make multiple request');
+    if (existingRequest) error('You\'ve already booked this trip');
 
     body.destination = body.destination.split(',');
 
@@ -251,17 +179,5 @@ export default class RequestService {
     if (data.length === 0) error('No result found');
 
     return data;
-  }
-
-  /**
-  * update trip request
-  * @param {number} id - request id
-  * @param {object} data - request object
-  * @return {object} - updated request
-  */
-  static async rejectRequest(id) {
-    const [, [{ dataValues }]] = await Request.update({ status: 'rejected' }, { where: { id }, returning: true });
-
-    return dataValues;
   }
 }
