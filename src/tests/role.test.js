@@ -16,6 +16,7 @@ let send;
 let userToken;
 let adminToken;
 let department;
+let department2;
 let userId;
 
 const URL_PREFIX = '/api/v1/auth';
@@ -59,7 +60,11 @@ describe('Assign User Role', () => {
 >>>>>>> update signup endpoint to enable user select a department on signup
 =======
     department = await TestHelper.createDepartment({ department: 'dev' });
+<<<<<<< HEAD
 >>>>>>> add endpoint for super admin to add a user to a department
+=======
+    department2 = await TestHelper.createDepartment({ department: 'travels' });
+>>>>>>> update assign manager logic
     await db.Role.bulkCreate(insertRoles);
     await TestHelper.createUser({
       ...superAdmin, roleId: 1
@@ -232,11 +237,23 @@ describe('Assign User Role', () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/users`)
         .set('token', adminToken)
-        .send({ userId, department: department.id });
+        .send({ userId, department: department2.id });
 
       res.should.have.status(200);
       res.body.should.have.property('message');
       res.body.message.should.equal('User department updated successfully');
+    });
+
+
+    it('should throw error when user is already assigned user to that department', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/users`)
+        .set('token', adminToken)
+        .send({ userId, department: department2.id });
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('User is already assigned to this department');
     });
 
     it('should not assign user to a department when user is not found', async () => {

@@ -302,6 +302,12 @@ export default class AuthService {
 
     if (!isDepartment) error('Department not found');
 
+    const isUserDepartment = await UserDepartment.findOne({
+      where: { userId, departmentId: department }
+    });
+
+    if (isUserDepartment) error('User is already assigned to this department');
+
     await UserDepartment.update({ departmentId: department }, { where: { userId } });
 
     return 'User department updated successfully';
