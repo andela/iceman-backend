@@ -33,28 +33,25 @@ describe('Assign User Role', () => {
   });
 
   before(async () => {
-    await TestHelper.destroyModel('Request');
-    await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('User');
     await db.Role.bulkCreate(insertRoles);
     await TestHelper.createUser({
       ...superAdmin, roleId: 1
     });
   });
 
-  beforeEach(async () => {
+  beforeEach((done) => {
     send = sinon.stub(sgMail, 'send').resolves({});
+    done();
   });
 
-  afterEach(async () => {
+  afterEach((done) => {
     send.restore();
+    done();
   });
 
   describe('PATCH /assign_role', () => {
-    before(async () => {
-
-    });
-
     it('should sign up a new user', async () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/signup`)

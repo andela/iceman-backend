@@ -27,8 +27,8 @@ router.post('/multi-city', [auth, userProfile, validator(requestSchema)], multiC
 router.post('/one-way', [auth, userProfile, validator(requestSchema)], oneWay);
 router.patch('/:requestId', [auth, validator(requestIdSchema, 'params'), validator(requestSchema)], update);
 router.get('/pending', auth, permitUser(['manager']), availOpenRequests);
-router.get('/userRequests', auth, getRequests);
-router.post('/return', [auth, userProfile, validator(requestSchema)], returnRequest);
+router.get('/', auth, getRequests);
+router.post('/return', [auth, validator(requestSchema)], returnRequest);
 router.get('/search', auth, search);
 
 router.post('/:requestId/comments', [auth, validator(commentSchema)], postComment);
