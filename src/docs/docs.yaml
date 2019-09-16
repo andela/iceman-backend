@@ -1186,8 +1186,276 @@ paths:
           description: Authentication failed
       security:
         - api_key: []
+<<<<<<< HEAD
 
 >>>>>>> document endpoints in swagger
+=======
+  /accommodation:
+    post:
+      tags: 
+        - Book Accommodation 
+      summary: Add new accommodation centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: country
+          in: formData
+          type: string
+          required: true
+        - name: state
+          in: formData
+          type: string
+          required: true
+        - name: city
+          in: formData
+          type: string
+          required: true
+        - name: address
+          in: formData
+          type: string
+          required: true
+        - name: image
+          in: formData
+          type: file
+          required: true
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: This centre already exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Accommodation'
+      security:
+        - api_key: []
+    get:
+      tags: 
+        - Book Accommodation 
+      summary: Get all accommodation
+      produces:
+        - application/json
+      responses:
+        404:
+          description: No accommodation yet
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/GetAccommodation'
+      security:
+        - api_key: []
+  /accommodation/{id}:
+    patch:
+      tags: 
+        - Book Accommodation 
+      summary: Update existing accommodation centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: country
+          in: formData
+          type: string
+          required: true
+        - name: state
+          in: formData
+          type: string
+          required: true
+        - name: city
+          in: formData
+          type: string
+          required: true
+        - name: address
+          in: formData
+          type: string
+          required: true
+        - name: image
+          in: formData
+          type: file
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: You cannot edit this accommodation
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Accommodation'
+      security:
+        - api_key: []
+    delete:
+      tags: 
+        - Book Accommodation 
+      summary: Delete accommodation centre
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        400:
+          description: You cannot delete this accommodation
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
+  /accommodation/{accommodationId}/room:
+    post:
+      tags: 
+        - Book Accommodation 
+      summary: Add new room to centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: accommodationId
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: roomType
+          in: formData
+          type: string
+          required: true
+        - name: facilities
+          in: formData
+          type: string
+          required: true
+        - name: price
+          in: formData
+          type: string
+        - name: status
+          in: formData
+          type: string
+        - name: images
+          in: formData
+          type: file
+          required: true
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: This room already exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Room'
+      security:
+        - api_key: []
+  /accommodation/{id}/room:
+    patch:
+      tags: 
+        - Book Accommodation 
+      summary: Update existing room details
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: roomType
+          in: formData
+          type: string
+          required: true
+        - name: facilities
+          in: formData
+          type: string
+          required: true
+        - name: price
+          in: formData
+          type: string
+        - name: status
+          in: formData
+          type: string
+        - name: images
+          in: formData
+          type: file
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: The room does not exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Room'
+      security:
+        - api_key: []
+    delete:
+      tags: 
+        - Book Accommodation 
+      summary: Delete accommodation room
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        400:
+          description: The operation was not successfully
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
+>>>>>>> update add accomodation logic
 definitions:
   AuthResponse:
     properties:
@@ -1209,9 +1477,6 @@ definitions:
             type: string
           lastName:
             type: string
-          isAdmin:
-            type: boolean
-            default: false
           isVerified:
             type: boolean
             default: false
@@ -1503,7 +1768,10 @@ definitions:
                     type: string
                   accommodationId:
                     type: integer
+<<<<<<< HEAD
 
+=======
+>>>>>>> update add accomodation logic
 securityDefinitions:
   api_key:
     type: apiKey

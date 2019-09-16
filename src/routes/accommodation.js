@@ -19,15 +19,15 @@ const {
 } = AccommodationController;
 
 router.get('/', auth, getAllAccommodation);
-router.post('/', [auth, permitUser(['travel_admin']),
+router.post('/', [auth, permitUser(['travel_admin', 'supplier']),
   multer.single('image'), validator(accommodationSchema)], createAccommodation);
-router.patch('/:id', [auth, permitUser(['travel_admin']),
+router.patch('/:id', [auth, permitUser(['travel_admin', 'supplier']),
   multer.single('image'), validator(accommodationSchema)], updateAccommodation);
-router.delete('/:id', [auth, permitUser(['travel_admin'])], deleteAccommodation);
-router.post('/:accommodationId/room', [auth, permitUser(['travel_admin']),
+router.delete('/:id', [auth, permitUser(['travel_admin', 'supplier'])], deleteAccommodation);
+router.post('/:accommodationId/room', [auth, permitUser(['travel_admin', 'supplier']),
   multer.array('images'), validator(roomSchema)], createRoom);
-router.patch('/:id/room', [auth, permitUser(['travel_admin']),
+router.patch('/:id/room', [auth, permitUser(['travel_admin', 'supplier']),
   multer.array('images'), validator(roomSchema)], updateRoom);
-router.delete('/:id/room', [auth, permitUser(['travel_admin'])], deleteRoom);
+router.delete('/:id/room', [auth, permitUser(['travel_admin', 'supplier'])], deleteRoom);
 
 export default router;

@@ -3,7 +3,7 @@ import chaiHttp from 'chai-http';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
-import { user } from './testData/sampleData';
+import { user, supplier } from './testData/sampleData';
 import db from '../models';
 import insertRoles from '../utils/insertTestRoles';
 
@@ -13,9 +13,12 @@ chai.should();
 const URL_PREFIX = '/api/v1/accommodation';
 let loginUser;
 let loginUser2;
+let loginSupplier;
 let accommodation;
 let accommodation2;
+let accommodation3;
 let room;
+let room2;
 let noAccommodation;
 
 describe('/api/v1/accommodation', () => {
@@ -24,6 +27,7 @@ describe('/api/v1/accommodation', () => {
 
   before(async () => {
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('Room');
     await TestHelper.destroyModel('Accommodation');
     await TestHelper.destroyModel('Request');
@@ -32,7 +36,9 @@ describe('/api/v1/accommodation', () => {
     await TestHelper.createUser({
       ...user, roleId: 2
     });
-
+    await TestHelper.createUser({
+      ...supplier, roleId: 7
+    });
     await TestHelper.createUser({
       ...user, email: 'user2@gmail.com', roleId: 2
     });
@@ -46,6 +52,11 @@ describe('/api/v1/accommodation', () => {
       .set('Content-Type', 'application/json')
       .send({ email: 'user2@gmail.com', password: user.password });
 
+    loginSupplier = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'supplier@gmail.com', password: supplier.password });
+
     noAccommodation = await chai.request(app)
       .get(`${URL_PREFIX}`)
       .set('token', loginUser.body.data.token);
@@ -54,22 +65,30 @@ describe('/api/v1/accommodation', () => {
     accommodation = await chai.request(app)
       .post(`${URL_PREFIX}`)
       .set('token', loginUser.body.data.token)
+      .attach('image', filePath)
       .field('name', 'Royal Guest House')
       .field('country', 'Nigeria')
       .field('state', 'Ibadan')
       .field('city', 'Ojoo')
       .field('address', '20 agodi oojoo')
-      .field('description', 'Nice one')
-      .attach('image', filePath);
+      .field('description', 'Nice one');
 
     accommodation2 = await chai.request(app)
       .post(`${URL_PREFIX}`)
       .set('token', loginUser.body.data.token)
+      .attach('image', filePath)
       .field('name', 'King Guest House')
-      .field('country', 'Nigeria')
-      .field('state', 'Ibadan')
       .field('city', 'Ojoo')
-      .field('address', '20 agodi oojoo')
+      .field('description', 'Nice one');
+
+    accommodation3 = await chai.request(app)
+      .post(`${URL_PREFIX}`)
+      .set('token', loginSupplier.body.data.token)
+      .field('name', 'uest House')
+      .field('country', 'Nigeria')
+      .field('state', 'delta')
+      .field('city', 'ughelli')
+      .field('address', '20 ughelli')
       .field('description', 'Nice one')
       .attach('image', filePath);
 
@@ -77,6 +96,14 @@ describe('/api/v1/accommodation', () => {
       .post(`${URL_PREFIX}/${accommodation.body.data.id}/room`)
       .set('token', loginUser.body.data.token)
       .field('name', 'Room 1')
+      .field('roomType', 'single')
+      .field('facilities', 'ac, tv, chair')
+      .attach('images', filePath);
+
+    room2 = await chai.request(app)
+      .post(`${URL_PREFIX}/${accommodation3.body.data.id}/room`)
+      .set('token', loginSupplier.body.data.token)
+      .field('name', 'Room 2')
       .field('roomType', 'single')
       .field('facilities', 'ac, tv, chair')
       .attach('images', filePath);
@@ -91,6 +118,16 @@ describe('/api/v1/accommodation', () => {
       accommodation.body.data.should.have.property('address', '20 agodi oojoo');
       accommodation.body.data.should.have.property('description', 'Nice one');
       accommodation.body.data.should.have.property('image');
+    });
+
+    it('should return 200 if the accommodation was added successfully by supplier', async () => {
+      accommodation3.should.have.status(200);
+      accommodation3.body.data.should.have.property('name', 'Royal Guest House');
+      accommodation3.body.data.should.have.property('country', 'Nigeria');
+      accommodation3.body.data.should.have.property('state', 'Ibadan');
+      accommodation3.body.data.should.have.property('address', '20 agodi oojoo');
+      accommodation3.body.data.should.have.property('description', 'Nice one');
+      accommodation3.body.data.should.have.property('image');
     });
 
     it('should return 400 if the accommodation already exists', async () => {
@@ -152,6 +189,14 @@ describe('/api/v1/accommodation', () => {
       room.body.data.should.have.property('roomType', 'single');
       room.body.data.should.have.property('facilities');
       room.body.data.should.have.property('images');
+    });
+
+    it('should return 200 if the room was added successfully by supplier', async () => {
+      room2.should.have.status(200);
+      room2.body.data.should.have.property('name', 'Room 1');
+      room2.body.data.should.have.property('roomType', 'single');
+      room2.body.data.should.have.property('facilities');
+      room2.body.data.should.have.property('images');
     });
 
     it('should return 400 if the room already exists', async () => {
@@ -240,6 +285,7 @@ describe('/api/v1/accommodation', () => {
       res.body.data.should.have.property('address', '20 Ikeja oojoo');
       res.body.data.should.have.property('image');
     });
+    
     it('should return 200 if the accommodation was updated successfully', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/${accommodation2.body.data.id}`)

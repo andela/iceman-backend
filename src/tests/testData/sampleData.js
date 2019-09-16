@@ -30,6 +30,20 @@ export const user = {
   password: 'Ice5m5am0a843r03'
 };
 
+export const supplier = {
+  firstName: 'cleave',
+  lastName: 'owhiroro',
+  email: 'supplier@gmail.com',
+  password: 'supplier12345'
+};
+
+export const managerUser = {
+  firstName: 'Line',
+  lastName: 'Manager',
+  email: 'manager1@gmail.com',
+  password: 'manager1234',
+};
+
 export const user4 = {
   id: 4,
   firstName: 'Samuel',
