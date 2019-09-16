@@ -30,6 +30,7 @@ export default class TestHelper {
     return { token, ...Helper.omitFields(result, ['password']) };
   }
 
+
   /**
    * Method to exclude properties from an object
    * @param {string} modelName - model to droped

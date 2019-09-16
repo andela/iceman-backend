@@ -9,4 +9,5 @@ router.use('/auth', authRoute);
 router.use('/requests', requestRoute);
 router.use('/accommodation', accommodationRoute);
 
+
 export default router;

@@ -45,6 +45,28 @@ module.exports = {
       type: Sequelize.STRING,
       defaultValue: 'open',
     },
+    passportName: {
+      type: Sequelize.STRING
+    },
+    passportNumber: {
+      type: Sequelize.STRING
+    },
+    gender: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    preferredLanguage: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    residentialAddress: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    preferredCurrency: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE

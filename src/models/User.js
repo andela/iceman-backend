@@ -54,6 +54,15 @@ module.exports = (sequelize, DataTypes) => {
       resetToken: {
         type: DataTypes.STRING
       },
+      rememberProfile: {
+        type: DataTypes.BOOLEAN
+      },
+      passportName: {
+        type: DataTypes.STRING
+      },
+      passportNumber: {
+        type: DataTypes.STRING
+      },
     },
     { },
   );
@@ -74,6 +83,9 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId'
     });
     User.hasMany(models.Feedback, {
+      foreignKey: 'userId'
+    });
+    User.hasMany(models.Comment, {
       foreignKey: 'userId'
     });
   };
