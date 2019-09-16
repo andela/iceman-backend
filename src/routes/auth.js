@@ -8,8 +8,8 @@ import {
   passwordResetSchema,
   verifyEmail,
   LogInSchema,
-  profileSchema,
   roleSchema,
+  profileSchema,
 } from '../validation/schemas';
 
 const router = express.Router();

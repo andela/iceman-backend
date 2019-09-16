@@ -58,7 +58,6 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>GET</td><td>/api/v1/departments</td><td>Get all departments</td></tr>
 <tr><td>PATCH</td><td>/api/v1/departments/manager</td><td>Assign manager to a department</td></tr>
 <tr><td>PATCH</td><td>/api/v1/requests/:id/respond</td><td>Approve or Reject a travel request</td></tr>
-<tr><td>PATCH</td><td>/api/v1/requests/:id/respond</td><td>Approve or Reject a travel request</td></tr>
 </table>
 
 ## API Documentation

@@ -11,4 +11,5 @@ router.use('/requests', requestRoute);
 router.use('/departments', departmentRoute);
 router.use('/accommodation', accommodationRoute);
 
+
 export default router;

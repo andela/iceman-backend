@@ -492,6 +492,21 @@ paths:
                 type: string
               accommodation:
                 type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
+                type: string
       responses:
         400:
           description: The request cannot be empty
@@ -538,6 +553,21 @@ paths:
               reason:
                 type: string
               accommodation:
+                type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
                 type: string
       responses:
         201:
@@ -690,6 +720,21 @@ paths:
                 type: string
               accommodation:
                 type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
+                type: string
       responses:
         201:
           description: successful operation
@@ -813,6 +858,77 @@ paths:
           description: Access Denied
         403:
           description: Authentication failed
+      security:
+        - api_key: []  
+  /requests/{requestId}/comments:
+    post:
+      tags:
+        - Comments
+      summary: Creates a comment
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Comment body
+          required: true
+          schema:
+            type: object
+            properties:
+              comment:
+                type: string
+        - in: path
+          name: requestId
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Error
+        201:
+          description: Success   
+      security:
+        - api_key: [] 
+    get: 
+      tags:
+        - Comments
+      summary: Gets all request comments
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Error
+        200:
+          description: Success 
+      security:
+        - api_key: []
+  /requests/{requestId}/comments/{commentId}:
+    delete:
+      tags:
+        - Comments
+      summary: Deletes a comment
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          type: integer
+        - in: path
+          name: commentId
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Error
+        200:
+          description: Success 
       security:
         - api_key: []
 
@@ -1258,6 +1374,20 @@ definitions:
             type: string
           userId:
             type: integer
+          rememberProfile:
+            type: boolean
+          gender:
+            type: string
+          passportName:
+            type: string
+          passportNumber:
+            type: string
+          preferredLanguage:
+            type: string
+          residentialAddress:
+            type: string
+          preferredCurrency:
+            type: string
 
   DownlineRequests:
     properties:

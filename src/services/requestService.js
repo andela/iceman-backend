@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { Request } from '../models';
+import { Request, User } from '../models';
 import Response from '../utils/response';
 import Helper from '../utils/helpers';
 
@@ -72,11 +72,14 @@ export default class RequestService {
    */
   static async oneway({ body, user: { id } }) {
     const { travelDate } = body;
+    // console.log(body);
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
-
     if (existingRequest) error('You\'ve already booked this trip');
 
     body.destination = body.destination.split(',');
+
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+
 
     return Request.create({ ...body, userId: id });
   }
@@ -98,6 +101,9 @@ export default class RequestService {
     if (body.tripType !== 'multi-city') error('Trip type must be multi city');
 
     const { dataValues } = await Request.create({ ...body, destination, userId: id });
+
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+
 
     return dataValues;
   }
@@ -150,6 +156,8 @@ export default class RequestService {
     if (body.destination.length > 1) error('Return trip allow only one destination');
 
     const { dataValues } = await Request.create({ ...body, userId: id });
+
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
 
     return dataValues;
   }
