@@ -2,7 +2,9 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 import Helper from '../utils/helpers';
-import { User, Role } from '../models';
+import {
+  User, Role, UserDepartment, Department
+} from '../models';
 import sendmail from './emailService';
 import Response from '../utils/response';
 
@@ -103,6 +105,9 @@ export default class AuthService {
    * */
   static async signup(userDetails) {
     const { email, password } = userDetails;
+
+    if (!userDetails.department) userDetails.department = 1;
+
     const checkEmail = await User.findOne({ where: { email } });
 
     if (checkEmail) error(`Email '${email}' already exists`);
@@ -112,10 +117,12 @@ export default class AuthService {
     const result = await User.create(userDetails);
     const { dataValues: user } = result;
 
+    await UserDepartment.create({ userId: user.id, departmentId: userDetails.department });
+
     const payload = Helper.pickFields(user, ['id', 'roleId']);
     const token = await Helper.genToken(payload);
 
-    return { token, ...Helper.omitFields(user, ['password', 'createdat', 'updatedat']) };
+    return { token, departmentId: userDetails.department, ...Helper.omitFields(user, ['password', 'createdat', 'updatedat']) };
   }
 
   /**
@@ -251,5 +258,55 @@ export default class AuthService {
     await User.update({ roleId: Number(roleId) }, { where: { email } });
 
     return 'User Role Assigned Successfully';
+  }
+
+  /**
+   * getting all users
+   * @return {array} - array of user objects
+   */
+  static async getAllUsers() {
+    const users = await User.findAll({});
+
+    return users;
+  }
+
+  /**
+   * getting all users
+   * @return {array} - array of user objects
+   */
+  static async deleteUser({ params }) {
+    const user = await User.findOne({ where: { id: params.userId } });
+
+    if (!user) error('user not found');
+
+    await UserDepartment.destroy({ where: { userId: params.userId } });
+    await User.destroy({ where: { id: params.userId } });
+
+    return 'User deleted sucessfully';
+  }
+
+  /**
+   * assign user to a department
+   * @param {object} body - request body
+   * @return {string} - success message
+   */
+  static async updateUserDepartment({ body: { userId, department } }) {
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (!user) error('user not found');
+
+    const isDepartment = await Department.findOne({ where: { id: department } });
+
+    if (!isDepartment) error('Department not found');
+
+    const isUserDepartment = await UserDepartment.findOne({
+      where: { userId, departmentId: department }
+    });
+
+    if (isUserDepartment) error('User is already assigned to this department');
+
+    await UserDepartment.update({ departmentId: department }, { where: { userId } });
+
+    return 'User department updated successfully';
   }
 }

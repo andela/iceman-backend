@@ -15,6 +15,9 @@ chai.should();
 let send;
 let userToken;
 let adminToken;
+let department;
+let department2;
+let userId;
 
 const URL_PREFIX = '/api/v1/auth';
 const superAdmin = {
@@ -23,6 +26,14 @@ const superAdmin = {
   email: process.env.SUPER_ADMIN_EMAIL,
   password: process.env.SUPER_ADMIN_PASSWORD
 };
+const user = {
+  id: 60,
+  firstName: 'user',
+  lastName: 'user',
+  email: 'user@mail.com',
+  password: 'jhgfd3456',
+  roleId: 5
+};
 
 
 describe('Assign User Role', () => {
@@ -30,16 +41,23 @@ describe('Assign User Role', () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
   });
 
   before(async () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
+    department = await TestHelper.createDepartment({ department: 'dev' });
+    department2 = await TestHelper.createDepartment({ department: 'travels' });
     await db.Role.bulkCreate(insertRoles);
     await TestHelper.createUser({
       ...superAdmin, roleId: 1
     });
+    await TestHelper.createUser(user);
   });
 
   beforeEach(async () => {
@@ -65,8 +83,9 @@ describe('Assign User Role', () => {
           password: '1111ghghjh'
         });
 
-      const { token } = res.body.data;
+      const { token, id } = res.body.data;
       userToken = token;
+      userId = id;
 
       res.should.have.status(201);
       res.body.should.have.property('data');
@@ -190,6 +209,85 @@ describe('Assign User Role', () => {
       res.should.have.status(400);
       res.body.should.have.property('error');
       res.body.error.should.equal('Email must be a valid email address e.g example@mail.com or example@mail.co.uk');
+    });
+  });
+
+  describe('GET /users', async () => {
+    it('should get all users super Admin is logged in', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/users`)
+        .set('token', adminToken);
+
+      res.should.have.status(200);
+    });
+  });
+
+  describe('PATCH /users', async () => {
+    it('should assign user to a department', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/users`)
+        .set('token', adminToken)
+        .send({ userId, department: department2.id });
+
+      res.should.have.status(200);
+      res.body.should.have.property('message');
+      res.body.message.should.equal('User department updated successfully');
+    });
+
+
+    it('should throw error when user is already assigned user to that department', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/users`)
+        .set('token', adminToken)
+        .send({ userId, department: department2.id });
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('User is already assigned to this department');
+    });
+
+    it('should not assign user to a department when user is not found', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/users`)
+        .set('token', adminToken)
+        .send({ userId: 234567, department: department.id });
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('user not found');
+    });
+
+    it('should not assign user to a department when department is not found', async () => {
+      const res = await chai.request(app)
+        .patch(`${URL_PREFIX}/users`)
+        .set('token', adminToken)
+        .send({ userId, department: 4566 });
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('Department not found');
+    });
+  });
+
+  describe('DELETE /users', async () => {
+    it('should delete users super Admin is logged in', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/users/60`)
+        .set('token', adminToken);
+
+      res.should.have.status(200);
+      res.body.should.have.property('message');
+      res.body.message.should.equal('User deleted sucessfully');
+    });
+
+    it('should not delete a users when the id is wrong', async () => {
+      const res = await chai.request(app)
+        .delete(`${URL_PREFIX}/users/600`)
+        .set('token', adminToken);
+
+      res.should.have.status(400);
+      res.body.should.have.property('error');
+      res.body.error.should.equal('user not found');
     });
   });
 });

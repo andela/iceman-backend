@@ -22,6 +22,7 @@ const {
   search
 } = RequestController;
 
+
 router.patch('/:requestId/respond', [auth, validator(requestIdSchema, 'params'), validator(responseSchema, 'body'), permitUser(['manager'])], respond);
 router.post('/multi-city', [auth, userProfile, validator(requestSchema)], multiCityRequest);
 router.post('/one-way', [auth, userProfile, validator(requestSchema)], oneWay);

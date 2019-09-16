@@ -34,6 +34,12 @@ module.exports = {
     type: 'guest',
     createdAt: new Date(),
     updatedAt: new Date()
+  },
+  {
+    id: 7,
+    type: 'supplier',
+    createdAt: new Date(),
+    updatedAt: new Date()
   }], {}),
 
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Roles', null, {})

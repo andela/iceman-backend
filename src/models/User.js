@@ -16,10 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING,
         unique: true,
-        allowNull: false,
-        validate: {
-          isEmail: true,
-        },
+        allowNull: false
       },
       password: {
         type: DataTypes.STRING,
@@ -74,6 +71,9 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'roleId'
     });
     User.hasOne(models.UserDepartment, {
+      foreignKey: 'userId'
+    });
+    User.hasMany(models.Accommodation, {
       foreignKey: 'userId'
     });
     User.hasMany(models.Comment, {

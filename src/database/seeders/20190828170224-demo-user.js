@@ -1,7 +1,6 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.bulkInsert('Users', [{
-    id: 1,
     firstName: 'cleave',
     lastName: 'owhiroro',
     email: 'cleave@mail.com',
@@ -11,7 +10,6 @@ module.exports = {
     updatedAt: new Date()
   },
   {
-    id: 2,
     firstName: 'demo',
     lastName: 'user',
     email: 'demo@mail.com',
@@ -21,7 +19,6 @@ module.exports = {
     updatedAt: new Date()
   },
   {
-    id: 3,
     firstName: 'Super',
     lastName: 'Administrator',
     email: 'super@mail.com',
@@ -31,7 +28,6 @@ module.exports = {
     updatedAt: new Date()
   },
   {
-    id: 4,
     firstName: 'cleave4',
     lastName: 'owhiroro4',
     email: 'cleave4@mail.com',
@@ -41,12 +37,20 @@ module.exports = {
     updatedAt: new Date()
   },
   {
-    id: 5,
-    firstName: 'demo',
-    lastName: 'user',
-    email: 'demo2@mail.com',
+    firstName: 'travel',
+    lastName: 'admin',
+    email: 'traveladmin@mail.com',
     password: '$2b$10$Ei9AIY7iUCU3jN3EAH7a8ez9lBmfazkBOHCI8SPbwWkD7iT4LWkYm',
-    roleId: 5,
+    roleId: 2,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    firstName: 'supplier',
+    lastName: 'supplier',
+    email: 'supplier@mail.com',
+    password: '$2b$10$Ei9AIY7iUCU3jN3EAH7a8ez9lBmfazkBOHCI8SPbwWkD7iT4LWkYm',
+    roleId: 7,
     createdAt: new Date(),
     updatedAt: new Date()
   }

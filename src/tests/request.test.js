@@ -12,6 +12,7 @@ import {
   user,
   returnRequest,
   tripRequest,
+  noProfileRequest,
   managerUser
 } from './testData/sampleData';
 
@@ -232,7 +233,7 @@ describe('/api/v1/requests', () => {
       const res = await chai.request(app)
         .post(`${URL_PREFIX}/one-way`)
         .set('token', loginUser2.body.data.token)
-        .send(tripRequest);
+        .send(noProfileRequest);
 
       res.should.have.status(400);
       res.body.error[0].should.equal('passportName is Required');
@@ -249,8 +250,8 @@ describe('/api/v1/requests', () => {
         .set('token', loginUser2.body.data.token)
         .send(oneWayTrip);
 
-      expect(JSON.parse(res.text).data.source).to.equal('Lagos');
       expect(res.status).to.equal(201);
+      expect(JSON.parse(res.text).data.source).to.equal('Lagos');
     });
 
     it('should update user profile', async () => {

@@ -18,8 +18,14 @@ module.exports = {
     updatedAt: new Date()
   },
   {
+    userId: 3,
+    departmentId: 3,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
     userId: 4,
-    departmentId: 2,
+    departmentId: 4,
     createdAt: new Date(),
     updatedAt: new Date()
   }

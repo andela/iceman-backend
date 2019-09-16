@@ -44,12 +44,17 @@ describe('/api/v1/auth', () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
   });
 
   before(async () => {
-    await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
+    await TestHelper.createDepartment({ department: 'dev' });
     await db.Role.bulkCreate(insertRoles);
     verifiedUser = await TestHelper.createUser({
       ...user, roleId: 5

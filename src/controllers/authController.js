@@ -10,6 +10,9 @@ const {
   getProfile,
   updateProfile,
   assignUser,
+  getAllUsers,
+  deleteUser,
+  updateUserDepartment
 } = AuthService;
 
 /**
@@ -147,6 +150,47 @@ export default class AuthController {
       const assign = await assignUser(body);
 
       successMessage(res, assign);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+    *@param {object} req request object
+   * @param {object} res response object
+   * @return {object} message
+   */
+  static async getAllUsers(req, res) {
+    const users = await getAllUsers();
+
+    successMessage(res, users);
+  }
+
+  /**
+    *@param {object} req request object
+   * @param {object} res response object
+   * @return {object} message
+   */
+  static async deleteUser(req, res) {
+    try {
+      const removeUser = await deleteUser(req);
+
+      successMessage(res, removeUser);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+    *@param {object} req request object
+   * @param {object} res response object
+   * @return {object} message
+   */
+  static async assignUserTodepartment(req, res) {
+    try {
+      const assignDepartment = await updateUserDepartment(req);
+
+      successMessage(res, assignDepartment);
     } catch ({ message: error }) {
       badRequest(res, error);
     }

@@ -24,7 +24,7 @@ export default class TestHelper {
     user.password = await bcrypt.hash(user.password, salt);
 
     const { dataValues: result } = await db.User.create(user);
-    const payload = { id: result.id, isAdmin: result.isAdmin };
+    const payload = { id: result.id, roleId: result.roleId };
     const token = await jwt.sign(payload, jwtSecret, { expiresIn: '1hr' });
 
     return { token, ...Helper.omitFields(result, ['password']) };
