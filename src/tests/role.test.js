@@ -57,10 +57,7 @@ describe('Assign User Role', () => {
     await TestHelper.createUser({
       ...superAdmin, roleId: 1
     });
-<<<<<<< HEAD
     await TestHelper.createUser(user);
-=======
->>>>>>> d9ccf8cae8b7b0740a75543c30c1bb235c14ca90
   });
 
   beforeEach(async () => {

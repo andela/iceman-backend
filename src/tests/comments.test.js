@@ -19,8 +19,8 @@ const URL_PREFIX = '/api/v1/requests';
 
 describe('api/v1/requests/:requestId/comments', () => {
   before(async () => {
-    await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Comment');
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');

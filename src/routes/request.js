@@ -1,19 +1,12 @@
 import { Router } from 'express';
-<<<<<<< HEAD
-import { requestSchema, requestIdSchema, responseSchema } from '../validation/schemas';
-=======
 import {
   requestSchema, requestIdSchema, responseSchema, commentSchema
 } from '../validation/schemas';
->>>>>>> d9ccf8cae8b7b0740a75543c30c1bb235c14ca90
 import RequestController from '../controllers/requestController';
 import { validator } from '../validation/validator';
 import userProfile from '../validation/userProfile';
 import middlewares from '../middlewares';
-<<<<<<< HEAD
-=======
 import commentController from '../controllers/commentController';
->>>>>>> d9ccf8cae8b7b0740a75543c30c1bb235c14ca90
 
 const { postComment, getComment, deleteComment } = commentController;
 const router = Router();
