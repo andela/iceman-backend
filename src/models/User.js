@@ -54,6 +54,15 @@ module.exports = (sequelize, DataTypes) => {
       resetToken: {
         type: DataTypes.STRING
       },
+      rememberProfile: {
+        type: DataTypes.BOOLEAN
+      },
+      passportName: {
+        type: DataTypes.STRING
+      },
+      passportNumber: {
+        type: DataTypes.STRING
+      },
     },
     { },
   );

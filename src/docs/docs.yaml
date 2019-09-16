@@ -422,6 +422,21 @@ paths:
                 type: string
               accommodation:
                 type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
+                type: string
       responses:
         400:
           description: The request cannot be empty
@@ -468,6 +483,21 @@ paths:
               reason:
                 type: string
               accommodation:
+                type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
                 type: string
       responses:
         201:
@@ -619,6 +649,21 @@ paths:
               reason:
                 type: string
               accommodation:
+                type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
                 type: string
       responses:
         201:
@@ -816,6 +861,7 @@ paths:
           description: Success 
       security:
         - api_key: []
+
 definitions:
   AuthResponse:
     properties:
@@ -950,6 +996,20 @@ definitions:
             type: string
           userId:
             type: integer
+          rememberProfile:
+            type: boolean
+          gender:
+            type: string
+          passportName:
+            type: string
+          passportNumber:
+            type: string
+          preferredLanguage:
+            type: string
+          residentialAddress:
+            type: string
+          preferredCurrency:
+            type: string
 
   DownlineRequests:
     properties:
@@ -1027,6 +1087,20 @@ definitions:
               type: string
             userId:
               type: integer
+            rememberProfile:
+              type: boolean
+            gender:
+              type: string
+            passportName:
+              type: string
+            passportNumber:
+              type: string
+            preferredLanguage:
+              type: string
+            residentialAddress:
+             type: string
+            preferredCurrency:
+              type: string
 
 securityDefinitions:
   api_key:

@@ -5,7 +5,14 @@ export const multiRequest = {
   travelDate: Date.now(),
   returnDate: Date.now(),
   reason: 'reason',
-  accommodation: 'accommodation'
+  accommodation: 'accommodation',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: false
 };
 
 export const missingRequiredField = {
@@ -13,7 +20,14 @@ export const missingRequiredField = {
   travelDate: Date.now(),
   returnDate: Date.now(),
   reason: 'reason',
-  accommodation: 'accommodation'
+  accommodation: 'accommodation',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: false
 };
 
 export const user = {
@@ -46,7 +60,14 @@ export const oneWayTrip = {
   travelDate: Date.now(),
   returnDate: Date.now(),
   reason: 'reason',
-  accommodation: 'accommodation'
+  accommodation: 'accommodation',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: true
 };
 export const oneWayTrip2 = {
   source: 'Lagos',
@@ -90,7 +111,25 @@ export const returnRequest = {
   travelDate: '10/02/2019',
   returnDate: '01/01/2018',
   reason: 'Work',
-  accommodation: 'Radison Blu'
+  accommodation: 'Radison Blu',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: false
+};
+
+
+export const tripRequest = {
+  source: 'Abuja',
+  tripType: 'one-way',
+  destination: 'Uyo',
+  travelDate: '2019-11-20',
+  reason: 'reason-it',
+  accommodation: 'accommodation-1s',
+  rememberProfile: true
 };
 
 export const user1 = {
