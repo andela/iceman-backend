@@ -123,3 +123,10 @@ export const requestSchema = Joi.object().keys({
   status: Joi.string(),
   accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' }))
 });
+
+export const commentSchema = Joi.object().keys({
+  comment: Joi.string().trim().required()
+    .error(() => ({
+      message: 'Comment is required'
+    }))
+});
