@@ -29,13 +29,38 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.STRING,
       defaultValue: 'open',
-    }
+    },
+    passportName: {
+      type: DataTypes.STRING,
+    },
+    passportNumber: {
+      type: DataTypes.STRING,
+    },
+    gender: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    preferredLanguage: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    residentialAddress: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    preferredCurrency: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
   }, {});
 
   Request.associate = (models) => {
     Request.belongsTo(models.User, {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
+    });
+    Request.hasMany(models.Comment, {
+      foreignKey: 'requestId'
     });
   };
   return Request;

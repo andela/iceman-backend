@@ -1,6 +1,9 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import {
+  User, UserDepartment, Department
+} from '../models';
 
 /**
  * Helper class
@@ -41,8 +44,8 @@ export default class Helper {
   /**
    * Method encrypt data
    * @param {string} password - password to encrypt
-   * @param { number } rounds - salt value
-   * @returns { string} - encypted data
+   * @param {number} rounds - salt value
+   * @returns {string} - encrypted data
    */
   static async encryptor(password, rounds = 10) {
     const salt = await bcrypt.genSaltSync(rounds);
@@ -98,5 +101,33 @@ export default class Helper {
     const verify = jwt.verify(token, process.env.JWTSECRET, (err, decoded) => decoded);
 
     return verify;
+  }
+
+  /**
+   * Method provide table join to map requests to department
+   * @param {number} id - User ID of Department manager
+   * @returns {array} - Table join to map requests to manager's department
+   */
+  static mapToDepartment(id) {
+    return [{
+      model: User,
+      required: true,
+      attributes: ['firstName', 'lastName'],
+      include: [
+        {
+          model: UserDepartment,
+          required: true,
+          attributes: ['departmentId'],
+          include: [
+            {
+              model: Department,
+              where: { manager: id },
+              required: true,
+              attributes: ['department', 'manager']
+            }
+          ]
+        },
+      ]
+    }];
   }
 }

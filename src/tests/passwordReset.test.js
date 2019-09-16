@@ -17,11 +17,17 @@ const urlPrefix = '/api/v1';
 describe('/api/v1/auth', () => {
   let passwordResetToken;
 
+  after(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+  });
+
   before(async () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
-    db.Role.bulkCreate(insertRoles);
+    await db.Role.bulkCreate(insertRoles);
     fakeToken = await Helper.genToken({ email: 'fake@chubi.com' });
     await db.User.create({
       firstName: 'irellevant',

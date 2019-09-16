@@ -26,6 +26,12 @@ const superAdmin = {
 
 
 describe('Assign User Role', () => {
+  after(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+  });
+
   before(async () => {
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('User');

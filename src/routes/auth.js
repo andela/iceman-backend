@@ -8,8 +8,8 @@ import {
   passwordResetSchema,
   verifyEmail,
   LogInSchema,
-  profileSchema,
   roleSchema,
+  profileSchema,
 } from '../validation/schemas';
 
 const router = express.Router();
@@ -22,7 +22,7 @@ const {
   resendVerification,
   getProfile,
   updateProfile,
-  assignRole,
+  assignRole
 } = AuthController;
 const { authenticate, callback } = PassportController;
 const { auth, permitUser } = middlewares;

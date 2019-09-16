@@ -19,17 +19,11 @@ paths:
   /auth/profile:
     get:
       tags:
-        - Users
+        - Auth
       summary: View user's profile information
       description: View user's profile information
       produces:
         - application/json
-      parameters:
-        - in: header
-          name: token
-          description: User authentication token
-          required: true
-          type: string
       responses:
         401:
           description: No token provided
@@ -43,9 +37,11 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/UsersResponse'
+      security:
+        - api_key: []
     patch:
       tags:
-        - Users
+        - Auth
       summary: Update user's profile information
       description: Update user's profile information
       consumes:
@@ -65,20 +61,22 @@ paths:
           schema:
             type: object
             properties:
-              first_name:
+              firstName:
                 type: string
-              last_name:
+              lastName:
+                type: string
+              middleName:
                 type: string
               gender:
                 type: string
-              date_of_birth:
+              dateOfBirth:
                 type: string
                 format: date
-              preferred_language:
+              preferredLanguage:
                 type: string
-              residential_address:
+              residentialAddress:
                 type: string
-              preferred_currency:
+              preferredCurrency:
                 type: string
       responses:
         200:
@@ -93,6 +91,8 @@ paths:
           description: No token provided
           schema:
             $ref: '#definitions/ErrorResponse'
+      security:
+        - api_key: []
 
   /auth/login:
     post:
@@ -128,6 +128,7 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthResponse'
+
   /auth/signup:
     post:
       tags:
@@ -164,6 +165,7 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthResponse'
+
   /auth/facebook:
     get:
       tags:
@@ -180,6 +182,7 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/AuthResponse'
+
   /auth/google:
     get:
       tags:
@@ -197,7 +200,7 @@ paths:
           schema:
             $ref: '#definitions/AuthResponse'
 
-  /auth/verify?token:
+  /auth/verify:
     get:
       tags:
         - Auth
@@ -222,6 +225,7 @@ paths:
           description: Error
         200:
           description: Success
+
   /auth/resend_verification_link:
     post:
       tags:
@@ -247,6 +251,7 @@ paths:
           description: error
         200:
           description: Success
+
   /auth/forgot_password:
     post:
       tags:
@@ -272,6 +277,7 @@ paths:
           description: Email Not Found
         200:
           description: Success
+
   /auth/reset_password/{token}:
     patch:
       tags:
@@ -300,8 +306,45 @@ paths:
           description: Email Not Found
         200:
           description: Success
-  
-  /requests/userRequests:
+
+  /auth/assign_role:
+    patch:
+      tags:
+        - Auth
+      summary: Assign user role
+      description: Assign user role with Super Administrator Access
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: roleId
+          in: body
+          description: Role ID
+          required: true
+          type: integer
+        - in: body
+          name: email
+          description: User email to be assigned a role
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Error
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
+
+  /requests:
     get:
       tags:
         - Requests
@@ -351,7 +394,7 @@ paths:
       parameters:
         - in: body
           name: body
-          description: Multiple Request Destination
+          description: Multiple Request Destzination
           required: true
           schema:
             properties:
@@ -371,6 +414,21 @@ paths:
               reason:
                 type: string
               accommodation:
+                type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
                 type: string
       responses:
         400:
@@ -408,14 +466,24 @@ paths:
               travelDate:
                 type: string
                 format: date-time
-              returnDate:
-                type: string
-                format: date-time
-              travelDate:
-                type: string
               reason:
                 type: string
               accommodation:
+                type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
                 type: string
       responses:
         201:
@@ -430,8 +498,49 @@ paths:
           description: Authentication failed
         409:
           description: Conflict
+        201:
+          description: Success
       security:
-      - api_key: []
+        - api_key: []
+
+  /requests/{requestId}/respond:
+    patch:
+      tags:
+        - Requests
+      summary: Approve or Reject Travel Request
+      description: Approves or Rejects a travel request
+      produces:
+        - application/json
+      parameters:
+        - name: requestId
+          in: path
+          description: ID of request to update
+          required: true
+          type: integer
+          format: int64
+        - name: body
+          in: body
+          description: Status of response, approved or rejected
+          required: true
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Request'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
+
   /requests/{requestId}:
     patch:
       tags:
@@ -484,6 +593,7 @@ paths:
           description: Authentication failed
       security:
         - api_key: []
+
   /requests/return:
     post:
       tags:
@@ -517,6 +627,21 @@ paths:
                 type: string
               accommodation:
                 type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
+                type: string
       responses:
         201:
           description: successful operation
@@ -534,7 +659,7 @@ paths:
           name: token
           description: an authorization header
           required: true
-          type: string        
+          type: string
       security:
         - Basic: []
       responses:
@@ -545,7 +670,8 @@ paths:
         401:
           description: Authorization failure
         201:
-          description: Success  
+          description: Success
+
   /requests/search:
     get:
       tags:
@@ -598,7 +724,7 @@ paths:
           name: token
           description: an authorization header
           required: true
-          type: string        
+          type: string
       security:
         - Basic: []
       responses:
@@ -607,7 +733,7 @@ paths:
         401:
           description: Authorization failure
         200:
-          description: Success    
+          description: Success
   /auth/assign_role:
     patch:
       tags:
@@ -619,20 +745,17 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: roleId
-          in: body
-          description: Role ID
-          required: true
-          type: integer
         - in: body
-          name: email
-          description: User email to be assigned a role
+          name: Role schema
+          description: Role assignment details
           required: true
           schema:
             type: object
             properties:
               email:
                 type: string
+              roleId:
+                type: integer
       responses:
         200:
           description: successful operation
@@ -842,6 +965,40 @@ paths:
       summary: Update existing room details
       consumes:
         - multipart/form-data
+  /requests/{requestId}/comments:
+    post:
+      tags:
+        - Comments
+      summary: Creates a comment
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Comment body
+          required: true
+          schema:
+            type: object
+            properties:
+              comment:
+                type: string
+        - in: path
+          name: requestId
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Error
+        201:
+          description: Success   
+      security:
+        - api_key: [] 
+    get: 
+      tags:
+        - Comments
+      summary: Gets all request comments
       produces:
         - application/json
       parameters:
@@ -907,6 +1064,37 @@ paths:
                 type: string
               message:
                 type: string
+          name: requestId
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Error
+        200:
+          description: Success 
+      security:
+        - api_key: []
+  /requests/{requestId}/comments/{commentId}:
+    delete:
+      tags:
+        - Comments
+      summary: Deletes a comment
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          type: integer
+        - in: path
+          name: commentId
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Error
+        200:
+          description: Success 
       security:
         - api_key: []
 definitions:
@@ -1043,6 +1231,20 @@ definitions:
             type: string
           userId:
             type: integer
+          rememberProfile:
+            type: boolean
+          gender:
+            type: string
+          passportName:
+            type: string
+          passportNumber:
+            type: string
+          preferredLanguage:
+            type: string
+          residentialAddress:
+            type: string
+          preferredCurrency:
+            type: string
 
   DownlineRequests:
     properties:
@@ -1225,6 +1427,20 @@ definitions:
                     type: string
                   accommodationId:
                     type: integer
+            rememberProfile:
+              type: boolean
+            gender:
+              type: string
+            passportName:
+              type: string
+            passportNumber:
+              type: string
+            preferredLanguage:
+              type: string
+            residentialAddress:
+             type: string
+            preferredCurrency:
+              type: string
 
 securityDefinitions:
   api_key:
