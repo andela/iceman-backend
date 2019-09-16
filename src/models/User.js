@@ -60,6 +60,9 @@ module.exports = (sequelize, DataTypes) => {
       passportName: {
         type: DataTypes.STRING
       },
+      // passportNumber: {
+      //   type: DataTypes.STRING
+      // },
       emailNotify: {
         type: DataTypes.BOOLEAN
       }
@@ -74,6 +77,9 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'roleId'
     });
     User.hasOne(models.UserDepartment, {
+      foreignKey: 'userId'
+    });
+    User.hasMany(models.Comment, {
       foreignKey: 'userId'
     });
   };

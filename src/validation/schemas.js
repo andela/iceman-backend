@@ -36,6 +36,8 @@ export const profileSchema = Joi.object().keys({
   preferredLanguage: Joi.string().trim().optional(),
   residentialAddress: Joi.string().trim().optional(),
   preferredCurrency: Joi.string().trim().optional(),
+  passportName: Joi.string().trim().optional(),
+  passportNumber: Joi.string().trim().optional(),
   dateOfBirth: Joi.date().optional(),
 });
 
@@ -121,12 +123,25 @@ export const requestSchema = Joi.object().keys({
   returnDate: Joi.date(),
   reason: Joi.string().required().error(() => ({ message: 'Reason is required' })),
   status: Joi.string(),
-  accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' }))
+  passportName: Joi.string().required().error(() => ({ message: 'passportName is Required' })),
+  passportNumber: Joi.number().required().error(() => ({ message: 'passportNumber is Required' })),
+  accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' })),
+  rememberProfile: Joi.boolean().required(),
+  gender: Joi.string().trim().required().error(() => ({ message: 'gender is Required' })),
+  preferredLanguage: Joi.string().trim().required().error(() => ({ message: 'preferredLanguage is Required' })),
+  residentialAddress: Joi.string().trim().required().error(() => ({ message: 'residentialAddress is Required' })),
+  preferredCurrency: Joi.string().trim().required().error(() => ({ message: 'preferredCurrency is Required' })),
 });
 
 export const optSchema = Joi.object().keys({
   emailNotification: Joi.boolean().required()
+  // .error(() => ({
+  //   message: 'emailNotification is required'
+  // }))
+});
+export const commentSchema = Joi.object().keys({
+  comment: Joi.string().trim().required()
     .error(() => ({
-      message: 'Input should either be true or false',
-    })),
+      message: 'Comment is required'
+    }))
 });

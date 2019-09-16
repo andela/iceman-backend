@@ -9,11 +9,13 @@ const { auth } = middlewares;
 const {
   optEmail,
   getNotification,
-  markAllAsRead
+  markAllAsRead,
+  getAllNotification
 } = NotificationController;
 
 router.patch('/opt_email', [auth, validator(optSchema)], optEmail);
-router.get('/', auth, getNotification);
+router.get('/', auth, getAllNotification);
+router.get('/:notificationId', auth, getNotification);
 router.patch('/mark_all_read', auth, markAllAsRead);
 
 export default router;

@@ -90,8 +90,8 @@ export default class RequestService {
    */
   static async oneway({ body, user: { id } }) {
     const { travelDate } = body;
+    // console.log(body);
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
-
     if (existingRequest) error('You\'ve already booked this trip');
 
     body.destination = body.destination.split(',');
@@ -107,6 +107,9 @@ export default class RequestService {
 
 
     await Notification.createNotificationMsg({ sender, receiver, type: 'newRequest' });
+
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+
 
     return Request.create({ ...body, userId: id });
   }
@@ -139,6 +142,8 @@ export default class RequestService {
     const { dataValues: receiver } = receive;
 
     await Notification.createNotificationMsg({ sender, receiver, type: 'newRequest' });
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+
 
     return dataValues;
   }
@@ -191,6 +196,8 @@ export default class RequestService {
     if (body.destination.length > 1) error('Return trip allow only one destination');
 
     const { dataValues } = await Request.create({ ...body, userId: id });
+
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
 
     return dataValues;
   }

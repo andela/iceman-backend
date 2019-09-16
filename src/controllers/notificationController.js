@@ -2,7 +2,9 @@ import Response from '../utils/response';
 import Notification from '../services/notificationService';
 
 const { success, badRequest } = Response;
-const { optEmailNotification, getUserNotification, markAllRead } = Notification;
+const {
+  optEmailNotification, getAllUserNotification, markAllRead, getSpecificNotification
+} = Notification;
 /**
  *  class for Notification
  */
@@ -27,11 +29,26 @@ export default class NotificationController {
    * @param {Object} res response object
    * @returns {Object} - response message
    */
-  static async getNotification(req, res) {
+  static async getAllNotification(req, res) {
     try {
-      const notification = await getUserNotification(req);
+      const notification = await getAllUserNotification(req);
 
       success(res, notification);
+    } catch ({ message: err }) {
+      badRequest(res, err);
+    }
+  }
+
+  /**
+   * @param {Object} req request object
+   * @param {Object} res response object
+   * @returns {Object} - response message
+   */
+  static async getNotification(req, res) {
+    try {
+      const specificNotification = await getSpecificNotification(req);
+
+      success(res, specificNotification);
     } catch ({ message: err }) {
       badRequest(res, err);
     }

@@ -422,6 +422,21 @@ paths:
                 type: string
               accommodation:
                 type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
+                type: string
       responses:
         400:
           description: The request cannot be empty
@@ -468,6 +483,21 @@ paths:
               reason:
                 type: string
               accommodation:
+                type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
                 type: string
       responses:
         201:
@@ -620,6 +650,21 @@ paths:
                 type: string
               accommodation:
                 type: string
+              rememberProfile:
+                type: boolean
+                default: false
+              gender:
+                type: string
+              passportName:
+                type: string
+              passportNumber:
+                type: string
+              preferredLanguage:
+                type: string
+              residentialAddress:
+                type: string
+              preferredCurrency:
+                type: string
       responses:
         201:
           description: successful operation
@@ -744,64 +789,76 @@ paths:
         403:
           description: Authentication failed
       security:
-        - api_key: []
-
-  /auth/remember_profile:
-    patch:
+        - api_key: []  
+  /requests/{requestId}/comments:
+    post:
       tags:
-        - Users
-      summary: Remember Profile
-      description: Checkbox to remember and use user profile for travel request
+        - Comments
+      summary: Creates a comment
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
-        - name: rememberProfile
-          in: body
-          description: remember profile option
+        - in: body
+          name: body
+          description: Comment body
           required: true
           schema:
             type: object
             properties:
-              rememberProfile:
-                type: boolean
-                default: false
-
+              comment:
+                type: string
+        - in: path
+          name: requestId
+          required: true
+          type: integer
       responses:
-        200:
-          description: successful operation
         400:
           description: Error
-        401:
-          description: Access Denied
-        403:
-          description: Authentication failed
+        201:
+          description: Success   
       security:
-        - api_key: []
-
-  /auth/user_information:
-    get:
+        - api_key: [] 
+    get: 
       tags:
-        - Users
-      summary: Get User Profile for Travel Request
-      description: Get all user profile to make a travel request
-      consumes:
-        - application/json
+        - Comments
+      summary: Gets all request comments
       produces:
         - application/json
-
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          type: integer
       responses:
-        200:
-          description: successful operation
-          schema:
-            $ref: '#/definitions/AuthResponse'
         400:
           description: Error
-        401:
-          description: Access Denied
-        403:
-          description: Authentication failed
+        200:
+          description: Success 
+      security:
+        - api_key: []
+  /requests/{requestId}/comments/{commentId}:
+    delete:
+      tags:
+        - Comments
+      summary: Deletes a comment
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          type: integer
+        - in: path
+          name: commentId
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Error
+        200:
+          description: Success 
       security:
         - api_key: []
 
@@ -939,6 +996,20 @@ definitions:
             type: string
           userId:
             type: integer
+          rememberProfile:
+            type: boolean
+          gender:
+            type: string
+          passportName:
+            type: string
+          passportNumber:
+            type: string
+          preferredLanguage:
+            type: string
+          residentialAddress:
+            type: string
+          preferredCurrency:
+            type: string
 
   DownlineRequests:
     properties:
@@ -1016,6 +1087,20 @@ definitions:
               type: string
             userId:
               type: integer
+            rememberProfile:
+              type: boolean
+            gender:
+              type: string
+            passportName:
+              type: string
+            passportNumber:
+              type: string
+            preferredLanguage:
+              type: string
+            residentialAddress:
+             type: string
+            preferredCurrency:
+              type: string
 
 securityDefinitions:
   api_key:

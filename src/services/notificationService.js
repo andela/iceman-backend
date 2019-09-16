@@ -86,11 +86,16 @@ export default class NotificationService {
     const { id } = req.user;
     const { notificationId } = req.params;
 
-    const data = await Notification.findOne({ where: { id: notificationId, receiverId: id } });
+    const data = await Notification.findOne({
+      where: {
+        id: Number(notificationId),
+        receiverId: id
+      }
+    });
 
     await Notification.update({ isRead: true }, { where: { receiverId: id } });
 
-    if (!data.datavalues) error('Notification Not Found');
+    if (!data) error('Notification Not Found');
 
     return data;
   }
@@ -99,9 +104,9 @@ export default class NotificationService {
    * @param {object} req request object
    * @returns {String} reponse message
    */
-  static async getAllNotification(req) {
+  static async getAllUserNotification(req) {
     const { id } = req.user;
-    const data = await Notification.findAll({ where: { receiverId: id, isRead: false } });
+    const data = await Notification.findAll({ where: { receiverId: id } });
 
     if (!data[0]) error('No notification Found');
 
@@ -117,11 +122,9 @@ export default class NotificationService {
 
     const isExist = await Notification.findAll({ where: { receiverId: id, isRead: false } });
 
-    if (!isExist[0]) error('There is unread Notification');
+    if (!isExist[0]) error('No Unread Notification Found');
 
-    const data = await Notification.update({ isRead: true }, { where: { receiverId: id } });
-
-    if (!data < 1) error('No notification Found');
+    await Notification.update({ isRead: true }, { where: { receiverId: id } });
 
     return 'All Notification Marked As Read';
   }
