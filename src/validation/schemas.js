@@ -124,3 +124,27 @@ export const requestSchema = Joi.object().keys({
   status: Joi.string(),
   accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' }))
 });
+
+/**
+ * Schema for validating centre
+ */
+export const accommodationSchema = Joi.object().keys({
+  name: Joi.string().required().error(() => ({ message: 'Please provide the name of the accommodation centre' })),
+  country: Joi.string().required().error(() => ({ message: 'Please provide the country were the accommodation centre is located' })),
+  state: Joi.string().required().error(() => ({ message: 'Please provide the state were the accommodation centre is located' })),
+  city: Joi.string().required().error(() => ({ message: 'Please provide the city were the accommodation centre is located' })),
+  address: Joi.string().required().error(() => ({ message: 'Please provide the address of the accommodation centre' })),
+  description: Joi.string(),
+});
+
+/**
+ * Schema for validating room
+ */
+export const roomSchema = Joi.object().keys({
+  name: Joi.string().required().error(() => ({ message: 'Please provide the room name' })),
+  roomType: Joi.string().required().error(() => ({ message: 'Please select valid room type' })),
+  facilities: Joi.string().required().error(() => ({ message: 'Please specify the room facilities' })),
+  price: Joi.string(),
+  status: Joi.string(),
+  description: Joi.string(),
+});

@@ -34,6 +34,12 @@ const insertRoles = [
     type: 'guest',
     createdAt: new Date(),
     updatedAt: new Date()
+  },
+  {
+    id: 7,
+    type: 'supplier',
+    createdAt: new Date(),
+    updatedAt: new Date()
   }];
 
 export default insertRoles;
