@@ -318,20 +318,17 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: roleId
-          in: body
-          description: Role ID
-          required: true
-          type: integer
         - in: body
-          name: email
-          description: User email to be assigned a role
+          name: Role schema
+          description: Role assignment details
           required: true
           schema:
             type: object
             properties:
               email:
                 type: string
+              roleId:
+                type: integer
       responses:
         200:
           description: successful operation
@@ -342,7 +339,7 @@ paths:
         403:
           description: Authentication failed
       security:
-        - api_key: []
+        - api_key: [] 
 
   /requests:
     get:
@@ -734,39 +731,7 @@ paths:
           description: Authorization failure
         200:
           description: Success
-  /auth/assign_role:
-    patch:
-      tags:
-        - Auth
-      summary: Assign user role
-      description: Assign user role with Super Administrator Access
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: Role schema
-          description: Role assignment details
-          required: true
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-              roleId:
-                type: integer
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Error
-        401:
-          description: Access Denied
-        403:
-          description: Authentication failed
-      security:
-        - api_key: []  
+   
   /accommodation:
     post:
       tags: 
@@ -965,6 +930,73 @@ paths:
       summary: Update existing room details
       consumes:
         - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: roomType
+          in: formData
+          type: string
+          required: true
+        - name: facilities
+          in: formData
+          type: string
+          required: true
+        - name: price
+          in: formData
+          type: string
+        - name: status
+          in: formData
+          type: string
+        - name: images
+          in: formData
+          type: file
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: The room does not exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Room'
+      security:
+        - api_key: []
+    delete:
+      tags: 
+        - Book Accommodation 
+      summary: Delete accommodation room
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        400:
+          description: The operation was not successfully
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
   /requests/{requestId}/comments:
     post:
       tags:
@@ -1038,40 +1070,6 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/Room'
-      security:
-        - api_key: []
-    delete:
-      tags: 
-        - Book Accommodation 
-      summary: Delete accommodation room
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          type: integer
-          required: true
-      responses:
-        400:
-          description: The operation was not successfully
-        401:
-          description: Access Denied, No token provided
-        200:
-          description: Success
-          schema:
-            properties:
-              status:
-                type: string
-              message:
-                type: string
-          name: requestId
-          required: true
-          type: integer
-      responses:
-        400:
-          description: Error
-        200:
-          description: Success 
       security:
         - api_key: []
   /requests/{requestId}/comments/{commentId}:
