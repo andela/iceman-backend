@@ -83,3 +83,8 @@ export const returnRequest = {
   reason: 'Work',
   accommodation: 'Radison Blu'
 };
+
+export const book = {
+  checkIn: Date.now(),
+  checkOut: Date.now(),
+};

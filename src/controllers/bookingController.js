@@ -1,7 +1,9 @@
 import BookingService from '../services/bookingService';
-import { badRequest, success } from '../utils/response';
+import Response from '../utils/response';
 
-const { book } = BookingService;
+const { book, viewBooking } = BookingService;
+
+const { badRequest, success } = Response;
 
 /**
  * Class for booking
@@ -15,11 +17,27 @@ export default class BookingController {
      */
   static async createBooking(req, res) {
     try {
-      const data = book(req);
+      const data = await book(req);
 
       success(res, data);
-    } catch (error) {
-      badRequest(res, error);
+    } catch ({ message: err }) {
+      badRequest(res, err);
+    }
+  }
+
+  /**
+     *
+     * @param {object} req - request
+     * @param {object} res - response message
+     * @returns {object} - response data
+     */
+  static async viewBookings(req, res) {
+    try {
+      const data = await viewBooking(req);
+
+      success(res, data);
+    } catch ({ message: err }) {
+      badRequest(res, err);
     }
   }
 }

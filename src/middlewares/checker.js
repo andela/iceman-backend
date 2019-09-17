@@ -9,16 +9,15 @@ const { badRequest, error } = Response;
  * @param {object} next - next
  * @returns {object } error message
  */
-export const checkBooking = async ({ params }, res, next) => {
+export const checkBooking = async ({ params, user }, res, next) => {
   try {
     const { requestId, accommodationId } = params;
 
-    const existingRequest = await Request.count({ where: { id: +requestId } });
+    const existingRequest = await Request.count({ where: { id: +requestId, userId: user.id } });
 
     if (!existingRequest) error('You don\'t a vaild request');
 
     const existingAccommodation = await Accommodation.count({ where: { id: +accommodationId } });
-    console.log(existingAccommodation);
 
     if (!existingAccommodation) error('You have not selected an existing accommodation');
 

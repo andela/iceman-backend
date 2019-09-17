@@ -3,6 +3,7 @@ module.exports = {
     id: {
       allowNull: false,
       primaryKey: true,
+      autoIncrement: true,
       type: Sequelize.INTEGER
     },
     userId: {
@@ -21,20 +22,11 @@ module.exports = {
     },
     requestId: {
       type: Sequelize.INTEGER,
-      allowNull: false,
+      allowNull: false
     },
     roomId: {
       type: Sequelize.INTEGER,
       allowNull: false
-    },
-    roomType: {
-      type: Sequelize.STRING,
-      allowNull: false
-    },
-    numberOfRooms: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      defaultValue: 1
     },
     checkIn: {
       type: Sequelize.DATE,
@@ -53,5 +45,5 @@ module.exports = {
       type: Sequelize.DATE
     }
   }, { freezeTableName: true }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Bookings')
+  down: queryInterface => queryInterface.dropTable('Booking')
 };

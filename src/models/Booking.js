@@ -1,13 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
   const Booking = sequelize.define('Booking', {
-    roomType: {
+    requestId: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    numberOfRooms: {
+    roomId: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    accommodationId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 1
+      allowNull: false
     },
     checkIn: {
       type: DataTypes.DATE,
@@ -22,10 +25,6 @@ module.exports = (sequelize, DataTypes) => {
   Booking.associate = (models) => {
     Booking.belongsTo(models.User, {
       foreignKey: 'userId',
-      onDelete: 'CASCADE'
-    });
-    Booking.belongsTo(models.Request, {
-      foreignKey: 'requestId',
       onDelete: 'CASCADE'
     });
   };

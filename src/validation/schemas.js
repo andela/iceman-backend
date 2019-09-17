@@ -132,8 +132,7 @@ export const roomSchema = Joi.object().keys({
  * Schema for booking accommodation
  */
 export const bookingSchema = Joi.object().keys({
-  roomType: Joi.string().required().error(() => ({ message: 'Room Type is required' })),
-  numberOfRoom: Joi.number().required().error(() => ({ message: 'Number of Room can only contain numbers' })),
+  roomId: Joi.number().required().error(() => ({ message: 'Please select a room' })),
   checkIn: Joi.date().required().error(() => ({ message: 'Check in date is required e.g YYYY-MM-DD' })),
-  checkout: Joi.date().required().error(() => ({ message: 'Check out date is required e.g YYYY-MM-DD' }))
+  checkOut: Joi.date().required().error(() => ({ message: 'Check out date is required e.g YYYY-MM-DD' }))
 });
