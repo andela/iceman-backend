@@ -235,3 +235,8 @@ export const departments = [
 export const commentBody = {
   comment: 'this is a comment'
 };
+
+export const book = {
+  checkIn: Date.now(),
+  checkOut: Date.now(),
+};
