@@ -244,4 +244,14 @@ describe('/api/v1/notification', () => {
     res.should.to.have.status(400);
     res.body.error.should.equal('User not Found');
   });
+
+  it('should return error if emailNotification input is invalid', async () => {
+    const res = await chai.request(app)
+      .patch(`${URL_NOTIFY_PREFIX}/opt_email`)
+      .set('token', loginUser.body.data.token)
+      .send({ emailNotification: 'bhjgjhg' });
+
+    res.should.to.have.status(400);
+    res.body.error.should.equal('invalid input syntax for type boolean: "bhjgjhg"');
+  });
 });

@@ -53,7 +53,7 @@ export default class NotificationService {
       type
     });
 
-    if (receiver.emailNotify) {
+    if (receiver.emailNotification) {
       await sendEmailNotification(title, message, url);
     }
 
@@ -73,7 +73,7 @@ export default class NotificationService {
 
     if (!data) error('User not Found');
 
-    await User.update({ emailNotify: emailNotification }, { where: { id } });
+    await User.update({ emailNotification }, { where: { id } });
 
     return 'Email Notification status successfully updated';
   }

@@ -69,7 +69,7 @@ module.exports = {
     passportNumber: {
       type: Sequelize.STRING
     },
-    emailNotify: {
+    emailNotification: {
       type: Sequelize.BOOLEAN,
       defaultValue: true
     },

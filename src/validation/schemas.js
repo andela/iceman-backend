@@ -134,11 +134,9 @@ export const requestSchema = Joi.object().keys({
 });
 
 export const optSchema = Joi.object().keys({
-  emailNotification: Joi.boolean().required()
-  // .error(() => ({
-  //   message: 'emailNotification is required'
-  // }))
+  emailNotification: Joi.boolean().valid(true, false).required()
 });
+
 export const commentSchema = Joi.object().keys({
   comment: Joi.string().trim().required()
     .error(() => ({

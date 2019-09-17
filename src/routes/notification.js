@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import NotificationController from '../controllers/notificationController';
 import { optSchema } from '../validation/schemas';
-import { validator } from '../validation/validator';
+import validate from '../validation/validator';
 import middlewares from '../middlewares';
 
 const router = Router();
@@ -14,7 +14,7 @@ const {
   clearAllNotification
 } = NotificationController;
 
-router.patch('/opt_email', [auth, validator(optSchema)], optEmail);
+router.patch('/opt_email', [auth, validate(optSchema)], optEmail);
 router.get('/', auth, getAllNotification);
 router.get('/:notificationId', auth, getSpecificNotification);
 router.patch('/mark_all_read', auth, markAllAsRead);

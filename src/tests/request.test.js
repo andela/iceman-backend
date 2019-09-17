@@ -164,6 +164,38 @@ describe('/api/v1/requests', () => {
       request.body.data.should.have.property('userId');
     });
 
+    it('should veiw user request', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/${request.body.data.id}/request`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('tripType', 'multi-city');
+      res.body.data.should.have.property('returnDate');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('userId');
+    });
+
+    it('should not view a request that does not exist', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/44/request`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(400);
+      res.body.error.should.equal('Request Not Found');
+    });
+
+    it('should not view a request if not permitted', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/1/request`)
+        .set('token', loginManager.body.data.token);
+
+      res.should.have.status(400);
+      res.body.error.should.equal('You are not Allowed to view this request');
+    });
+
     it('should return 400 if the trip is already booked', async () => {
       const { text, status } = await chai.request(app)
         .post(`${URL_PREFIX}/multi-city`)
@@ -459,7 +491,7 @@ describe('/api/v1/requests', () => {
         .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
         .set('token', manager.body.data.token)
         .send({ status: 'rejected' });
-      console.log(res.body);
+
       res.should.have.status(200);
       res.body.should.be.an('object');
       res.body.should.have.property('status').eql('success');

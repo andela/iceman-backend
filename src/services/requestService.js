@@ -171,6 +171,26 @@ export default class RequestService {
   }
 
   /**
+   * @param {object} body - request object
+   * @returns {object} obj - return object
+   */
+  static async getSpecificRequest({ user: { id }, params: { requestId } }) {
+    console.log('i am here');
+    const result = await Request.findOne({ where: { id: Number(requestId) } });
+
+    if (!result) error('Request Not Found');
+
+    const userDept = await UserDepartment.findOne({
+      include: [Department], where: { userId: result.userId }
+    });
+    const { dataValues: { Department: { dataValues: { manager } } } } = userDept;
+
+    if (result.userId !== id && id !== manager) error('You are not Allowed to view this request');
+
+    return result;
+  }
+
+  /**
    *
    * @param {number} id - manager's id
    * @return {object} - open requests

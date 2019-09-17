@@ -53,6 +53,12 @@ docker run -p 3000:3000 iceman-backend
 <tr><td>GET</td><td>/api/v1/requests/return</td><td>Create a return trip</td></tr>
 <tr><td>GET</td><td>/api/v1/requests/pending</td><td>Avail open requests for approval</td></tr>
 <tr><td>PATCH</td><td>/api/v1/requests/:id/respond</td><td>Approve or Reject a travel request</td></tr>
+<tr><td>GET</td><td>/api/v1/requests/:requestId/request</td><td>Get a Specific Request</td></tr>
+<tr><td>PATCH</td><td>/api/v1/notification/opt_email</td><td>Opt In or Out Email Notification</td></tr>
+<tr><td>GET</td><td>/api/v1/notification/</td><td>Get All Notification</td></tr>
+<tr><td>GET</td><td>/api/v1/notification/:notificationId</td><td>Get A Specific Notification</td></tr>
+<tr><td>PATCH</td><td>/api/v1/notification/mark_all_read</td><td>Mark All Notifications As Read</td></tr>
+<tr><td>DELETE</td><td>/api/v1/notification/clear</td><td>Clear All Notifications</td></tr>
 </table>
 
 ## API Documentation
