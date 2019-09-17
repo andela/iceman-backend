@@ -909,6 +909,75 @@ paths:
                 type: string
       security:
         - api_key: []
+  /bookings/create/{requestId}/{accommodationId}:
+    post:
+      tags:
+        - Book Accommodation 
+      summary: Book an Accommodation
+      description: User book an Accommodation
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: requestId
+          in: path
+          description: Trip Request ID
+          required: true
+          type: integer
+          format: int64
+        - name: accommodationId
+          in: path
+          description: Accommodation ID
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          description: User booking object
+          required: true
+          schema:
+            type: object
+            properties:
+              roomId:
+                type: integer
+              checkIn:
+                type: string
+                format: date-time
+              checkOut:
+                type: string
+                format: date-time
+      responses:
+        200:
+          description: Successfully Book Accommodation
+          schema:
+            $ref: '#/definitions/Booking'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
+  /bookings/:
+    get:
+      tags:
+        - Book Accommodation
+      summary: Get user booking History
+      produces:
+        - application/json
+      responses:
+        400:
+          description: Your booking history is empty
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Booking'
+      security:
+        - api_key: []
 definitions:
   AuthResponse:
     properties:
@@ -1225,6 +1294,32 @@ definitions:
                     type: string
                   accommodationId:
                     type: integer
+  Booking:
+    properties:
+      status:
+        type: string
+      data:
+        items:
+          properties:
+            id:
+              type: integer
+            roomId:
+              type: integer
+              required: true
+            checkIn:
+              type: string
+              format: date
+              required: true
+            checkOut:
+              type: string
+              format: date
+              required: true
+            requestId:
+              type: integer
+            accommodationId:
+              type: integer
+            userId:
+              type: integer
 
 securityDefinitions:
   api_key:
