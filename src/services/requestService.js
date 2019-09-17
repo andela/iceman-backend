@@ -72,11 +72,11 @@ export default class RequestService {
 
     if (status === 'approved') {
       await Notification.createNotificationMsg({
-        sender, receiver, type: 'approvedRequest', url: dataValues.id
+        sender, receiver, type: 'approvedRequest', link: dataValues.id
       });
     } else {
       await Notification.createNotificationMsg({
-        sender, receiver, type: 'rejectRequest', url: dataValues.id
+        sender, receiver, type: 'rejectRequest', link: dataValues.id
       });
     }
 
@@ -90,11 +90,14 @@ export default class RequestService {
    */
   static async oneway({ body, user: { id } }) {
     const { travelDate } = body;
-    // console.log(body);
     const existingRequest = await Request.count({ where: { travelDate, userId: id } });
     if (existingRequest) error('You\'ve already booked this trip');
 
     body.destination = body.destination.split(',');
+
+    const data = await Request.create({ ...body, userId: id });
+
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
 
     const userDept = await UserDepartment.findOne({
       include: [Department], where: { userId: id }
@@ -105,13 +108,11 @@ export default class RequestService {
     const receive = await User.findOne({ where: { id: manager } });
     const { dataValues: receiver } = receive;
 
+    await Notification.createNotificationMsg({
+      sender, receiver, type: 'newRequest', link: data.dataValues.id
+    });
 
-    await Notification.createNotificationMsg({ sender, receiver, type: 'newRequest' });
-
-    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
-
-
-    return Request.create({ ...body, userId: id });
+    return data;
   }
 
   /**
@@ -132,9 +133,12 @@ export default class RequestService {
 
     const { dataValues } = await Request.create({ ...body, destination, userId: id });
 
+    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+
     const userDept = await UserDepartment.findOne({
       include: [Department], where: { userId: id }
     });
+
     const { dataValues: { Department: { dataValues: { manager } } } } = userDept;
     const send = await User.findOne({ where: id });
     const { dataValues: sender } = send;
@@ -142,7 +146,6 @@ export default class RequestService {
     const { dataValues: receiver } = receive;
 
     await Notification.createNotificationMsg({ sender, receiver, type: 'newRequest' });
-    await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
 
 
     return dataValues;

@@ -60,9 +60,9 @@ module.exports = (sequelize, DataTypes) => {
       passportName: {
         type: DataTypes.STRING
       },
-      // passportNumber: {
-      //   type: DataTypes.STRING
-      // },
+      passportNumber: {
+        type: DataTypes.STRING
+      },
       emailNotify: {
         type: DataTypes.BOOLEAN
       }

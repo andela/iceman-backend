@@ -34,7 +34,6 @@ export const sendMail = async (data) => {
   };
 
   try {
-    console.log(message);
     await sgMail.send(message);
   } catch (error) {
     Response.error(error);

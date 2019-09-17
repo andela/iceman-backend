@@ -8,14 +8,16 @@ const router = Router();
 const { auth } = middlewares;
 const {
   optEmail,
-  getNotification,
+  getSpecificNotification,
   markAllAsRead,
-  getAllNotification
+  getAllNotification,
+  clearAllNotification
 } = NotificationController;
 
 router.patch('/opt_email', [auth, validator(optSchema)], optEmail);
 router.get('/', auth, getAllNotification);
-router.get('/:notificationId', auth, getNotification);
+router.get('/:notificationId', auth, getSpecificNotification);
 router.patch('/mark_all_read', auth, markAllAsRead);
+router.delete('/clear', auth, clearAllNotification);
 
 export default router;

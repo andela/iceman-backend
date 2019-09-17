@@ -69,6 +69,7 @@ export default class NotificationService {
   static async optEmailNotification(req) {
     const { id } = req.user;
     const { emailNotification } = req.body;
+
     const data = await User.findOne({ where: { id } });
 
     if (!data) error('User not Found');
@@ -82,9 +83,22 @@ export default class NotificationService {
    * @param {object} req request object
    * @returns {String} reponse message
    */
-  static async getSpecificNotification(req) {
+  static async getNotification(req) {
     const { id } = req.user;
     const { notificationId } = req.params;
+
+    const aa = await Notification.update({
+      isRead: true
+    },
+    {
+      where:
+      {
+        receiverId: id,
+        id: Number(notificationId)
+      }
+    });
+
+    if (aa[0] !== 1) error('Notification Not Found');
 
     const data = await Notification.findOne({
       where: {
@@ -92,10 +106,6 @@ export default class NotificationService {
         receiverId: id
       }
     });
-
-    await Notification.update({ isRead: true }, { where: { receiverId: id } });
-
-    if (!data) error('Notification Not Found');
 
     return data;
   }
@@ -127,5 +137,21 @@ export default class NotificationService {
     await Notification.update({ isRead: true }, { where: { receiverId: id } });
 
     return 'All Notification Marked As Read';
+  }
+
+  /**
+   * @param {object} req request object
+   * @returns {String} reponse message
+   */
+  static async deleteAllNotification(req) {
+    const { id } = req.user;
+
+    const isExist = await Notification.findAll({ where: { receiverId: id } });
+
+    if (!isExist[0]) error('No Notification Found');
+
+    await Notification.destroy({ where: { receiverId: id } });
+
+    return 'Notification Cleared';
   }
 }

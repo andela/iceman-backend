@@ -1,5 +1,7 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
+import sgMail from '@sendgrid/mail';
+import sinon from 'sinon';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
@@ -29,6 +31,7 @@ let request;
 let managerRequest;
 let manager;
 let manager2;
+let send;
 
 const profileDetails = {
   gender: 'Male',
@@ -47,6 +50,8 @@ describe('/api/v1/requests', () => {
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');
+    await TestHelper.destroyModel('Notification');
+    await send.restore();
   });
 
   before(async () => {
@@ -55,6 +60,7 @@ describe('/api/v1/requests', () => {
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');
+    await TestHelper.destroyModel('Notification');
     await db.Role.bulkCreate(insertRoles);
 
     await TestHelper.createUser({
@@ -81,10 +87,24 @@ describe('/api/v1/requests', () => {
       ...managerUser, roleId: 4,
     });
 
+    manager = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'manager@gmail.com', password: user.password });
+
+    department = await TestHelper.createDepartment({
+      department: 'dev', manager: manager.body.data.id
+    });
+
     loginUser = await chai.request(app)
       .post('/api/v1/auth/login')
       .set('Content-Type', 'application/json')
       .send(Helper.pickFields(user, ['email', 'password']));
+
+    await TestHelper.createUserDepartment({
+      userId: loginUser.body.data.id,
+      departmentId: department.id
+    });
 
     loginUser2 = await chai.request(app)
       .post('/api/v1/auth/login')
@@ -101,6 +121,13 @@ describe('/api/v1/requests', () => {
       .set('Content-Type', 'application/json')
       .send(Helper.pickFields(managerUser, ['email', 'password']));
 
+    await TestHelper.createUserDepartment({
+      userId: loginManager.body.data.id,
+      departmentId: department.id
+    });
+
+    send = await sinon.stub(sgMail, 'send').resolves({});
+
     request = await chai.request(app)
       .post(`${URL_PREFIX}/multi-city`)
       .set('Content-Type', 'application/json')
@@ -113,25 +140,13 @@ describe('/api/v1/requests', () => {
       .set('token', loginManager.body.data.token)
       .send(multiRequest);
 
-    manager = await chai.request(app)
-      .post('/api/v1/auth/login')
-      .set('Content-Type', 'application/json')
-      .send({ email: 'manager@gmail.com', password: user.password });
-
     manager2 = await chai.request(app)
       .post('/api/v1/auth/login')
       .set('Content-Type', 'application/json')
       .send({ email: 'manager2@gmail.com', password: user.password });
 
-    department = await TestHelper.createDepartment({ department: 'dev', manager: manager.body.data.id });
-
     await TestHelper.createUserDepartment({
       userId: loginUser2.body.data.id,
-      departmentId: department.id
-    });
-
-    await TestHelper.createUserDepartment({
-      userId: loginManager.body.data.id,
       departmentId: department.id
     });
   });
@@ -440,7 +455,7 @@ describe('/api/v1/requests', () => {
         .patch(`${URL_PREFIX}/${managerRequest.body.data.id}/respond`)
         .set('token', manager.body.data.token)
         .send({ status: 'rejected' });
-
+      console.log(res.body);
       res.should.have.status(200);
       res.body.should.be.an('object');
       res.body.should.have.property('status').eql('success');
