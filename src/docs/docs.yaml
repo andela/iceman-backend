@@ -13,6 +13,8 @@ tags:
     description: Manage User Authentication and Profile
   - name: Requests
     description: Manage Travel Requests
+  - name: Accommodation
+    description: Manage Accommodation Facilities
 host: localhost:3000
 basePath: /api/v1
 paths:
@@ -339,7 +341,7 @@ paths:
         403:
           description: Authentication failed
       security:
-        - api_key: [] 
+        - api_key: []
 
   /requests:
     get:
@@ -731,11 +733,11 @@ paths:
           description: Authorization failure
         200:
           description: Success
-   
+
   /accommodation:
     post:
-      tags: 
-        - Book Accommodation 
+      tags:
+        - Accommodation
       summary: Add new accommodation centre
       consumes:
         - multipart/form-data
@@ -781,8 +783,8 @@ paths:
       security:
         - api_key: []
     get:
-      tags: 
-        - Book Accommodation 
+      tags:
+        - Accommodation
       summary: Get all accommodation
       produces:
         - application/json
@@ -797,10 +799,11 @@ paths:
             $ref: '#definitions/GetAccommodation'
       security:
         - api_key: []
+
   /accommodation/{id}:
     patch:
-      tags: 
-        - Book Accommodation 
+      tags:
+        - Accommodation
       summary: Update existing accommodation centre
       consumes:
         - multipart/form-data
@@ -849,8 +852,8 @@ paths:
       security:
         - api_key: []
     delete:
-      tags: 
-        - Book Accommodation 
+      tags:
+        - Accommodation
       summary: Delete accommodation centre
       produces:
         - application/json
@@ -876,8 +879,8 @@ paths:
         - api_key: []
   /accommodation/{accommodationId}/room:
     post:
-      tags: 
-        - Book Accommodation 
+      tags:
+        - Accommodation
       summary: Add new room to centre
       consumes:
         - multipart/form-data
@@ -925,8 +928,8 @@ paths:
         - api_key: []
   /accommodation/{id}/room:
     patch:
-      tags: 
-        - Book Accommodation 
+      tags:
+        - Accommodation
       summary: Update existing room details
       consumes:
         - multipart/form-data
@@ -972,8 +975,8 @@ paths:
       security:
         - api_key: []
     delete:
-      tags: 
-        - Book Accommodation 
+      tags:
+        - Accommodation
       summary: Delete accommodation room
       produces:
         - application/json
@@ -1000,7 +1003,7 @@ paths:
   /requests/{requestId}/comments:
     post:
       tags:
-        - Comments
+        - Requests
       summary: Creates a comment
       consumes:
         - application/json
@@ -1024,12 +1027,12 @@ paths:
         400:
           description: Error
         201:
-          description: Success   
+          description: Success
       security:
-        - api_key: [] 
-    get: 
+        - api_key: []
+    get:
       tags:
-        - Comments
+        - Requests
       summary: Gets all request comments
       produces:
         - application/json
@@ -1037,45 +1040,20 @@ paths:
         - in: path
           name: id
           required: true
-        - name: name
-          in: formData
-          type: string
-          required: true
-        - name: roomType
-          in: formData
-          type: string
-          required: true
-        - name: facilities
-          in: formData
-          type: string
-          required: true
-        - name: price
-          in: formData
-          type: string
-        - name: status
-          in: formData
-          type: string
-        - name: images
-          in: formData
-          type: file
-        - name: description
-          in: formData
-          type: string
       responses:
         400:
-          description: The room does not exists
+          description: The request does not exist
         401:
           description: Access Denied, No token provided
         200:
           description: Success
-          schema:
-            $ref: '#definitions/Room'
       security:
         - api_key: []
+
   /requests/{requestId}/comments/{commentId}:
     delete:
       tags:
-        - Comments
+        - Requests
       summary: Deletes a comment
       produces:
         - application/json
@@ -1090,11 +1068,144 @@ paths:
           type: integer
       responses:
         400:
-          description: Error
+          description: Bad Request
+        401:
+          description: Access Denied, no token provided
         200:
-          description: Success 
+          description: Success
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              message:
+                type: string
       security:
         - api_key: []
+
+  /accommodation/{accommodationId}/like:
+    post:
+      tags:
+        - Accommodation
+      summary: Like an accommodation centre
+      description: Like an accommodation centre
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: accommodationId
+          type: integer
+          description: ID of accommodation centre
+          required: true
+      responses:
+        400:
+          description: Bad Request
+        401:
+          description: Access Denied, no token provided
+        201:
+          description: Success
+          schema:
+            $ref: '#definitions/Like'
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Accommodation
+      summary: Unlike an accommodation centre
+      description: Unlike an accommodation centre
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: accommodationId
+          type: integer
+          description: ID of accommodation centre
+          required: true
+      responses:
+        400:
+          description: Bad Request
+        401:
+          description: Access Denied, no token provided
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
+
+  /accommodation/{accommodationId}/feedback:
+    post:
+      tags:
+        - Accommodation
+      summary: Post a feedback comment on an accommodation centre
+      description: Post a feedback comment on an accommodation centre
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: accommodationId
+          type: integer
+          description: ID of accommodation centre
+          required: true
+        - in: body
+          name: Feedback schema
+          description: Feedback details
+          required: true
+          schema:
+            type: object
+            properties:
+              comment:
+                type: string
+      responses:
+        400:
+          description: Bad request
+        401:
+          description: Access Denied, no token provided
+        201:
+          description: Success
+          schema:
+            $ref: '#definitions/Feedback'
+      security:
+        - api_key: []
+
+  /accommodation/feedback/{feedbackId}:
+    delete:
+      tags:
+        - Accommodation
+      summary: Remove a feedback comment
+      description: Remove a feedback comment
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: feedbackId
+          type: integer
+          description: ID of feedback comment
+          required: true
+      responses:
+        400:
+          description: Bad Request
+        401:
+          description: Access Denied, no token provided
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
+
 definitions:
   AuthResponse:
     properties:
@@ -1144,6 +1255,7 @@ definitions:
           updatedAt:
             type: string
             format: date-time
+
   UsersResponse:
     properties:
       status:
@@ -1190,12 +1302,14 @@ definitions:
           updatedAt:
             type: string
             format: date-time
+
   ErrorResponse:
     properties:
       status:
         type: string
       error:
         type: string
+
   Request:
     properties:
       status:
@@ -1243,6 +1357,12 @@ definitions:
             type: string
           preferredCurrency:
             type: string
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
 
   DownlineRequests:
     properties:
@@ -1286,6 +1406,26 @@ definitions:
                     type: string
                   lastName:
                     type: string
+            rememberProfile:
+              type: boolean
+            gender:
+              type: string
+            passportName:
+              type: string
+            passportNumber:
+              type: string
+            preferredLanguage:
+              type: string
+            residentialAddress:
+             type: string
+            preferredCurrency:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
   MyRequest:
     properties:
       status:
@@ -1320,6 +1460,26 @@ definitions:
               type: string
             userId:
               type: integer
+            rememberProfile:
+              type: boolean
+            gender:
+              type: string
+            passportName:
+              type: string
+            passportNumber:
+              type: string
+            preferredLanguage:
+              type: string
+            residentialAddress:
+             type: string
+            preferredCurrency:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
   Room:
     properties:
       status:
@@ -1349,6 +1509,13 @@ definitions:
             type: string
           accommodationId:
             type: integer
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+
   Accommodation:
     properties:
       status:
@@ -1373,6 +1540,13 @@ definitions:
             type: string
           roomsCount:
             type: integer
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+
   GetAccommodation:
     properties:
       status:
@@ -1425,20 +1599,55 @@ definitions:
                     type: string
                   accommodationId:
                     type: integer
-            rememberProfile:
-              type: boolean
-            gender:
-              type: string
-            passportName:
-              type: string
-            passportNumber:
-              type: string
-            preferredLanguage:
-              type: string
-            residentialAddress:
-             type: string
-            preferredCurrency:
-              type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+
+  Like:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          userId:
+            type: integer
+          accommodationId:
+            type: integer
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+
+  Feedback:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          userId:
+            type: integer
+          accommodationId:
+            type: integer
+          comment:
+            type: string
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+
 
 securityDefinitions:
   api_key:

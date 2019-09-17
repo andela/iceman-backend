@@ -163,3 +163,30 @@ export const roomSchema = Joi.object().keys({
   status: Joi.string(),
   description: Joi.string(),
 });
+
+/**
+ * Schema for accommodation ID
+ */
+export const accommodationIdSchema = Joi.object().keys({
+  accommodationId: Joi.number().integer().min(1).required()
+    .error(() => ({
+      message: 'Accommodation ID must be an integer greater than or equal to 1',
+    })),
+});
+
+/**
+ * Schema for accommodation feedback
+ */
+export const feedbackSchema = Joi.object().keys({
+  comment: Joi.string().required().error(() => ({ message: 'Please enter your comment' }))
+});
+
+/**
+ * Schema for feedback ID
+ */
+export const feedbackIdSchema = Joi.object().keys({
+  feedbackId: Joi.number().integer().min(1).required()
+    .error(() => ({
+      message: 'Feedback ID must be an integer greater than or equal to 1',
+    })),
+});

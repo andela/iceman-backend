@@ -38,6 +38,12 @@ module.exports = (sequelize, DataTypes) => {
     Accommodation.hasMany(models.Room, {
       foreignKey: 'accommodationId'
     });
+    Accommodation.hasMany(models.Like, {
+      foreignKey: 'accommodationId'
+    });
+    Accommodation.hasMany(models.Feedback, {
+      foreignKey: 'accommodationId'
+    });
   };
   return Accommodation;
 };

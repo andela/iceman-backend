@@ -13,8 +13,8 @@ import {
   user,
   returnRequest,
   tripRequest,
-  managerUser,
-  noProfileRequest
+  noProfileRequest,
+  managerUser
 } from './testData/sampleData';
 
 chai.use(chaiHttp);
@@ -43,10 +43,18 @@ const profileDetails = {
 };
 
 describe('/api/v1/requests', () => {
-  before(async () => {
+  after(async () => {
+    await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
+  });
+
+  before(async () => {
     await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');
     await db.Role.bulkCreate(insertRoles);
@@ -129,7 +137,7 @@ describe('/api/v1/requests', () => {
     });
   });
 
-  describe('POST /multi-city', () => {
+  describe('POST /multi-city', async () => {
     it('should return 200 if the request finished successfully', async () => {
       request.should.have.status(200);
       request.body.data.should.have.property('destination');

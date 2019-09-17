@@ -11,7 +11,8 @@ module.exports = {
     roleId: 1,
     createdAt: new Date(),
     updatedAt: new Date()
-  }], {}),
+  }
+  ], {}),
 
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Users', null, {})
 };

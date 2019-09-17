@@ -33,6 +33,7 @@ describe('Assign User Role', () => {
   });
 
   before(async () => {
+    await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('User');
     await db.Role.bulkCreate(insertRoles);

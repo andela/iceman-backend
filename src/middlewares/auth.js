@@ -10,6 +10,8 @@ export default async (req, res, next) => {
 
   if (!token) return badRequest(res, 'Access Denied, No token provided', 401);
 
+  console.log(req.params);
+
   try {
     const payload = await jwt.verify(token, jwtSecret);
 

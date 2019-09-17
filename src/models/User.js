@@ -79,6 +79,12 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Accommodation, {
       foreignKey: 'userId'
     });
+    User.hasMany(models.Like, {
+      foreignKey: 'userId'
+    });
+    User.hasMany(models.Feedback, {
+      foreignKey: 'userId'
+    });
     User.hasMany(models.Comment, {
       foreignKey: 'userId'
     });

@@ -49,18 +49,29 @@ const profileDetails = {
 describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
-  before(async () => {
-    await TestHelper.destroyModel('Role');
+  after(async () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+  });
+
+  before(async () => {
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('Role');
     await db.Role.bulkCreate(insertRoles);
-    await TestHelper.createUser({
+
+    verifiedUser = await TestHelper.createUser({
       ...user, roleId: 5
     });
 
     notVerifiedUser = await TestHelper.createUser({
       ...user,
       email: 'user2@gmail.com',
+    });
+
+    verifiedUser = await TestHelper.createUser({
+      ...user3, roleId: 5,
     });
   });
 
@@ -404,16 +415,6 @@ describe('/api/v1/auth', () => {
     });
   });
   describe('GET /profile', () => {
-    beforeEach(async () => {
-      verifiedUser = await TestHelper.createUser({
-        ...user3, roleId: 5,
-      });
-    });
-
-    afterEach(async () => {
-      await TestHelper.destroyModel('User');
-    });
-
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/profile`)
@@ -473,16 +474,6 @@ describe('/api/v1/auth', () => {
   });
 
   describe('PATCH /profile', () => {
-    beforeEach(async () => {
-      verifiedUser = await TestHelper.createUser({
-        ...user3, roleId: 5,
-      });
-    });
-
-    afterEach(async () => {
-      await TestHelper.destroyModel('User');
-    });
-
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/profile`)
