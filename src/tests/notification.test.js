@@ -90,6 +90,7 @@ describe('/api/v1/notification', () => {
       .send({ ...oneWayTrip, rememberProfile: false });
 
     requestId = res.body.data.id;
+
     res.should.have.status(201);
     res.body.data.should.have.property('destination');
     res.body.data.should.have.property('source');

@@ -37,31 +37,30 @@ const user3 = {
   password: 'elijah1994'
 };
 
+const profileDetails = {
+  firstName: 'Elijah',
+  lastName: 'Enuem-Udogu',
+  gender: 'Male',
+  dateOfBirth: '1994-05-20',
+  preferredLanguage: 'English',
+  residentialAddress: 'Benin City, Nigeria',
+  preferredCurrency: 'Nigerian Naira (NGN)',
+};
 describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
-  after(async () => {
-    await TestHelper.destroyModel('Request');
-    await TestHelper.destroyModel('User');
-    await TestHelper.destroyModel('Role');
-  });
-
   before(async () => {
-    await TestHelper.destroyModel('User');
-    await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
     await db.Role.bulkCreate(insertRoles);
-    verifiedUser = await TestHelper.createUser({
+    await TestHelper.createUser({
       ...user, roleId: 5
     });
 
     notVerifiedUser = await TestHelper.createUser({
       ...user,
       email: 'user2@gmail.com',
-    });
-
-    verifiedUser = await TestHelper.createUser({
-      ...user3, roleId: 5,
     });
   });
 
@@ -404,8 +403,17 @@ describe('/api/v1/auth', () => {
       res.body.error.should.equal('User not found');
     });
   });
-
   describe('GET /profile', () => {
+    beforeEach(async () => {
+      verifiedUser = await TestHelper.createUser({
+        ...user3, roleId: 5,
+      });
+    });
+
+    afterEach(async () => {
+      await TestHelper.destroyModel('User');
+    });
+
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)
         .get(`${URL_PREFIX}/profile`)
@@ -465,15 +473,15 @@ describe('/api/v1/auth', () => {
   });
 
   describe('PATCH /profile', () => {
-    const profileDetails = {
-      firstName: 'Elijah',
-      lastName: 'Enuem-Udogu',
-      gender: 'Male',
-      dateOfBirth: '1994-05-20',
-      preferredLanguage: 'English',
-      residentialAddress: 'Benin City, Nigeria',
-      preferredCurrency: 'Nigerian Naira (NGN)',
-    };
+    beforeEach(async () => {
+      verifiedUser = await TestHelper.createUser({
+        ...user3, roleId: 5,
+      });
+    });
+
+    afterEach(async () => {
+      await TestHelper.destroyModel('User');
+    });
 
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)

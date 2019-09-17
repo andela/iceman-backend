@@ -14,7 +14,21 @@ export const multiRequest = {
   residentialAddress: 'Delta state',
   rememberProfile: false
 };
-
+export const multiRequest2 = {
+  source: 'Nigeria',
+  destination: 'Abuja, USA, POLAND',
+  tripType: 'multi-city',
+  travelDate: Date.now(),
+  reason: 'reason',
+  accommodation: 'accommodation',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: false
+};
 export const missingRequiredField = {
   tripType: 'multi-city',
   travelDate: Date.now(),
@@ -42,6 +56,13 @@ export const managerUser = {
   lastName: 'Manager',
   email: 'manager1@gmail.com',
   password: 'manager1234',
+  gender: 'Male',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: true
 };
 
 export const user4 = {
@@ -57,8 +78,8 @@ export const oneWayTrip = {
   source: 'Lagos',
   tripType: 'one-way',
   destination: 'Abuja',
-  travelDate: Date.now(),
-  returnDate: Date.now(),
+  travelDate: new Date('2035-01-01'),
+  returnDate: new Date('2035-01-01'),
   reason: 'reason',
   accommodation: 'accommodation',
   gender: 'female',
@@ -67,17 +88,23 @@ export const oneWayTrip = {
   passportNumber: '1212323',
   preferredCurrency: 'Euro',
   residentialAddress: 'Delta state',
-  rememberProfile: true
+  rememberProfile: false
 };
 export const oneWayTrip2 = {
   source: 'Lagos',
   tripType: 'one-way',
   destination: 'Abuja',
-  travelDate: '10/02/2019',
-  returnDate: Date(2011 - 10 - 5),
+  travelDate: new Date('2034-01-01'),
+  returnDate: new Date('2034-01-01'),
   reason: 'reason',
   accommodation: 'accommodation',
-  rememberProfile: true
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: false
 };
 
 export const testRequest = {
@@ -127,10 +154,26 @@ export const tripRequest = {
   source: 'Abuja',
   tripType: 'one-way',
   destination: 'Uyo',
-  travelDate: '2019-11-20',
+  travelDate: new Date('2036-01-01'),
   reason: 'reason-it',
   accommodation: 'accommodation-1s',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
   rememberProfile: true
+};
+
+export const noProfileRequest = {
+  source: 'Abuja',
+  tripType: 'one-way',
+  destination: 'Uyo',
+  travelDate: Date.now(),
+  reason: 'reason-it',
+  accommodation: 'accommodation-1s',
+  rememberProfile: false
 };
 
 export const user1 = {

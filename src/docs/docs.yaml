@@ -318,20 +318,17 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: roleId
-          in: body
-          description: Role ID
-          required: true
-          type: integer
         - in: body
-          name: email
-          description: User email to be assigned a role
+          name: Role schema
+          description: Role assignment details
           required: true
           schema:
             type: object
             properties:
               email:
                 type: string
+              roleId:
+                type: integer
       responses:
         200:
           description: successful operation
@@ -342,9 +339,9 @@ paths:
         403:
           description: Authentication failed
       security:
-        - api_key: []
+        - api_key: [] 
 
-  /requests/userRequests:
+  /requests:
     get:
       tags:
         - Requests
@@ -394,7 +391,7 @@ paths:
       parameters:
         - in: body
           name: body
-          description: Multiple Request Destination
+          description: Multiple Request Destzination
           required: true
           schema:
             properties:
@@ -403,13 +400,6 @@ paths:
                 required: true
               destination:
                 type: string
-              tripType:
-                type: string
-                required: true
-                enum:
-                  - one-way
-                  - return
-                  - multi-city
               travelDate:
                 type: string
                 format: date
@@ -470,13 +460,6 @@ paths:
                 type: string
               destination:
                 type: string
-              tripType:
-                type: string
-                description: Trip type
-                enum:
-                  - one-way
-                  - return
-                  - multi-city
               travelDate:
                 type: string
                 format: date-time
@@ -584,13 +567,6 @@ paths:
                 type: string
               destination:
                 type: string
-              tripType:
-                type: string
-                description: Trip type
-                enum:
-                  - one-way
-                  - return
-                  - multi-city
               travelDate:
                 type: string
                 format: date-time
@@ -635,8 +611,6 @@ paths:
               source:
                 type: string
               destination:
-                type: string
-              tripType:
                 type: string
               travelDate:
                 type: string
@@ -757,39 +731,272 @@ paths:
           description: Authorization failure
         200:
           description: Success
-  /auth/assign_role:
-    patch:
-      tags:
-        - Auth
-      summary: Assign user role
-      description: Assign user role with Super Administrator Access
+   
+  /accommodation:
+    post:
+      tags: 
+        - Book Accommodation 
+      summary: Add new accommodation centre
       consumes:
-        - application/json
+        - multipart/form-data
       produces:
         - application/json
       parameters:
-        - in: body
-          name: Role schema
-          description: Role assignment details
+        - name: name
+          in: formData
+          type: string
           required: true
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-              roleId:
-                type: integer
+        - name: country
+          in: formData
+          type: string
+          required: true
+        - name: state
+          in: formData
+          type: string
+          required: true
+        - name: city
+          in: formData
+          type: string
+          required: true
+        - name: address
+          in: formData
+          type: string
+          required: true
+        - name: image
+          in: formData
+          type: file
+          required: true
+        - name: description
+          in: formData
+          type: string
       responses:
-        200:
-          description: successful operation
         400:
-          description: Error
+          description: This centre already exists
         401:
-          description: Access Denied
-        403:
-          description: Authentication failed
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Accommodation'
       security:
-        - api_key: []  
+        - api_key: []
+    get:
+      tags: 
+        - Book Accommodation 
+      summary: Get all accommodation
+      produces:
+        - application/json
+      responses:
+        404:
+          description: No accommodation yet
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/GetAccommodation'
+      security:
+        - api_key: []
+  /accommodation/{id}:
+    patch:
+      tags: 
+        - Book Accommodation 
+      summary: Update existing accommodation centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: country
+          in: formData
+          type: string
+          required: true
+        - name: state
+          in: formData
+          type: string
+          required: true
+        - name: city
+          in: formData
+          type: string
+          required: true
+        - name: address
+          in: formData
+          type: string
+          required: true
+        - name: image
+          in: formData
+          type: file
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: You cannot edit this accommodation
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Accommodation'
+      security:
+        - api_key: []
+    delete:
+      tags: 
+        - Book Accommodation 
+      summary: Delete accommodation centre
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        400:
+          description: You cannot delete this accommodation
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
+  /accommodation/{accommodationId}/room:
+    post:
+      tags: 
+        - Book Accommodation 
+      summary: Add new room to centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: accommodationId
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: roomType
+          in: formData
+          type: string
+          required: true
+        - name: facilities
+          in: formData
+          type: string
+          required: true
+        - name: price
+          in: formData
+          type: string
+        - name: status
+          in: formData
+          type: string
+        - name: images
+          in: formData
+          type: file
+          required: true
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: This room already exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Room'
+      security:
+        - api_key: []
+  /accommodation/{id}/room:
+    patch:
+      tags: 
+        - Book Accommodation 
+      summary: Update existing room details
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: roomType
+          in: formData
+          type: string
+          required: true
+        - name: facilities
+          in: formData
+          type: string
+          required: true
+        - name: price
+          in: formData
+          type: string
+        - name: status
+          in: formData
+          type: string
+        - name: images
+          in: formData
+          type: file
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: The room does not exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Room'
+      security:
+        - api_key: []
+    delete:
+      tags: 
+        - Book Accommodation 
+      summary: Delete accommodation room
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        400:
+          description: The operation was not successfully
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
   /requests/{requestId}/comments:
     post:
       tags:
@@ -828,14 +1035,41 @@ paths:
         - application/json
       parameters:
         - in: path
-          name: requestId
+          name: id
           required: true
-          type: integer
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: roomType
+          in: formData
+          type: string
+          required: true
+        - name: facilities
+          in: formData
+          type: string
+          required: true
+        - name: price
+          in: formData
+          type: string
+        - name: status
+          in: formData
+          type: string
+        - name: images
+          in: formData
+          type: file
+        - name: description
+          in: formData
+          type: string
       responses:
         400:
-          description: Error
+          description: The room does not exists
+        401:
+          description: Access Denied, No token provided
         200:
-          description: Success 
+          description: Success
+          schema:
+            $ref: '#definitions/Room'
       security:
         - api_key: []
   /requests/{requestId}/comments/{commentId}:
@@ -861,7 +1095,6 @@ paths:
           description: Success 
       security:
         - api_key: []
-
 definitions:
   AuthResponse:
     properties:
@@ -980,7 +1213,7 @@ definitions:
             items:
               type: string
             required: true
-          type:
+          tripType:
             type: string
           travelDate:
             type: string
@@ -1087,6 +1320,111 @@ definitions:
               type: string
             userId:
               type: integer
+  Room:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          roomType:
+            type: string
+          facilities:
+            type: array
+            items:
+              type: string
+          price:
+            type: number
+          status:
+            type: string
+          images:
+            type: array
+            items:
+              type: string
+          description:
+            type: string
+          accommodationId:
+            type: integer
+  Accommodation:
+    properties:
+      status:
+        type: string
+      data:
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          country:
+            type: string
+          state:
+            type: string
+          city:
+            type: string
+          address:
+            type: string
+          image:
+            type: string
+          description:
+            type: string
+          roomsCount:
+            type: integer
+  GetAccommodation:
+    properties:
+      status:
+        type: string
+      data:
+        type: array
+        items:
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            country:
+              type: string
+            state:
+              type: string
+            city:
+              type: string
+            address:
+              type: string
+            image:
+              type: string
+            description:
+              type: string
+            roomsCount:
+              type: integer
+            Rooms:
+              type: array
+              items:
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  roomType:
+                    type: string
+                  facilities:
+                    type: array
+                    items:
+                      type: string
+                  price:
+                    type: number
+                  status:
+                    type: string
+                  images:
+                    type: array
+                    items:
+                      type: string
+                  description:
+                    type: string
+                  accommodationId:
+                    type: integer
             rememberProfile:
               type: boolean
             gender:

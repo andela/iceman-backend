@@ -26,7 +26,6 @@ export default class NotificationService {
       pusher.trigger('notifications', `event-${id}`, {
         title, message, url
       });
-      console.log('i am here');
     };
 
     // Email notification Function
@@ -87,18 +86,15 @@ export default class NotificationService {
     const { id } = req.user;
     const { notificationId } = req.params;
 
-    const aa = await Notification.update({
-      isRead: true
-    },
-    {
-      where:
+    const value = await Notification.update({ isRead: true },
       {
-        receiverId: id,
-        id: Number(notificationId)
-      }
-    });
+        where: {
+          receiverId: id,
+          id: Number(notificationId)
+        }
+      });
 
-    if (aa[0] !== 1) error('Notification Not Found');
+    if (value[0] !== 1) error('Notification Not Found');
 
     const data = await Notification.findOne({
       where: {
