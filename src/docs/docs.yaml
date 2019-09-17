@@ -320,20 +320,17 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: roleId
-          in: body
-          description: Role ID
-          required: true
-          type: integer
         - in: body
-          name: email
-          description: User email to be assigned a role
+          name: Role schema
+          description: Role assignment details
           required: true
           schema:
             type: object
             properties:
               email:
                 type: string
+              roleId:
+                type: integer
       responses:
         200:
           description: successful operation
@@ -346,7 +343,7 @@ paths:
       security:
         - api_key: []
 
-  /requests/userRequests:
+  /requests:
     get:
       tags:
         - Requests
@@ -396,7 +393,7 @@ paths:
       parameters:
         - in: body
           name: body
-          description: Multiple Request Destination
+          description: Multiple Request Destzination
           required: true
           schema:
             properties:
@@ -405,13 +402,6 @@ paths:
                 required: true
               destination:
                 type: string
-              tripType:
-                type: string
-                required: true
-                enum:
-                  - one-way
-                  - return
-                  - multi-city
               travelDate:
                 type: string
                 format: date
@@ -472,13 +462,6 @@ paths:
                 type: string
               destination:
                 type: string
-              tripType:
-                type: string
-                description: Trip type
-                enum:
-                  - one-way
-                  - return
-                  - multi-city
               travelDate:
                 type: string
                 format: date-time
@@ -586,13 +569,6 @@ paths:
                 type: string
               destination:
                 type: string
-              tripType:
-                type: string
-                description: Trip type
-                enum:
-                  - one-way
-                  - return
-                  - multi-city
               travelDate:
                 type: string
                 format: date-time
@@ -637,8 +613,6 @@ paths:
               source:
                 type: string
               destination:
-                type: string
-              tripType:
                 type: string
               travelDate:
                 type: string
@@ -759,116 +733,12 @@ paths:
           description: Authorization failure
         200:
           description: Success
-  /auth/assign_role:
-    patch:
-      tags:
-        - Auth
-      summary: Assign user role
-      description: Assign user role with Super Administrator Access
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: Role schema
-          description: Role assignment details
-          required: true
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-              roleId:
-                type: integer
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Error
-        401:
-          description: Access Denied
-        403:
-          description: Authentication failed
-      security:
-        - api_key: []
-  /requests/{requestId}/comments:
-    post:
-      tags:
-        - Comments
-      summary: Creates a comment
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: Comment body
-          required: true
-          schema:
-            type: object
-            properties:
-              comment:
-                type: string
-        - in: path
-          name: requestId
-          required: true
-          type: integer
-      responses:
-        400:
-          description: Error
-        201:
-          description: Success
-      security:
-        - api_key: []
-    get:
-      tags:
-        - Comments
-      summary: Gets all request comments
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: requestId
-          required: true
-          type: integer
-      responses:
-        400:
-          description: Error
-        200:
-          description: Success
-      security:
-        - api_key: []
-  /requests/{requestId}/comments/{commentId}:
-    delete:
-      tags:
-        - Comments
-      summary: Deletes a comment
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: requestId
-          required: true
-          type: integer
-        - in: path
-          name: commentId
-          required: true
-          type: integer
-      responses:
-        400:
-          description: Error
-        200:
-          description: Success
-      security:
-        - api_key: []
 
   /accommodation:
     post:
       tags:
         - Accommodation
-      summary: Add new centre
+      summary: Add new accommodation centre
       consumes:
         - multipart/form-data
       produces:
@@ -930,6 +800,83 @@ paths:
       security:
         - api_key: []
 
+  /accommodation/{id}:
+    patch:
+      tags:
+        - Accommodation
+      summary: Update existing accommodation centre
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: country
+          in: formData
+          type: string
+          required: true
+        - name: state
+          in: formData
+          type: string
+          required: true
+        - name: city
+          in: formData
+          type: string
+          required: true
+        - name: address
+          in: formData
+          type: string
+          required: true
+        - name: image
+          in: formData
+          type: file
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: You cannot edit this accommodation
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Accommodation'
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Accommodation
+      summary: Delete accommodation centre
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        400:
+          description: You cannot delete this accommodation
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
   /accommodation/{accommodationId}/room:
     post:
       tags:
@@ -977,6 +924,162 @@ paths:
           description: Success
           schema:
             $ref: '#definitions/Room'
+      security:
+        - api_key: []
+  /accommodation/{id}/room:
+    patch:
+      tags:
+        - Accommodation
+      summary: Update existing room details
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+        - name: name
+          in: formData
+          type: string
+          required: true
+        - name: roomType
+          in: formData
+          type: string
+          required: true
+        - name: facilities
+          in: formData
+          type: string
+          required: true
+        - name: price
+          in: formData
+          type: string
+        - name: status
+          in: formData
+          type: string
+        - name: images
+          in: formData
+          type: file
+        - name: description
+          in: formData
+          type: string
+      responses:
+        400:
+          description: The room does not exists
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/Room'
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Accommodation
+      summary: Delete accommodation room
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        400:
+          description: The operation was not successfully
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+      security:
+        - api_key: []
+  /requests/{requestId}/comments:
+    post:
+      tags:
+        - Requests
+      summary: Creates a comment
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Comment body
+          required: true
+          schema:
+            type: object
+            properties:
+              comment:
+                type: string
+        - in: path
+          name: requestId
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Error
+        201:
+          description: Success
+      security:
+        - api_key: []
+    get:
+      tags:
+        - Requests
+      summary: Gets all request comments
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+      responses:
+        400:
+          description: The request does not exist
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+      security:
+        - api_key: []
+
+  /requests/{requestId}/comments/{commentId}:
+    delete:
+      tags:
+        - Requests
+      summary: Deletes a comment
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          type: integer
+        - in: path
+          name: commentId
+          required: true
+          type: integer
+      responses:
+        400:
+          description: Bad Request
+        401:
+          description: Access Denied, no token provided
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              message:
+                type: string
       security:
         - api_key: []
 
@@ -1224,7 +1327,7 @@ definitions:
             items:
               type: string
             required: true
-          type:
+          tripType:
             type: string
           travelDate:
             type: string
@@ -1303,6 +1406,20 @@ definitions:
                     type: string
                   lastName:
                     type: string
+            rememberProfile:
+              type: boolean
+            gender:
+              type: string
+            passportName:
+              type: string
+            passportNumber:
+              type: string
+            preferredLanguage:
+              type: string
+            residentialAddress:
+             type: string
+            preferredCurrency:
+              type: string
             createdAt:
               type: string
               format: date-time

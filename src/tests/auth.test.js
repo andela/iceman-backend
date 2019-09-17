@@ -37,6 +37,15 @@ const user3 = {
   password: 'elijah1994'
 };
 
+const profileDetails = {
+  firstName: 'Elijah',
+  lastName: 'Enuem-Udogu',
+  gender: 'Male',
+  dateOfBirth: '1994-05-20',
+  preferredLanguage: 'English',
+  residentialAddress: 'Benin City, Nigeria',
+  preferredCurrency: 'Nigerian Naira (NGN)',
+};
 describe('/api/v1/auth', () => {
   let verifiedUser, notVerifiedUser;
 
@@ -405,7 +414,6 @@ describe('/api/v1/auth', () => {
       res.body.error.should.equal('User not found');
     });
   });
-
   describe('GET /profile', () => {
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)
@@ -466,16 +474,6 @@ describe('/api/v1/auth', () => {
   });
 
   describe('PATCH /profile', () => {
-    const profileDetails = {
-      firstName: 'Elijah',
-      lastName: 'Enuem-Udogu',
-      gender: 'Male',
-      dateOfBirth: '1994-05-20',
-      preferredLanguage: 'English',
-      residentialAddress: 'Benin City, Nigeria',
-      preferredCurrency: 'Nigerian Naira (NGN)',
-    };
-
     it('should return 401 if there is no token in the header', async () => {
       const res = await chai.request(app)
         .patch(`${URL_PREFIX}/profile`)

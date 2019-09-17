@@ -3,9 +3,13 @@ import AccommodationService from '../services/accommodationService';
 
 const { success, badRequest, successMessage } = Response;
 const {
-  addCentre,
-  addRoom,
+  createAccommodation,
+  createRoom,
   getAllAccommodation,
+  updateAccommodation,
+  deleteAccommodation,
+  updateRoom,
+  deleteRoom,
   likeAccommodation,
   unlikeAccommodation,
   addFeedback,
@@ -21,9 +25,9 @@ export default class AccommodationController {
  * @param {object} res - response object
  * @return {object} return object containing status and data
  */
-  static async addCentre(req, res) {
+  static async createAccommodation(req, res) {
     try {
-      const data = await addCentre(req);
+      const data = await createAccommodation(req);
 
       success(res, data);
     } catch ({ message: error }) {
@@ -36,9 +40,9 @@ export default class AccommodationController {
  * @param {object} res - response object
  * @return {object} - return object containing status and data
  */
-  static async addRoom(req, res) {
+  static async createRoom(req, res) {
     try {
-      const data = await addRoom(req);
+      const data = await createRoom(req);
 
       success(res, data);
     } catch ({ message: error }) {
@@ -79,6 +83,21 @@ export default class AccommodationController {
   /**
  * @param {object} req - request object
  * @param {object} res - response object
+ * @return {object} user - return object containing status and data
+ */
+  static async updateAccommodation(req, res) {
+    try {
+      const data = await updateAccommodation(req);
+
+      success(res, data);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+ * @param {object} req - request object
+ * @param {object} res - response object
  * @return {object} - return object containing status and data
  */
   static async unlikeAccommodation(req, res) {
@@ -86,6 +105,21 @@ export default class AccommodationController {
       await unlikeAccommodation(req);
 
       successMessage(res, 'You\'ve unliked this centre successfully');
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+ * @param {object} req - request object
+ * @param {object} res - response object
+ * @return {object} user - return object containing status and data
+ */
+  static async deleteAccommodation(req, res) {
+    try {
+      const data = await deleteAccommodation(req);
+
+      successMessage(res, data);
     } catch ({ message: error }) {
       badRequest(res, error);
     }
@@ -109,6 +143,21 @@ export default class AccommodationController {
   /**
  * @param {object} req - request object
  * @param {object} res - response object
+ * @return {object} room - return object containing status and data
+ */
+  static async updateRoom(req, res) {
+    try {
+      const data = await updateRoom(req);
+
+      success(res, data);
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+ * @param {object} req - request object
+ * @param {object} res - response object
  * @return {object} - return object containing status and data
  */
   static async removeFeedback(req, res) {
@@ -116,6 +165,21 @@ export default class AccommodationController {
       await removeFeedback(req);
 
       successMessage(res, 'You\'ve removed this feedback successfully');
+    } catch ({ message: error }) {
+      badRequest(res, error);
+    }
+  }
+
+  /**
+ * @param {object} req - request object
+ * @param {object} res - response object
+ * @return {string}  - return success or error message
+ */
+  static async deleteRoom(req, res) {
+    try {
+      const data = await deleteRoom(req);
+
+      successMessage(res, data);
     } catch ({ message: error }) {
       badRequest(res, error);
     }

@@ -117,15 +117,15 @@ export const responseSchema = Joi.object().keys({
  */
 export const requestSchema = Joi.object().keys({
   source: Joi.string().required().error(() => ({ message: 'Source is required' })),
-  tripType: Joi.string().required().error(() => ({ message: 'Please select your trip type. Should be one-way, return or multi-city' })),
+  tripType: Joi.string(),
   destination: Joi.string().required().error(() => ({ message: 'Please select your destination(s)' })),
   travelDate: Joi.date().required().error(() => ({ message: 'Travel date is required e.g YYYY-MM-DD' })),
   returnDate: Joi.date(),
   reason: Joi.string().required().error(() => ({ message: 'Reason is required' })),
   status: Joi.string(),
+  accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' })),
   passportName: Joi.string().required().error(() => ({ message: 'passportName is Required' })),
   passportNumber: Joi.number().required().error(() => ({ message: 'passportNumber is Required' })),
-  accommodation: Joi.string().required().error(() => ({ message: 'Accommodation is required' })),
   rememberProfile: Joi.boolean().required(),
   gender: Joi.string().trim().required().error(() => ({ message: 'gender is Required' })),
   preferredLanguage: Joi.string().trim().required().error(() => ({ message: 'preferredLanguage is Required' })),
@@ -143,12 +143,12 @@ export const commentSchema = Joi.object().keys({
 /**
  * Schema for validating centre
  */
-export const centreSchema = Joi.object().keys({
-  name: Joi.string().required().error(() => ({ message: 'Please provide the centre name' })),
-  country: Joi.string().required().error(() => ({ message: 'Please select country of the centre' })),
-  state: Joi.string().required().error(() => ({ message: 'Please select state of the centre' })),
-  city: Joi.string().required().error(() => ({ message: 'Please select city of the centre' })),
-  address: Joi.string().required().error(() => ({ message: 'Please provide the centre address' })),
+export const accommodationSchema = Joi.object().keys({
+  name: Joi.string().required().error(() => ({ message: 'Please provide the name of the accommodation centre' })),
+  country: Joi.string().required().error(() => ({ message: 'Please provide the country were the accommodation centre is located' })),
+  state: Joi.string().required().error(() => ({ message: 'Please provide the state were the accommodation centre is located' })),
+  city: Joi.string().required().error(() => ({ message: 'Please provide the city were the accommodation centre is located' })),
+  address: Joi.string().required().error(() => ({ message: 'Please provide the address of the accommodation centre' })),
   description: Joi.string(),
 });
 

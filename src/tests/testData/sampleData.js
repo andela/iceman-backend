@@ -14,7 +14,21 @@ export const multiRequest = {
   residentialAddress: 'Delta state',
   rememberProfile: false
 };
-
+export const multiRequest2 = {
+  source: 'Nigeria',
+  destination: 'Abuja, USA, POLAND',
+  tripType: 'multi-city',
+  travelDate: Date.now(),
+  reason: 'reason',
+  accommodation: 'accommodation',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: false
+};
 export const missingRequiredField = {
   tripType: 'multi-city',
   travelDate: Date.now(),
