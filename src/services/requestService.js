@@ -152,7 +152,9 @@ export default class RequestService {
     const receive = await User.findOne({ where: { id: manager } });
     const { dataValues: receiver } = receive;
 
-    await Notification.createNotificationMsg({ sender, receiver, type: 'newRequest' });
+    await Notification.createNotificationMsg({
+      sender, receiver, type: 'newRequest', link: dataValues.id
+    });
 
 
     return dataValues;
@@ -175,7 +177,6 @@ export default class RequestService {
    * @returns {object} obj - return object
    */
   static async getSpecificRequest({ user: { id }, params: { requestId } }) {
-    console.log('i am here');
     const result = await Request.findOne({ where: { id: Number(requestId) } });
 
     if (!result) error('Request Not Found');
@@ -228,6 +229,21 @@ export default class RequestService {
     const { dataValues } = await Request.create({ ...body, userId: id });
 
     await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+
+    const userDept = await UserDepartment.findOne({
+      include: [Department], where: { userId: id }
+    });
+
+    const { dataValues: { Department: { dataValues: { manager } } } } = userDept;
+    const send = await User.findOne({ where: id });
+    const { dataValues: sender } = send;
+    const receive = await User.findOne({ where: { id: manager } });
+    const { dataValues: receiver } = receive;
+
+    await Notification.createNotificationMsg({
+      sender, receiver, type: 'newRequest', link: dataValues.id
+    });
+
 
     return dataValues;
   }
