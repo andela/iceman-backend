@@ -69,6 +69,10 @@ module.exports = {
     passportNumber: {
       type: Sequelize.STRING
     },
+    emailNotification: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE

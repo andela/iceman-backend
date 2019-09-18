@@ -10,7 +10,8 @@ const {
   returnRequest,
   oneway,
   respondToRequest,
-  search
+  search,
+  getSpecificRequest
 } = RequestService;
 
 /**
@@ -91,6 +92,21 @@ export default class RequestController {
       success(res, data);
     } catch ({ message: err }) {
       badRequest(res, err, 404);
+    }
+  }
+
+  /**
+   * @param {req} req - request obiect
+   * @param {res} res - res object object
+   * @returns {object} - return object
+   */
+  static async getSpecificRequest(req, res) {
+    try {
+      const data = await getSpecificRequest(req);
+
+      success(res, data);
+    } catch ({ message: err }) {
+      badRequest(res, err);
     }
   }
 

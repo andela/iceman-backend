@@ -1,7 +1,10 @@
 import { Op } from 'sequelize';
-import { Request, User } from '../models';
+import {
+  Request, User, UserDepartment, Department
+} from '../models';
 import Response from '../utils/response';
 import Helper from '../utils/helpers';
+import Notification from './notificationService';
 
 const { error } = Response;
 
@@ -62,6 +65,21 @@ export default class RequestService {
       where: { id: requestId }, returning: true
     });
 
+    const receive = await User.findOne({ where: { id: userRequest.userId } });
+    const { dataValues: receiver } = receive;
+    const send = await User.findOne({ where: { id } });
+    const { dataValues: sender } = send;
+
+    if (status === 'approved') {
+      await Notification.createNotificationMsg({
+        sender, receiver, type: 'approvedRequest', link: dataValues.id
+      });
+    } else {
+      await Notification.createNotificationMsg({
+        sender, receiver, type: 'rejectRequest', link: dataValues.id
+      });
+    }
+
     return dataValues;
   }
 
@@ -82,10 +100,24 @@ export default class RequestService {
 
     body.tripType = 'one-way';
 
+    const data = await Request.create({ ...body, destination, userId: id });
+
     await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
 
+    const userDept = await UserDepartment.findOne({
+      include: [Department], where: { userId: id }
+    });
+    const { dataValues: { Department: { dataValues: { manager } } } } = userDept;
+    const send = await User.findOne({ where: id });
+    const { dataValues: sender } = send;
+    const receive = await User.findOne({ where: { id: manager } });
+    const { dataValues: receiver } = receive;
 
-    return Request.create({ ...body, destination, userId: id });
+    await Notification.createNotificationMsg({
+      sender, receiver, type: 'newRequest', link: data.dataValues.id
+    });
+
+    return data;
   }
 
   /**
@@ -110,6 +142,20 @@ export default class RequestService {
 
     await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
 
+    const userDept = await UserDepartment.findOne({
+      include: [Department], where: { userId: id }
+    });
+
+    const { dataValues: { Department: { dataValues: { manager } } } } = userDept;
+    const send = await User.findOne({ where: id });
+    const { dataValues: sender } = send;
+    const receive = await User.findOne({ where: { id: manager } });
+    const { dataValues: receiver } = receive;
+
+    await Notification.createNotificationMsg({
+      sender, receiver, type: 'newRequest', link: dataValues.id
+    });
+
 
     return dataValues;
   }
@@ -122,6 +168,25 @@ export default class RequestService {
     const result = await Request.findAll({ where: { userId: id } });
 
     if (result.length === 0) error('You\'ve not made any requests');
+
+    return result;
+  }
+
+  /**
+   * @param {object} body - request object
+   * @returns {object} obj - return object
+   */
+  static async getSpecificRequest({ user: { id }, params: { requestId } }) {
+    const result = await Request.findOne({ where: { id: Number(requestId) } });
+
+    if (!result) error('Request Not Found');
+
+    const userDept = await UserDepartment.findOne({
+      include: [Department], where: { userId: result.userId }
+    });
+    const { dataValues: { Department: { dataValues: { manager } } } } = userDept;
+
+    if (result.userId !== id && id !== manager) error('You are not Allowed to view this request');
 
     return result;
   }
@@ -164,6 +229,21 @@ export default class RequestService {
     const { dataValues } = await Request.create({ ...body, userId: id });
 
     await User.update({ rememberProfile: body.rememberProfile }, { where: { id } });
+
+    const userDept = await UserDepartment.findOne({
+      include: [Department], where: { userId: id }
+    });
+
+    const { dataValues: { Department: { dataValues: { manager } } } } = userDept;
+    const send = await User.findOne({ where: id });
+    const { dataValues: sender } = send;
+    const receive = await User.findOne({ where: { id: manager } });
+    const { dataValues: receiver } = receive;
+
+    await Notification.createNotificationMsg({
+      sender, receiver, type: 'newRequest', link: dataValues.id
+    });
+
 
     return dataValues;
   }

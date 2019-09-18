@@ -59,6 +59,7 @@
     "passport-strategy": "^1.0.0",
     "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
+    "pusher": "^2.2.2",
     "request": "^2.87.0",
     "sequelize": "^5.18.0",
     "sequelize-cli": "^5.5.1",

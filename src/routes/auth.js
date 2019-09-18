@@ -9,7 +9,7 @@ import {
   verifyEmail,
   LogInSchema,
   roleSchema,
-  profileSchema,
+  profileSchema
 } from '../validation/schemas';
 
 const router = express.Router();

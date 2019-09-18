@@ -133,6 +133,10 @@ export const requestSchema = Joi.object().keys({
   preferredCurrency: Joi.string().trim().required().error(() => ({ message: 'preferredCurrency is Required' })),
 });
 
+export const optSchema = Joi.object().keys({
+  emailNotification: Joi.boolean().valid(true, false).required()
+});
+
 export const commentSchema = Joi.object().keys({
   comment: Joi.string().trim().required()
     .error(() => ({

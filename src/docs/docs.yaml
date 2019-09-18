@@ -360,6 +360,24 @@ paths:
       security:
         - api_key: []
 
+  /requests/{requestId}/request:
+    get:
+      tags:
+        - Requests
+      summary: view specific request
+      produces:
+        - application/json
+      responses:
+        400:
+          description: Request Not Found
+        401:
+          description: Access Denied, No token provided
+        200:
+          description: Success
+          schema:
+            $ref: '#definitions/MyRequest'
+      security:
+        - api_key: []
   /requests/pending:
     get:
       tags:
@@ -1095,6 +1113,120 @@ paths:
           description: Success 
       security:
         - api_key: []
+
+  /notification/opt_email:
+    patch:
+      tags:
+        - Notification
+      summary: Opt in or out Email Notification
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: emailNotification
+          required: true
+          type: boolean
+          schema:
+            type: object
+            properties:
+              emailNotification:
+                type: boolean
+      responses:
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+        400:
+          description: Error
+        200:
+          description: Success 
+      security:
+        - api_key: []
+
+  /notification/:
+    get:
+      tags:
+        - Notification
+      summary: Gets All Notification for a User
+      produces:
+        - application/json
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Notification'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
+
+  /notification/{notificationId}:
+    get:
+      tags:
+        - Notification
+      summary: Gets Specific Notification
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: notificationId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Notification'
+        400:
+          description: Bad request
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+      security:
+        - api_key: []
+
+  /mark_all_read:
+    patch:
+      tags:
+        - Notification
+      summary: Mark All notification as Read
+      produces:
+        - application/json
+      responses:
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+        400:
+          description: Error
+        200:
+          description: Success 
+      security:
+        - api_key: []
+
+  /notification/clear:
+    delete:
+      tags:
+        - Notification
+      summary: Clear All Notification
+      produces:
+        - application/json
+      responses:
+        401:
+          description: Access Denied
+        403:
+          description: Authentication failed
+        400:
+          description: Error
+        200:
+          description: Success 
+      security:
+        - api_key: []
 definitions:
   AuthResponse:
     properties:
@@ -1439,6 +1571,25 @@ definitions:
              type: string
             preferredCurrency:
               type: string
+  Notification:
+    properties:
+      status:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          type:
+            type: string
+          senderId:
+            type: integer
+          receiverId:
+            type: integer
+          message:
+            type: string
+          url:
+            type: string
 
 securityDefinitions:
   api_key:

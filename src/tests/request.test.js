@@ -1,5 +1,7 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
+import sgMail from '@sendgrid/mail';
+import sinon from 'sinon';
 import app from '../index';
 import TestHelper from '../utils/testHelper';
 import Helper from '../utils/helpers';
@@ -31,6 +33,7 @@ let request;
 let managerRequest;
 let manager;
 let manager2;
+let send;
 
 const profileDetails = {
   gender: 'Male',
@@ -43,12 +46,23 @@ const profileDetails = {
 };
 
 describe('/api/v1/requests', () => {
+  after(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
+    await TestHelper.destroyModel('Notification');
+    await send.restore();
+  });
+
   before(async () => {
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Role');
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');
+    await TestHelper.destroyModel('Notification');
     await db.Role.bulkCreate(insertRoles);
 
     await TestHelper.createUser({
@@ -75,10 +89,24 @@ describe('/api/v1/requests', () => {
       ...managerUser, roleId: 4,
     });
 
+    manager = await chai.request(app)
+      .post('/api/v1/auth/login')
+      .set('Content-Type', 'application/json')
+      .send({ email: 'manager@gmail.com', password: user.password });
+
+    department = await TestHelper.createDepartment({
+      department: 'dev', manager: manager.body.data.id
+    });
+
     loginUser = await chai.request(app)
       .post('/api/v1/auth/login')
       .set('Content-Type', 'application/json')
       .send(Helper.pickFields(user, ['email', 'password']));
+
+    await TestHelper.createUserDepartment({
+      userId: loginUser.body.data.id,
+      departmentId: department.id
+    });
 
     loginUser2 = await chai.request(app)
       .post('/api/v1/auth/login')
@@ -95,6 +123,13 @@ describe('/api/v1/requests', () => {
       .set('Content-Type', 'application/json')
       .send(Helper.pickFields(managerUser, ['email', 'password']));
 
+    await TestHelper.createUserDepartment({
+      userId: loginManager.body.data.id,
+      departmentId: department.id
+    });
+
+    send = await sinon.stub(sgMail, 'send').resolves({});
+
     request = await chai.request(app)
       .post(`${URL_PREFIX}/multi-city`)
       .set('Content-Type', 'application/json')
@@ -107,24 +142,13 @@ describe('/api/v1/requests', () => {
       .set('token', loginManager.body.data.token)
       .send(multiRequest);
 
-    manager = await chai.request(app)
-      .post('/api/v1/auth/login')
-      .set('Content-Type', 'application/json')
-      .send({ email: 'manager@gmail.com', password: user.password });
-
     manager2 = await chai.request(app)
       .post('/api/v1/auth/login')
       .set('Content-Type', 'application/json')
       .send({ email: 'manager2@gmail.com', password: user.password });
 
-    department = await TestHelper.createDepartment({ department: 'dev', manager: manager.body.data.id });
-
     await TestHelper.createUserDepartment({
       userId: loginUser2.body.data.id,
-      departmentId: department.id
-    });
-    await TestHelper.createUserDepartment({
-      userId: loginManager.body.data.id,
       departmentId: department.id
     });
   });
@@ -138,6 +162,38 @@ describe('/api/v1/requests', () => {
       request.body.data.should.have.property('returnDate');
       request.body.data.should.have.property('travelDate');
       request.body.data.should.have.property('userId');
+    });
+
+    it('should veiw user request', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/${request.body.data.id}/request`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(200);
+      res.body.data.should.have.property('destination');
+      res.body.data.should.have.property('source');
+      res.body.data.should.have.property('tripType', 'multi-city');
+      res.body.data.should.have.property('returnDate');
+      res.body.data.should.have.property('travelDate');
+      res.body.data.should.have.property('userId');
+    });
+
+    it('should not view a request that does not exist', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/44/request`)
+        .set('token', loginUser.body.data.token);
+
+      res.should.have.status(400);
+      res.body.error.should.equal('Request Not Found');
+    });
+
+    it('should not view a request if not permitted', async () => {
+      const res = await chai.request(app)
+        .get(`${URL_PREFIX}/1/request`)
+        .set('token', loginManager.body.data.token);
+
+      res.should.have.status(400);
+      res.body.error.should.equal('You are not Allowed to view this request');
     });
 
     it('should return 400 if the trip is already booked', async () => {

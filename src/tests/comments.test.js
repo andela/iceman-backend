@@ -1,4 +1,6 @@
 import chai, { expect } from 'chai';
+import sgMail from '@sendgrid/mail';
+import sinon from 'sinon';
 import chaiHttp from 'chai-http';
 import app from '../index';
 import db from '../models';
@@ -15,36 +17,54 @@ let imposterToken2;
 let commentId;
 let requestId;
 let badRequestId;
+let send;
 const URL_PREFIX = '/api/v1/requests';
 
 describe('api/v1/requests/:requestId/comments', () => {
+  after(async () => {
+    await TestHelper.destroyModel('Request');
+    await TestHelper.destroyModel('User');
+    await TestHelper.destroyModel('Role');
+    await TestHelper.destroyModel('Department');
+    await TestHelper.destroyModel('UserDepartment');
+    await TestHelper.destroyModel('Notification');
+    await send.restore();
+  });
+
   before(async () => {
     await TestHelper.destroyModel('Request');
     await TestHelper.destroyModel('User');
     await TestHelper.destroyModel('Comment');
     await TestHelper.destroyModel('Department');
     await TestHelper.destroyModel('UserDepartment');
+    await TestHelper.destroyModel('Notification');
 
     const { token } = await TestHelper.createUser({
-      ...user1, isVerified: true
+      ...user1, roleId: 5
     });
+
     const { token: token1 } = await TestHelper.createUser({
-      ...user2, isVerified: true
+      ...user2, roleId: 5
     });
+
     const { token: token2 } = await TestHelper.createUser({
-      ...user3, isVerified: true
+      ...user3, roleId: 5
     });
+
+    await db.Department.bulkCreate(departments);
+    await db.UserDepartment.bulkCreate(userDepartments);
+
+    send = await sinon.stub(sgMail, 'send').resolves({});
+
     const { body: { data: { id } } } = await chai.request(app)
       .post(`${URL_PREFIX}/one-way`)
       .set('token', token)
       .send(oneWayTrip);
+
     const { body: { data: { id: second } } } = await chai.request(app)
       .post(`${URL_PREFIX}/one-way`)
       .set('token', token)
       .send(oneWayTrip2);
-
-    await db.Department.bulkCreate(departments);
-    await db.UserDepartment.bulkCreate(userDepartments);
 
     authToken = token;
     imposterToken = token1;

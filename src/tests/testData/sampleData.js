@@ -181,7 +181,14 @@ export const user1 = {
   email: 'earl@ragner.com',
   firstName: 'John',
   lastName: 'lennon',
-  password: 'letmebe123'
+  password: 'letmebe123',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: false
 };
 
 export const user2 = {
@@ -189,7 +196,14 @@ export const user2 = {
   email: 'earl@borg.com',
   firstName: 'John',
   lastName: 'lennon',
-  password: 'letmebe123'
+  password: 'letmebe123',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: false
 };
 
 export const user3 = {
@@ -197,7 +211,14 @@ export const user3 = {
   email: 'earl@ingstad.com',
   firstName: 'John',
   lastName: 'lennon',
-  password: 'letmebe123'
+  password: 'letmebe123',
+  gender: 'female',
+  preferredLanguage: 'french',
+  passportName: 'My Name',
+  passportNumber: '1212323',
+  preferredCurrency: 'Euro',
+  residentialAddress: 'Delta state',
+  rememberProfile: false
 };
 
 export const userDepartments = [
